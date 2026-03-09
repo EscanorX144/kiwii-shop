@@ -70,7 +70,7 @@ def upd(oid, st):
 
 @app.route('/')
 def index():
-    packages =     packages = [
+    packages = [
         {"d": "Weekly Pass", "p": "5,800"}, {"d": "Twilight Pass", "p": "32,000"},
         {"d": "86", "p": "4,800"}, {"d": "172", "p": "9,600"},
         {"d": "257", "p": "14,400"}, {"d": "343", "p": "19,200"},
