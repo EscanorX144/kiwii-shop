@@ -30,7 +30,7 @@ def send_order():
     db[oid] = {"status": "⏳ စစ်ဆေးနေဆဲ", "u": u, "z": z, "it": it, "amt": a, "method": pay}
     save_db(db)
     
-    msg = (f"🔔 **NEW ORDER: #{oid}**\n🆔 {u} ({z})\n💎 {it}\n💰 Price: {p} Ks\n💵 User Sent: {a} Ks ({pay})\n\n🔗 Admin: http://127.0.0.1:8080/admin?pw={ADMIN_PASSWORD}")
+    msg = (f"🔔 **NEW ORDER: #{oid}**\n🆔 {u} ({z})\n💎 {it}\n💰 Price: {p} Ks\n💵 User Sent: {a} Ks ({pay})\n\n🔗 Admin: https://kiwiigameshop.onrender.com/admin?pw=1234}")
     try:
         f = request.files.get('s')
         if f: requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto", data={'chat_id': CHAT_ID, 'caption': msg, 'parse_mode': 'Markdown'}, files={'photo': f.read()})
