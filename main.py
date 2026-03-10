@@ -1,7 +1,7 @@
 import os
 import pymongo
 import json
-from flask import Flask, render_template_string, request, redirect, url_for
+from flask import Flask, render_template_string, request
 import requests
 
 app = Flask(__name__)
@@ -42,18 +42,13 @@ def order():
     pkg_name = request.form.get('p'); amt = request.form.get('a')
     pay = request.form.get('pay'); photo = request.files.get('photo')
     oid = os.urandom(2).hex().upper()
-    
     orders_col.insert_one({"id": oid, "uid": uid, "zone": zone, "pkg": pkg_name, "amt": amt, "status": "Pending ⏳", "note": ""})
-    
     msg = f"🔔 *NEW ORDER: #{oid}*\n🆔 *ID:* `{uid}` (`{zone}`)\n💎 *Item:* {pkg_name}\n💰 *Price:* {amt} Ks\n💵 *Pay:* {pay}"
     admin_url = f"https://kiwiigameshop.onrender.com/admin?pw={ADMIN_PASSWORD}"
     reply_markup = json.dumps({"inline_keyboard": [[{"text": "📝 Admin Panel", "url": admin_url}]]})
-    
     if photo:
         photo.seek(0)
-        requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto", 
-                      data={'chat_id': ADMIN_ID, 'caption': msg, 'parse_mode': 'Markdown', 'reply_markup': reply_markup}, 
-                      files={'photo': photo})
+        requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto", data={'chat_id': ADMIN_ID, 'caption': msg, 'parse_mode': 'Markdown', 'reply_markup': reply_markup}, files={'photo': photo})
     return render_template_string('<html><body style="background:#0f172a;color:white;text-align:center;padding:80px;font-family:sans-serif;"><h2>Order Success! ✅</h2><p>Order ID: #{{oid}}</p><a href="/" style="color:#fbbf24;">Back to Shop</a></body></html>', oid=oid)
 
 @app.route('/admin', methods=['GET', 'POST'])
@@ -64,9 +59,8 @@ def admin():
         oid = request.form.get('oid'); action = request.form.get('action'); reason = request.form.get('reason', '')
         if action == 'done': orders_col.update_one({"id": oid}, {"$set": {"status": "Diamond ထည့်သွင်းပြီးပါပြီ ✅", "note": "ကျေးဇူးတင်ပါတယ်!"}})
         elif action == 'reject': orders_col.update_one({"id": oid}, {"$set": {"status": "Order ငြင်းပယ်ခံရသည် ❌", "note": reason}})
-            
     orders = orders_col.find().sort("_id", -1)
-    order_html = "".join([f'<div style="border:1px solid #334155;padding:15px;background:#1e293b;border-radius:12px;margin-bottom:15px;"><b>#{v["id"]}</b> | {v["uid"]} | {v["status"]}<form method="post"><input type="hidden" name="oid" value="{v["id"]}"><button name="action" value="done">DONE</button></form></div>' for v in orders])
+    order_html = "".join([f'<div style="border:1px solid #334155;padding:15px;background:#1e293b;border-radius:12px;margin-bottom:15px;"><b>#{v["id"]}</b> | {v["uid"]} | {v["status"]}<form method="post"><input type="hidden" name="oid" value="{v["id"]}"><input name="reason" placeholder="Reason (if reject)"><button name="action" value="done">DONE</button><button name="action" value="reject">REJECT</button></form></div>' for v in orders])
     return f"<html><body style='background:#0f172a;color:white;padding:20px;'><h2>Admin Panel</h2>{order_html}</body></html>"
 
 @app.route('/')
@@ -97,22 +91,20 @@ def index():
         <div id="t2" class="pay-tab" onclick="setPay('WaveMoney')">WAVE MONEY</div>
     </div>
     <div class="pay-box">
-        <div style="font-size:11px; color:#94a3b8;">PAYMENT NUMBER</div>
         <div id="p-num" class="pay-no">{{pay_no}}</div>
         <button class="copy-btn" onclick="copyNum()">COPY</button>
         <div style="color:#fbbf24; font-size:14px; margin: 10px 0;">NAME - {{name}}</div>
         <div class="note-tag">NOTE မှာ "PAYMENT" လို့ရေးပေးပါ</div>
     </div>
-    <form action="/order" method="post" enctype="multipart/form-data" style="background:#1e293b;padding:25px;border-radius:20px; border: 1px solid #334155;">
+    <form action="/order" method="post" enctype="multipart/form-data">
         <input name="u" placeholder="Game Player ID" required>
         <input name="z" placeholder="Zone ID" required>
         <input id="p_val" name="p" type="hidden" required><input id="a_val" name="a" type="hidden" required>
         <input id="pay_method" name="pay" type="hidden" value="KBZPay">
-        <p style="font-size:13px;color:#94a3b8;text-align:center;">ငွေလွှဲ Screenshot ထည့်ပေးပါ</p>
+        <p style="font-size:13px;color:#94a3b8;text-align:center;">Screenshot တင်ပေးပါ</p>
         <input type="file" name="photo" required accept="image/*">
         <button type="submit" class="buy-btn">CONFIRM ORDER</button>
     </form>
-    <div style="text-align:center; margin-top:20px; color:#94a3b8; font-size:14px;">Support: <a href="https://t.me/{{cs}}" style="color:#fbbf24;text-decoration:none;">@{{cs}}</a></div>
     <script>
     function sel(el,d,p){document.querySelectorAll('.pkg-card').forEach(c=>c.classList.remove('selected'));el.classList.add('selected');document.getElementById('p_val').value=d;document.getElementById('a_val').value=p;}
     function copyNum(){navigator.clipboard.writeText(document.getElementById('p-num').innerText).then(()=>{alert('Copied!');});}
