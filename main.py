@@ -41,10 +41,10 @@ def order():
         oid = os.urandom(2).hex().upper()
         db[oid] = {'u': uid, 'z': zone, 'p': pkg_name, 'a': amt, 'status': 'Pending ⏳', 'note': ''}
         
-        # Admin Panel Link သတ်မှတ်ခြင်း (Smile One link အစားထိုးရန်)
+        # Admin Panel Link (Smile One အစားထိုးရန်)
         admin_link = f"https://kiwiigameshop.onrender.com/admin?pw={ADMIN_PASSWORD}"
         
-        # Telegram Message (Smile One link များ ဖယ်ရှားပြီး Admin Link ထည့်သွင်းထားသည်)
+        # Telegram Message
         caption_msg = (f"🔔 *NEW ORDER: #{oid}*\n"
                        f"🆔 *ID:* `{uid}` (`{zone}`)\n"
                        f"💎 *Item:* {pkg_name}\n"
@@ -56,7 +56,7 @@ def order():
             photo.seek(0)
             requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto", 
                           data={'chat_id': ADMIN_ID, 'caption': caption_msg, 'parse_mode': 'Markdown'}, 
-                          files={'photo': photo}, timeout=15)
+                          files={'photo': photo}, timeout=20)
                           
         return render_template_string('<html><body style="background:#0f172a;color:white;text-align:center;padding-top:100px;font-family:sans-serif;"><h2>Order Success! ✅</h2><p>Order ID: #{{oid}}</p><a href="/" style="color:#fbbf24;text-decoration:none;">Back to Shop</a></body></html>', oid=oid)
     except Exception as e:
@@ -135,6 +135,9 @@ def index():
     <script>function sel(el,d,p,id){var cards=document.getElementsByClassName('pkg-card');for(var i=0;i<cards.length;i++){cards[i].classList.remove('selected');}el.classList.add('selected');document.getElementById('p_val').value=d;document.getElementById('a_val').value=p;document.getElementById('pid_val').value=id;}</script>
 </body></html>''', pkg_items=pkg_items)
 
+# --- PORT CONFIGURATION ---
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=10000)
+    # Render အတွက် လိုအပ်သော Port dynamic ဖတ်သည့်အပိုင်း
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host='0.0.0.0', port=port)
     
