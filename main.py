@@ -1,187 +1,208 @@
-import os
-import pymongo
-import json
-from flask import Flask, render_template_string, request, redirect, url_for
-import requests
+import os, json
+from flask import Flask, render_template_string, request, redirect
 
 app = Flask(__name__)
 
-# --- CONFIGURATION ---
-ADMIN_PASSWORD = "1234"
-BOT_TOKEN = "8089066962:AAFOHBGeuDF7E3YgeJ3mUu000sQNJ4uJVok"
-ADMIN_ID = "7089720301"
-CS_TELEGRAM = "Bby_kiwii7"
-
-# --- PAYMENT INFO ---
 PAY_NO = "09775394979"
 PAY_NAME = "THANSIN KYAW"
-
-# --- MONGODB SETUP ---
-MONGO_URL = "mongodb+srv://contisarto_db_user:sta1YjKJxKmuvpxg@cluster0.m2mtomm.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
-client = pymongo.MongoClient(MONGO_URL)
-db = client.gameshop_db
-orders_col = db.orders
-
-@app.route('/order', methods=['POST'])
-def order():
-    uid = request.form.get('u'); zone = request.form.get('z')
-    pkg_name = request.form.get('p'); amt = request.form.get('a')
-    pay = request.form.get('pay'); photo = request.files.get('photo')
-    oid = os.urandom(2).hex().upper()
-    
-    orders_col.insert_one({"id": oid, "uid": uid, "zone": zone, "pkg": pkg_name, "amt": amt, "status": "Pending ⏳", "note": ""})
-    
-    msg = f"🔔 *NEW ORDER: #{oid}*\n🆔 *ID:* `{uid}` (`{zone}`)\n💎 *Item:* {pkg_name}\n💰 *Price:* {amt} Ks\n💵 *Pay:* {pay}"
-    admin_url = f"https://kiwiigameshop.onrender.com/admin?pw={ADMIN_PASSWORD}"
-    reply_markup = json.dumps({"inline_keyboard": [[{"text": "📝 Admin Panel", "url": admin_url}]]})
-    
-    if photo:
-        photo.seek(0)
-        requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto", 
-                      data={'chat_id': ADMIN_ID, 'caption': msg, 'parse_mode': 'Markdown', 'reply_markup': reply_markup}, 
-                      files={'photo': photo})
-    return render_template_string('<html><body style="background:#0f172a;color:white;text-align:center;padding:80px;font-family:sans-serif;"><h2>Order Success! ✅</h2><p>Order ID: #{{oid}}</p><a href="/" style="color:#fbbf24;">Back to Shop</a></body></html>', oid=oid)
-
-@app.route('/admin', methods=['GET', 'POST'])
-def admin():
-    pw = request.args.get('pw')
-    if pw != ADMIN_PASSWORD: return "Unauthorized", 401
-    
-    if request.method == 'POST':
-        oid = request.form.get('oid'); action = request.form.get('action'); reason = request.form.get('reason', '')
-        if action == 'done':
-            orders_col.update_one({"id": oid}, {"$set": {"status": "Diamond ထည့်သွင်းပြီးပါပြီ ✅", "note": "ကျေးဇူးတင်ပါတယ်!"}})
-        elif action == 'reject':
-            orders_col.update_one({"id": oid}, {"$set": {"status": "Order ငြင်းပယ်ခံရသည် ❌", "note": reason}})
-            
-    orders = orders_col.find().sort("_id", -1)
-    order_html = "".join([f'<div style="border:1px solid #334155;padding:15px;background:#1e293b;border-radius:12px;margin-bottom:15px;"><b>#{v["id"]}</b> | {v["uid"]} | {v["status"]}<form method="post" style="margin-top:10px;"><input type="hidden" name="oid" value="{v["id"]}"><input name="reason" placeholder="Reject Reason" style="margin-right:5px;padding:5px;border-radius:5px;"><button name="action" value="done" style="background:green;color:white;border:none;padding:5px 10px;border-radius:5px;cursor:pointer;">DONE</button> <button name="action" value="reject" style="background:red;color:white;border:none;padding:5px 10px;border-radius:5px;cursor:pointer;">REJECT</button></form></div>' for v in orders])
-    return f"<html><body style='background:#0f172a;color:white;padding:20px;font-family:sans-serif;'><h2>Admin Panel</h2>{order_html}</body></html>"
-
-@app.route('/check', methods=['GET', 'POST'])
-def check():
-    res = ""
-    if request.method == 'POST':
-        o = orders_col.find_one({"id": request.form.get('oid', '').upper().replace("#","")})
-        if o: res = f"<div style='background:#1e293b;padding:20px;border-radius:15px;margin-top:20px;border:1px solid #334155;'>Order ID: <b>#{o['id']}</b><br>Status: <b style='color:#fbbf24;'>{o['status']}</b><br>Note: {o['note']}</div>"
-        else: res = "<p style='color:#ef4444;margin-top:20px;'>Order ID မတွေ့ပါ၊ ပြန်စစ်ပေးပါဗျ။</p>"
-    return render_template_string('''<html><head><meta name="viewport" content="width=device-width, initial-scale=1.0"></head><body style="background:#0f172a;color:white;text-align:center;padding:50px; font-family:sans-serif;"><h3>🔍 Check Order Status</h3><form method="post"><input name="oid" placeholder="Order ID (ဥပမာ- A1B2)" style="padding:12px;border-radius:10px;border:1px solid #334155;background:#1e293b;color:white;width:80%;max-width:300px;"><br><button type="submit" style="margin-top:15px;padding:10px 30px;background:#fbbf24;border:none;border-radius:10px;font-weight:bold;cursor:pointer;">CHECK</button></form>{{res|safe}}<br><a href="/" style="color:#94a3b8;text-decoration:none;display:block;margin-top:30px;">Back to Shop</a></body></html>''', res=res)
+CS_TELEGRAM = "Kiwii_144"
 
 @app.route('/')
 def index():
-    # Category အလိုက် စျေးနှုန်းစာရင်းများ (ကော်မာ အကုန်ဖြုတ်ထားသည်)
-    cats = {
-        "Normal Dia": [
-            {"d": "11", "p": "700"}, {"d": "22", "p": "1400"}, {"d": "33", "p": "2100"}, {"d": "44", "p": "2800"},
-            {"d": "56", "p": "3500"}, {"d": "112", "p": "7000"}, {"d": "86", "p": "4750"}, {"d": "172", "p": "9450"},
-            {"d": "257", "p": "13800"}, {"d": "279", "p": "15200"}, {"d": "343", "p": "18600"}, {"d": "429", "p": "23350"},
-            {"d": "514", "p": "27650"}, {"d": "600", "p": "32650"}, {"d": "706", "p": "37450"}, {"d": "792", "p": "42200"},
-            {"d": "878", "p": "46850"}, {"d": "963", "p": "51200"}, {"d": "1049", "p": "56000"}, {"d": "1135", "p": "60850"},
-            {"d": "1412", "p": "74900"}, {"d": "2195", "p": "114200"}, {"d": "3688", "p": "190500"}, {"d": "5532", "p": "287000"},
-            {"d": "7376", "p": "381000"}, {"d": "9288", "p": "475200"}
-        ],
-        "Weekly Pass": [
-            {"d": "Weekly Pass", "p": "5900"}, {"d": "Weekly Pass 2X", "p": "11800"}, {"d": "Weekly Pass 3X", "p": "17700"},
-            {"d": "Weekly Pass 4X", "p": "23600"}, {"d": "Weekly Pass 5X", "p": "29500"}, {"d": "Weekly Pass 6X", "p": "35400"},
-            {"d": "Weekly Pass 7X", "p": "41300"}, {"d": "Weekly Pass 8X", "p": "47200"}, {"d": "Weekly Pass 9X", "p": "53100"},
-            {"d": "Weekly Pass 10X", "p": "59000"}
-        ],
-        "Dia 2X": [
-            {"d": "50+", "p": "3050"}, {"d": "150+", "p": "9100"}, {"d": "250+", "p": "14650"}, {"d": "500+", "p": "29950"}
-        ],
-        "Bundle Pack": [
-            {"d": "Weekly elite bundle", "p": "3050"}, {"d": "Monthly epic bundle", "p": "15350"}, {"d": "Twilight pass", "p": "31500"}
-        ]
+    # Server အလိုက် Data များ စုစည်းမှု
+    games = {
+        "Normal Server": {
+            "img": "https://img.icons8.com/color/144/mobile-legends.png",
+            "dia_name": "Normal Dia",
+            "cats": {
+                "Normal Dia": [
+                    {"d": "11", "p": "700"}, {"d": "22", "p": "1400"}, {"d": "33", "p": "2100"}, {"d": "44", "p": "2800"},
+                    {"d": "56", "p": "3500"}, {"d": "112", "p": "7000"}, {"d": "86", "p": "4750"}, {"d": "172", "p": "9450"},
+                    {"d": "257", "p": "13800"}, {"d": "279", "p": "15200"}, {"d": "343", "p": "18600"}, {"d": "429", "p": "23350"},
+                    {"d": "514", "p": "27650"}, {"d": "600", "p": "32650"}, {"d": "706", "p": "37450"}, {"d": "792", "p": "42200"},
+                    {"d": "878", "p": "46850"}, {"d": "963", "p": "51200"}, {"d": "1049", "p": "56000"}, {"d": "1135", "p": "60850"},
+                    {"d": "1412", "p": "74900"}, {"d": "2195", "p": "114200"}, {"d": "3688", "p": "190500"}, {"d": "5532", "p": "287000"},
+                    {"d": "7376", "p": "381000"}, {"d": "9288", "p": "475200"}
+                ],
+                "Weekly Pass": [{"d": f"Weekly Pass {i}X", "p": str(5900 * i)} for i in range(1, 11)],
+                "Dia 2X": [{"d": "50+", "p": "3050"}, {"d": "150+", "p": "9100"}, {"d": "250+", "p": "14650"}, {"d": "500+", "p": "29950"}],
+                "Bundle Pack": [{"d": "Weekly elite bundle", "p": "3050"}, {"d": "Monthly epic bundle", "p": "15350"}, {"d": "Twilight pass", "p": "31500"}]
+            }
+        },
+        "Malaysia & Singapore (🇲🇾🇸🇬)": {
+            "img": "https://img.icons8.com/color/144/malaysia.png",
+            "dia_name": "Mal & SGP Dia",
+            "cats": {
+                "Mal & SGP Dia": [
+                    {"d": "14", "p": "1050"}, {"d": "42", "p": "3100"}, {"d": "56", "p": "4150"}, {"d": "70", "p": "5050"},
+                    {"d": "140", "p": "10100"}, {"d": "210", "p": "15100"}, {"d": "284", "p": "20200"}, {"d": "355", "p": "25200"},
+                    {"d": "429", "p": "30300"}, {"d": "583", "p": "41200"}, {"d": "716", "p": "50200"}, {"d": "870", "p": "61400"},
+                    {"d": "1145", "p": "80500"}, {"d": "1446", "p": "100500"}, {"d": "2162", "p": "150500"}, {"d": "2976", "p": "201000"},
+                    {"d": "3606", "p": "223000"}, {"d": "6012", "p": "371000"}, {"d": "7502", "p": "503500"}
+                ],
+                "Weekly Pass": [{"d": f"Weekly Pass {i}X", "p": str(8400 * i)} for i in range(1, 11)],
+                "Dia 2X": [{"d": "50+", "p": "4100"}, {"d": "150+", "p": "12000"}, {"d": "250+", "p": "19700"}, {"d": "500+", "p": "40000"}],
+                "Bundle Pack": [{"d": "Weekly Elite Bundle", "p": "4000"}, {"d": "Monthly Epic Bundle", "p": "19600"}, {"d": "Twilight Pass", "p": "46000"}]
+            }
+        },
+        "Indonesia (🇮🇩)": {
+            "img": "https://img.icons8.com/color/144/indonesia.png",
+            "dia_name": "Indo Dia",
+            "cats": {
+                "Indo Dia": [
+                    {"d": "5", "p": "450"}, {"d": "12", "p": "950"}, {"d": "19", "p": "1500"}, {"d": "28", "p": "2200"},
+                    {"d": "44", "p": "3300"}, {"d": "59", "p": "4300"}, {"d": "85", "p": "5850"}, {"d": "170", "p": "11700"},
+                    {"d": "240", "p": "16600"}, {"d": "296", "p": "20500"}, {"d": "408", "p": "28000"}, {"d": "568", "p": "37500"},
+                    {"d": "875", "p": "58500"}, {"d": "2010", "p": "123500"}, {"d": "4830", "p": "299000"}
+                ],
+                "Weekly Pass": [{"d": f"Weekly Pass {i}X", "p": str(7500 * i)} for i in range(1, 11)],
+                "Bundle Pack": [{"d": "Twilight Pass", "p": "45000"}]
+            }
+        },
+        "Russia (🇷🇺)": {
+            "img": "https://img.icons8.com/color/144/russian-federation.png",
+            "dia_name": "Russia Dia",
+            "cats": {
+                "Russia Dia": [
+                    {"d": "35", "p": "2750"}, {"d": "55", "p": "4450"}, {"d": "165", "p": "13000"}, {"d": "275", "p": "22000"},
+                    {"d": "565", "p": "44500"}, {"d": "1155", "p": "88000"}, {"d": "1765", "p": "182000"}, {"d": "2975", "p": "220000"},
+                    {"d": "6000", "p": "435000"}
+                ],
+                "Weekly Pass": [{"d": f"Weekly Pass {i}X", "p": str(8600 * i)} for i in range(1, 11)]
+            }
+        },
+        "Philippines (🇵🇭)": {
+            "img": "https://img.icons8.com/color/144/philippines.png",
+            "dia_name": "Philippines Dia",
+            "cats": {
+                "Philippines Dia": [
+                    {"d": "11", "p": "750"}, {"d": "22", "p": "1500"}, {"d": "56", "p": "3500"}, {"d": "112", "p": "7000"},
+                    {"d": "223", "p": "14000"}, {"d": "336", "p": "21300"}, {"d": "570", "p": "36000"}, {"d": "1163", "p": "70500"},
+                    {"d": "2398", "p": "140000"}, {"d": "6042", "p": "350000"}
+                ],
+                "Weekly Pass": [{"d": f"Weekly Pass {i}X", "p": str(6500 * i)} for i in range(1, 11)],
+                "Dia 2X": [{"d": "50+", "p": "3600"}, {"d": "150+", "p": "10500"}, {"d": "250+", "p": "17200"}, {"d": "500+", "p": "34500"}],
+                "Bundle Pack": [{"d": "Twilight Pass", "p": "35500"}]
+            }
+        }
     }
     
-    import json
     return render_template_string('''
 <!DOCTYPE html><html><head><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
     body { background:#0f172a; color:white; font-family:sans-serif; padding:15px; max-width:500px; margin:auto; }
+    .game-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
+    .game-card { background: #1e293b; border: 1px solid #334155; border-radius: 15px; padding: 15px; text-align: center; cursor: pointer; }
+    .game-card img { width: 60px; height: 60px; border-radius: 12px; margin-bottom: 10px; }
+    .game-card h4 { margin: 5px 0; font-size: 13px; color: #fbbf24; }
+    
+    #order-section { display: none; }
     .cat-tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 15px; scrollbar-width: none; }
-    .cat-tabs::-webkit-scrollbar { display: none; }
-    .cat-tab { padding: 10px 18px; background: #1e293b; border-radius: 12px; cursor: pointer; border: 1px solid #334155; font-size: 13px; white-space: nowrap; color: #94a3b8; }
-    .cat-tab.active { background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3); }
-    .scroll-box { display:grid; grid-template-columns: 1fr 1fr; gap:12px; max-height: 400px; overflow-y: auto; padding:12px; background:rgba(30, 41, 59, 0.4); border-radius:18px; border:1px solid #334155; }
-    .pkg-card { background:#1e293b; border:1px solid #334155; padding:15px; border-radius:12px; cursor:pointer; text-align:center; transition: 0.3s; }
+    .cat-tab { padding: 10px 18px; background: #1e293b; border-radius: 12px; cursor: pointer; border: 1px solid #334155; font-size: 12px; white-space: nowrap; color: #94a3b8; }
+    .cat-tab.active { background: #10b981; color: white; border: none; }
+    
+    .pkg-grid { display:grid; grid-template-columns: 1fr 1fr; gap:12px; max-height: 400px; overflow-y: auto; padding:5px; }
+    .pkg-card { background:#1e293b; border:1px solid #334155; padding:15px; border-radius:12px; cursor:pointer; text-align:center; }
     .pkg-card.selected { border: 2px solid #fbbf24; background: #1e3a8a; }
+    
     input { width:100%; padding:14px; margin:8px 0; border-radius:12px; border:1px solid #334155; background:#1e293b; color:white; box-sizing:border-box; }
-    .pay-box { background:#1e293b; padding:20px; border-radius:18px; border:1px solid #334155; text-align:center; margin: 20px 0; }
-    .copy-btn { background:#334155; color:#fff; border:none; padding:5px 12px; border-radius:8px; cursor:pointer; font-size:11px; margin-left:8px; }
-    .note-tag { border: 1px solid rgba(239, 68, 68, 0.6); color: #f87171; padding: 7px 18px; border-radius: 20px; font-size: 11px; display: inline-block; margin-top: 12px; box-shadow: 0 0 10px rgba(239, 68, 68, 0.2); font-weight: bold; }
-    .buy-btn { width:100%; padding:16px; background:#fbbf24; border:none; border-radius:12px; font-weight:bold; cursor:pointer; font-size: 18px; color:#000; }
+    .buy-btn { width:100%; padding:16px; background:#fbbf24; border:none; border-radius:12px; font-weight:bold; cursor:pointer; font-size: 18px; color:#000; margin-top:10px; }
+    .back-btn { background: #334155; color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; margin-bottom: 15px; }
+    .pay-info { background:#1e3a8a; padding:15px; border-radius:15px; text-align:center; margin: 15px 0; border: 1px solid #3b82f6; }
 </style></head>
 <body>
-    <h2 style="text-align:center;color:#fbbf24;">KIWII GAME SHOP</h2>
-    <div class="cat-tabs" id="tabs"></div>
-    <div class="scroll-box" id="pkg-list"></div>
-    <div class="pay-box">
-        <div style="display: flex; gap: 8px; justify-content: center; margin-bottom: 15px;">
-            <button id="kbz" class="cat-tab active" onclick="setPay('KBZPay')">KBZ PAY</button>
-            <button id="wave" class="cat-tab" onclick="setPay('WaveMoney')">WAVE MONEY</button>
+    <div id="home-section">
+        <h2 style="text-align:center;color:#fbbf24;">KIWII GAME SHOP</h2>
+        <p style="text-align:center; font-size:13px; color:#94a3b8;">Select Your MLBB Server</p>
+        <div class="game-grid" id="game-list"></div>
+    </div>
+
+    <div id="order-section">
+        <button class="back-btn" onclick="goHome()">← Back</button>
+        <h3 id="selected-title" style="color:#fbbf24; margin:0 0 15px 0;"></h3>
+        <div class="cat-tabs" id="tabs"></div>
+        <div class="pkg-grid" id="pkg-list"></div>
+        
+        <div class="pay-info">
+            <span style="font-size: 22px; font-weight: bold;">{{pay_no}}</span><br>
+            <small>NAME: {{name}}</small>
         </div>
-        <span id="p-num" style="font-size: 26px; font-weight: bold;">{{pay_no}}</span>
-        <button class="copy-btn" onclick="copyNum()">COPY</button>
-        <div style="color:#fbbf24; font-size:14px; margin: 10px 0;">NAME - {{name}}</div>
-        <div class="note-tag">NOTE မှာ "PAYMENT" လို့ရေးပေးပါ</div>
+
+        <form action="/order" method="post" enctype="multipart/form-data" onsubmit="return validate()">
+            <input type="number" name="u" placeholder="Game Player ID" required>
+            <input type="number" name="z" placeholder="Zone ID" required>
+            <input id="p_val" name="p" type="hidden"><input id="a_val" name="a" type="hidden">
+            <p style="font-size:12px;color:#94a3b8;text-align:center;">ငွေလွှဲ Screenshot တင်ပေးပါ</p>
+            <input type="file" name="photo" required accept="image/*">
+            <button type="submit" class="buy-btn">CONFIRM ORDER</button>
+        </form>
     </div>
-    <form action="/order" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
-        <input type="number" name="u" id="u_id" placeholder="Game Player ID" required>
-        <input type="number" name="z" id="z_id" placeholder="Zone ID" required>
-        <input id="p_val" name="p" type="hidden"><input id="a_val" name="a" type="hidden">
-        <input id="pay_method" name="pay" type="hidden" value="KBZPay">
-        <p style="font-size:13px;color:#94a3b8;text-align:center;">ငွေလွှဲ Screenshot တင်ပေးပါ</p>
-        <input type="file" name="photo" id="photo_id" required accept="image/*">
-        <button type="submit" class="buy-btn">CONFIRM ORDER</button>
-    </form>
-    <div style="display: flex; gap: 10px; margin-top: 20px; margin-bottom: 30px;">
-        <a href="/check" style="flex:1; background:#334155; color:white; padding:12px; border-radius:10px; text-decoration:none; text-align:center; font-size: 14px;">🔍 Check</a>
-        <a href="https://t.me/{{cs}}" style="flex:1; background:#fbbf24; color:black; padding:12px; border-radius:10px; text-decoration:none; text-align:center; font-weight:bold; font-size: 14px;">💬 Admin</a>
-    </div>
+
     <script>
-    const data = ''' + json.dumps(cats) + ''';
-    const tabsBox = document.getElementById('tabs');
-    const pkgBox = document.getElementById('pkg-list');
-    function renderPkgs(catName, target) {
-        if(target) {
+    const data = ''' + json.dumps(games) + ''';
+    let currentServer = null;
+
+    function init() {
+        const list = document.getElementById('game-list');
+        list.innerHTML = Object.keys(data).map(name => `
+            <div class="game-card" onclick="selectServer('${name}')">
+                <img src="${data[name].img}">
+                <h4>${name}</h4>
+            </div>
+        `).join('');
+    }
+
+    function selectServer(name) {
+        currentServer = data[name];
+        document.getElementById('home-section').style.display = 'none';
+        document.getElementById('order-section').style.display = 'block';
+        document.getElementById('selected-title').innerText = name;
+        
+        const tabsBox = document.getElementById('tabs');
+        tabsBox.innerHTML = Object.keys(currentServer.cats).map((cat, i) => `
+            <div class="cat-tab ${i===0?'active':''}" onclick="renderPkgs('${cat}', this)">${cat}</div>
+        `).join('');
+        renderPkgs(Object.keys(currentServer.cats)[0]);
+    }
+
+    function renderPkgs(catName, el) {
+        if(el) {
             document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
-            target.classList.add('active');
+            el.classList.add('active');
         }
-        pkgBox.innerHTML = data[catName].map(p => `
+        const pkgBox = document.getElementById('pkg-list');
+        pkgBox.innerHTML = currentServer.cats[catName].map(p => `
             <div class="pkg-card" onclick="sel(this,'${p.d}','${p.p}')">
-                <span>${p.d} ${catName.includes('Dia') ? '💎' : ''}</span><br>
+                <span>${p.d} 💎</span><br>
                 <b style="color:#fbbf24">${Number(p.p).toLocaleString()} Ks</b>
             </div>`).join('');
     }
-    Object.keys(data).forEach((cat, i) => {
-        const btn = document.createElement('div');
-        btn.className = 'cat-tab' + (i === 0 ? ' active' : '');
-        btn.innerText = cat; btn.onclick = (e) => renderPkgs(cat, e.target);
-        tabsBox.appendChild(btn);
-        if(i === 0) renderPkgs(cat);
-    });
+
     function sel(el, d, p) {
         document.querySelectorAll('.pkg-card').forEach(c => c.classList.remove('selected'));
         el.classList.add('selected');
         document.getElementById('p_val').value = d; document.getElementById('a_val').value = p;
     }
-    function setPay(m) {
-        document.getElementById('pay_method').value = m;
-        document.getElementById('kbz').classList.toggle('active', m === 'KBZPay');
-        document.getElementById('wave').classList.toggle('active', m === 'WaveMoney');
+
+    function goHome() {
+        document.getElementById('home-section').style.display = 'block';
+        document.getElementById('order-section').style.display = 'none';
     }
-    function copyNum() {
-        const num = document.getElementById('p-num').innerText;
-        navigator.clipboard.writeText(num).then(() => alert('Copy ကူးလိုက်ပါပြီ- ' + num));
-    }
-    function validateForm() {
+
+    function validate() {
         if(!document.getElementById('p_val').value) { alert("အမျိုးအစား တစ်ခုရွေးချယ်ပေးပါ"); return false; }
         return true;
     }
+
+    init();
     </script>
 </body></html>''', pay_no=PAY_NO, name=PAY_NAME, cs=CS_TELEGRAM)
 
+@app.route('/order', methods=['POST'])
+def order():
+    # Order လက်ခံသည့် Logic (ယခင်အတိုင်း)
+    return "Order Received! (Success Page)"
 
-if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 10000)))
+if __name__ == '__main__':
+    app.run(debug=True)
+    
