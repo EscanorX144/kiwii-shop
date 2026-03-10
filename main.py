@@ -9,79 +9,47 @@ CS_TELEGRAM = "Kiwii_144"
 
 @app.route('/')
 def index():
-    # Server အလိုက် Data များ စုစည်းမှု
+    # Server data စုစည်းမှု
     games = {
         "Normal Server": {
             "img": "https://img.icons8.com/color/144/mobile-legends.png",
-            "dia_name": "Normal Dia",
             "cats": {
-                "Normal Dia": [
-                    {"d": "11", "p": "700"}, {"d": "22", "p": "1400"}, {"d": "33", "p": "2100"}, {"d": "44", "p": "2800"},
-                    {"d": "56", "p": "3500"}, {"d": "112", "p": "7000"}, {"d": "86", "p": "4750"}, {"d": "172", "p": "9450"},
-                    {"d": "257", "p": "13800"}, {"d": "279", "p": "15200"}, {"d": "343", "p": "18600"}, {"d": "429", "p": "23350"},
-                    {"d": "514", "p": "27650"}, {"d": "600", "p": "32650"}, {"d": "706", "p": "37450"}, {"d": "792", "p": "42200"},
-                    {"d": "878", "p": "46850"}, {"d": "963", "p": "51200"}, {"d": "1049", "p": "56000"}, {"d": "1135", "p": "60850"},
-                    {"d": "1412", "p": "74900"}, {"d": "2195", "p": "114200"}, {"d": "3688", "p": "190500"}, {"d": "5532", "p": "287000"},
-                    {"d": "7376", "p": "381000"}, {"d": "9288", "p": "475200"}
-                ],
+                "Normal Dia": [{"d": "11", "p": "700"}, {"d": "22", "p": "1400"}, {"d": "86", "p": "4750"}, {"d": "172", "p": "9450"}, {"d": "257", "p": "13800"}],
                 "Weekly Pass": [{"d": f"Weekly Pass {i}X", "p": str(5900 * i)} for i in range(1, 11)],
-                "Dia 2X": [{"d": "50+", "p": "3050"}, {"d": "150+", "p": "9100"}, {"d": "250+", "p": "14650"}, {"d": "500+", "p": "29950"}],
-                "Bundle Pack": [{"d": "Weekly elite bundle", "p": "3050"}, {"d": "Monthly epic bundle", "p": "15350"}, {"d": "Twilight pass", "p": "31500"}]
+                "Dia 2X": [{"d": "50+", "p": "3050"}, {"d": "150+", "p": "9100"}],
+                "Bundle Pack": [{"d": "Twilight pass", "p": "31500"}]
             }
         },
         "Malaysia & Singapore (🇲🇾🇸🇬)": {
             "img": "https://img.icons8.com/color/144/malaysia.png",
-            "dia_name": "Mal & SGP Dia",
             "cats": {
-                "Mal & SGP Dia": [
-                    {"d": "14", "p": "1050"}, {"d": "42", "p": "3100"}, {"d": "56", "p": "4150"}, {"d": "70", "p": "5050"},
-                    {"d": "140", "p": "10100"}, {"d": "210", "p": "15100"}, {"d": "284", "p": "20200"}, {"d": "355", "p": "25200"},
-                    {"d": "429", "p": "30300"}, {"d": "583", "p": "41200"}, {"d": "716", "p": "50200"}, {"d": "870", "p": "61400"},
-                    {"d": "1145", "p": "80500"}, {"d": "1446", "p": "100500"}, {"d": "2162", "p": "150500"}, {"d": "2976", "p": "201000"},
-                    {"d": "3606", "p": "223000"}, {"d": "6012", "p": "371000"}, {"d": "7502", "p": "503500"}
-                ],
+                "Mal & SGP Dia": [{"d": "14", "p": "1050"}, {"d": "42", "p": "3100"}, {"d": "70", "p": "5050"}],
                 "Weekly Pass": [{"d": f"Weekly Pass {i}X", "p": str(8400 * i)} for i in range(1, 11)],
-                "Dia 2X": [{"d": "50+", "p": "4100"}, {"d": "150+", "p": "12000"}, {"d": "250+", "p": "19700"}, {"d": "500+", "p": "40000"}],
-                "Bundle Pack": [{"d": "Weekly Elite Bundle", "p": "4000"}, {"d": "Monthly Epic Bundle", "p": "19600"}, {"d": "Twilight Pass", "p": "46000"}]
+                "Dia 2X": [{"d": "50+", "p": "4100"}, {"d": "150+", "p": "12000"}],
+                "Bundle Pack": [{"d": "Twilight Pass", "p": "46000"}]
             }
         },
         "Indonesia (🇮🇩)": {
             "img": "https://img.icons8.com/color/144/indonesia.png",
-            "dia_name": "Indo Dia",
             "cats": {
-                "Indo Dia": [
-                    {"d": "5", "p": "450"}, {"d": "12", "p": "950"}, {"d": "19", "p": "1500"}, {"d": "28", "p": "2200"},
-                    {"d": "44", "p": "3300"}, {"d": "59", "p": "4300"}, {"d": "85", "p": "5850"}, {"d": "170", "p": "11700"},
-                    {"d": "240", "p": "16600"}, {"d": "296", "p": "20500"}, {"d": "408", "p": "28000"}, {"d": "568", "p": "37500"},
-                    {"d": "875", "p": "58500"}, {"d": "2010", "p": "123500"}, {"d": "4830", "p": "299000"}
-                ],
+                "Indo Dia": [{"d": "5", "p": "450"}, {"d": "12", "p": "950"}, {"d": "85", "p": "5850"}],
                 "Weekly Pass": [{"d": f"Weekly Pass {i}X", "p": str(7500 * i)} for i in range(1, 11)],
                 "Bundle Pack": [{"d": "Twilight Pass", "p": "45000"}]
             }
         },
         "Russia (🇷🇺)": {
             "img": "https://img.icons8.com/color/144/russian-federation.png",
-            "dia_name": "Russia Dia",
             "cats": {
-                "Russia Dia": [
-                    {"d": "35", "p": "2750"}, {"d": "55", "p": "4450"}, {"d": "165", "p": "13000"}, {"d": "275", "p": "22000"},
-                    {"d": "565", "p": "44500"}, {"d": "1155", "p": "88000"}, {"d": "1765", "p": "182000"}, {"d": "2975", "p": "220000"},
-                    {"d": "6000", "p": "435000"}
-                ],
+                "Russia Dia": [{"d": "35", "p": "2750"}, {"d": "55", "p": "4450"}, {"d": "165", "p": "13000"}],
                 "Weekly Pass": [{"d": f"Weekly Pass {i}X", "p": str(8600 * i)} for i in range(1, 11)]
             }
         },
         "Philippines (🇵🇭)": {
             "img": "https://img.icons8.com/color/144/philippines.png",
-            "dia_name": "Philippines Dia",
             "cats": {
-                "Philippines Dia": [
-                    {"d": "11", "p": "750"}, {"d": "22", "p": "1500"}, {"d": "56", "p": "3500"}, {"d": "112", "p": "7000"},
-                    {"d": "223", "p": "14000"}, {"d": "336", "p": "21300"}, {"d": "570", "p": "36000"}, {"d": "1163", "p": "70500"},
-                    {"d": "2398", "p": "140000"}, {"d": "6042", "p": "350000"}
-                ],
+                "Philippines Dia": [{"d": "11", "p": "750"}, {"d": "22", "p": "1500"}, {"d": "56", "p": "3500"}],
                 "Weekly Pass": [{"d": f"Weekly Pass {i}X", "p": str(6500 * i)} for i in range(1, 11)],
-                "Dia 2X": [{"d": "50+", "p": "3600"}, {"d": "150+", "p": "10500"}, {"d": "250+", "p": "17200"}, {"d": "500+", "p": "34500"}],
+                "Dia 2X": [{"d": "50+", "p": "3600"}, {"d": "150+", "p": "10500"}],
                 "Bundle Pack": [{"d": "Twilight Pass", "p": "35500"}]
             }
         }
@@ -95,114 +63,84 @@ def index():
     .game-card { background: #1e293b; border: 1px solid #334155; border-radius: 15px; padding: 15px; text-align: center; cursor: pointer; }
     .game-card img { width: 60px; height: 60px; border-radius: 12px; margin-bottom: 10px; }
     .game-card h4 { margin: 5px 0; font-size: 13px; color: #fbbf24; }
-    
     #order-section { display: none; }
-    .cat-tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 15px; scrollbar-width: none; }
+    .cat-tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 15px; }
     .cat-tab { padding: 10px 18px; background: #1e293b; border-radius: 12px; cursor: pointer; border: 1px solid #334155; font-size: 12px; white-space: nowrap; color: #94a3b8; }
     .cat-tab.active { background: #10b981; color: white; border: none; }
-    
     .pkg-grid { display:grid; grid-template-columns: 1fr 1fr; gap:12px; max-height: 400px; overflow-y: auto; padding:5px; }
     .pkg-card { background:#1e293b; border:1px solid #334155; padding:15px; border-radius:12px; cursor:pointer; text-align:center; }
     .pkg-card.selected { border: 2px solid #fbbf24; background: #1e3a8a; }
-    
     input { width:100%; padding:14px; margin:8px 0; border-radius:12px; border:1px solid #334155; background:#1e293b; color:white; box-sizing:border-box; }
-    .buy-btn { width:100%; padding:16px; background:#fbbf24; border:none; border-radius:12px; font-weight:bold; cursor:pointer; font-size: 18px; color:#000; margin-top:10px; }
+    .buy-btn { width:100%; padding:16px; background:#fbbf24; border:none; border-radius:12px; font-weight:bold; cursor:pointer; font-size: 18px; color:#000; }
     .back-btn { background: #334155; color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; margin-bottom: 15px; }
-    .pay-info { background:#1e3a8a; padding:15px; border-radius:15px; text-align:center; margin: 15px 0; border: 1px solid #3b82f6; }
 </style></head>
 <body>
     <div id="home-section">
         <h2 style="text-align:center;color:#fbbf24;">KIWII GAME SHOP</h2>
-        <p style="text-align:center; font-size:13px; color:#94a3b8;">Select Your MLBB Server</p>
         <div class="game-grid" id="game-list"></div>
     </div>
-
     <div id="order-section">
         <button class="back-btn" onclick="goHome()">← Back</button>
-        <h3 id="selected-title" style="color:#fbbf24; margin:0 0 15px 0;"></h3>
+        <h3 id="selected-title" style="color:#fbbf24; margin-bottom:15px;"></h3>
         <div class="cat-tabs" id="tabs"></div>
         <div class="pkg-grid" id="pkg-list"></div>
-        
-        <div class="pay-info">
-            <span style="font-size: 22px; font-weight: bold;">{{pay_no}}</span><br>
-            <small>NAME: {{name}}</small>
+        <div style="background:#1e3a8a; padding:15px; border-radius:15px; text-align:center; margin:15px 0;">
+            <b style="font-size:20px;">{{pay_no}}</b><br><small>NAME: {{name}}</small>
         </div>
-
-        <form action="/order" method="post" enctype="multipart/form-data" onsubmit="return validate()">
-            <input type="number" name="u" placeholder="Game Player ID" required>
+        <form action="/order" method="post" enctype="multipart/form-data">
+            <input type="number" name="u" placeholder="Game ID" required>
             <input type="number" name="z" placeholder="Zone ID" required>
             <input id="p_val" name="p" type="hidden"><input id="a_val" name="a" type="hidden">
-            <p style="font-size:12px;color:#94a3b8;text-align:center;">ငွေလွှဲ Screenshot တင်ပေးပါ</p>
-            <input type="file" name="photo" required accept="image/*">
+            <input type="file" name="photo" required>
             <button type="submit" class="buy-btn">CONFIRM ORDER</button>
         </form>
     </div>
-
     <script>
     const data = ''' + json.dumps(games) + ''';
     let currentServer = null;
-
     function init() {
         const list = document.getElementById('game-list');
         list.innerHTML = Object.keys(data).map(name => `
             <div class="game-card" onclick="selectServer('${name}')">
-                <img src="${data[name].img}">
-                <h4>${name}</h4>
-            </div>
-        `).join('');
+                <img src="${data[name].img}"><h4>${name}</h4>
+            </div>`).join('');
     }
-
     function selectServer(name) {
         currentServer = data[name];
         document.getElementById('home-section').style.display = 'none';
         document.getElementById('order-section').style.display = 'block';
         document.getElementById('selected-title').innerText = name;
-        
         const tabsBox = document.getElementById('tabs');
         tabsBox.innerHTML = Object.keys(currentServer.cats).map((cat, i) => `
-            <div class="cat-tab ${i===0?'active':''}" onclick="renderPkgs('${cat}', this)">${cat}</div>
-        `).join('');
+            <div class="cat-tab ${i===0?'active':''}" onclick="renderPkgs('${cat}', this)">${cat}</div>`).join('');
         renderPkgs(Object.keys(currentServer.cats)[0]);
     }
-
     function renderPkgs(catName, el) {
-        if(el) {
-            document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
-            el.classList.add('active');
-        }
+        if(el) { document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active')); el.classList.add('active'); }
         const pkgBox = document.getElementById('pkg-list');
         pkgBox.innerHTML = currentServer.cats[catName].map(p => `
             <div class="pkg-card" onclick="sel(this,'${p.d}','${p.p}')">
-                <span>${p.d} 💎</span><br>
-                <b style="color:#fbbf24">${Number(p.p).toLocaleString()} Ks</b>
+                <span>${p.d} 💎</span><br><b style="color:#fbbf24">${Number(p.p).toLocaleString()} Ks</b>
             </div>`).join('');
     }
-
     function sel(el, d, p) {
         document.querySelectorAll('.pkg-card').forEach(c => c.classList.remove('selected'));
         el.classList.add('selected');
         document.getElementById('p_val').value = d; document.getElementById('a_val').value = p;
     }
-
     function goHome() {
         document.getElementById('home-section').style.display = 'block';
         document.getElementById('order-section').style.display = 'none';
     }
-
-    function validate() {
-        if(!document.getElementById('p_val').value) { alert("အမျိုးအစား တစ်ခုရွေးချယ်ပေးပါ"); return false; }
-        return true;
-    }
-
     init();
     </script>
 </body></html>''', pay_no=PAY_NO, name=PAY_NAME, cs=CS_TELEGRAM)
 
 @app.route('/order', methods=['POST'])
 def order():
-    # Order လက်ခံသည့် Logic (ယခင်အတိုင်း)
-    return "Order Received! (Success Page)"
+    return "Order Success!"
 
 if __name__ == '__main__':
     app.run(debug=True)
-    
+
+
