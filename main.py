@@ -90,55 +90,69 @@ def index():
     body { background:#0f172a; color:white; font-family:sans-serif; padding:15px; max-width:500px; margin:auto; }
     .scroll-box { display:grid; grid-template-columns: 1fr 1fr; gap:12px; height: 350px; overflow-y: auto; padding:15px; background:rgba(30, 41, 59, 0.5); border-radius:15px; margin-bottom:20px; border:1px solid #334155; }
     .pkg-card { background:#1e293b; border:1px solid #334155; padding:18px; border-radius:12px; cursor:pointer; text-align:center; transition: 0.3s; }
-    .selected { border: 2px solid #fbbf24; }
+    .selected { border: 2px solid #fbbf24; background: #1e3a8a; }
     input { width:100%; padding:14px; margin:8px 0; border-radius:12px; border:1px solid #334155; background:#1e293b; color:white; box-sizing:border-box; }
+    input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
     .pay-tabs { display: flex; gap: 8px; margin-bottom: 12px; justify-content: center; }
     .pay-tab { padding: 8px 18px; background: #1e293b; border-radius: 12px; cursor: pointer; border: 1px solid #334155; font-size: 13px; color: #94a3b8; }
     .pay-tab.active { background: #fbbf24; color: #000; border-color: #fbbf24; }
     .pay-box { background:#1e293b; padding:20px; border-radius:18px; border:1px solid #334155; text-align:center; margin-bottom: 25px; }
-    .pay-no { font-size: 26px; font-weight: bold; color: #fff; margin-bottom: 5px; }
-    .copy-btn { background: #334155; color: #fff; border: none; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 11px; }
-    .note-tag { border: 1px solid rgba(239, 68, 68, 0.6); color: #ef4444; padding: 6px 16px; border-radius: 20px; font-size: 12px; display: inline-block; font-weight: bold; }
     .buy-btn { width:100%; padding:16px; background:#fbbf24; border:none; border-radius:12px; font-weight:bold; cursor:pointer; font-size: 18px; color:#000; }
-    .footer-links { text-align:center; margin-top:20px; display:flex; justify-content: space-around; font-size: 14px; }
-    .footer-links a { color:#94a3b8; text-decoration:none; }
-    .footer-links a:hover { color:#fbbf24; }
 </style></head>
 <body>
     <h2 style="text-align:center;color:#fbbf24;">KIWII GAME SHOP</h2>
     <div class="scroll-box">{{pkg_items|safe}}</div>
+    
     <div class="pay-tabs">
         <div id="t1" class="pay-tab active" onclick="setPay('KBZPay')">KBZ PAY</div>
         <div id="t2" class="pay-tab" onclick="setPay('WaveMoney')">WAVE MONEY</div>
     </div>
     <div class="pay-box">
-        <div id="p-num" class="pay-no">{{pay_no}}</div>
-        <button class="copy-btn" onclick="copyNum()">COPY</button>
+        <div id="p-num" style="font-size: 26px; font-weight: bold;">{{pay_no}}</div>
         <div style="color:#fbbf24; font-size:14px; margin: 10px 0;">NAME - {{name}}</div>
-        <div class="note-tag">NOTE မှာ "PAYMENT" လို့ရေးပေးပါ</div>
     </div>
-    <form action="/order" method="post" enctype="multipart/form-data" style="background:#1e293b;padding:25px;border-radius:20px; border: 1px solid #334155;">
-        <input name="u" placeholder="Game Player ID" required>
-        <input name="z" placeholder="Zone ID" required>
-        <input id="p_val" name="p" type="hidden" required><input id="a_val" name="a" type="hidden" required>
+
+    <form action="/order" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
+        <input type="number" name="u" id="u_id" placeholder="Game Player ID (ဂဏန်းများသာ)" required>
+        <input type="number" name="z" id="z_id" placeholder="Zone ID (ဂဏန်းများသာ)" required>
+        <input id="p_val" name="p" type="hidden">
+        <input id="a_val" name="a" type="hidden">
         <input id="pay_method" name="pay" type="hidden" value="KBZPay">
         <p style="font-size:13px;color:#94a3b8;text-align:center;">ငွေလွှဲ Screenshot ထည့်ပေးပါ</p>
-        <input type="file" name="photo" required accept="image/*">
+        <input type="file" name="photo" id="photo_id" required accept="image/*">
         <button type="submit" class="buy-btn">CONFIRM ORDER</button>
     </form>
     
-    <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
-    <a href="/check" style="background:#334155; color:white; padding:10px 20px; border-radius:10px; text-decoration:none; font-weight:bold; flex: 1; text-align: center;">🔍 Check Order</a>
-    <a href="https://t.me/Bby_kiwii7" style="background:#fbbf24; color:black; padding:10px 20px; border-radius:10px; text-decoration:none; font-weight:bold; flex: 1; text-align: center;">💬 Admin</a>
-</div>
-
+    <div style="display: flex; gap: 10px; margin-top: 20px;">
+        <a href="/check" style="flex:1; background:#334155; color:white; padding:10px; border-radius:10px; text-decoration:none; text-align:center;">🔍 Check</a>
+        <a href="https://t.me/{{cs}}" style="flex:1; background:#fbbf24; color:black; padding:10px; border-radius:10px; text-decoration:none; text-align:center; font-weight:bold;">💬 Admin</a>
+    </div>
 
     <script>
-    function sel(el,d,p){document.querySelectorAll('.pkg-card').forEach(c=>c.classList.remove('selected'));el.classList.add('selected');document.getElementById('p_val').value=d;document.getElementById('a_val').value=p;}
-    function copyNum(){navigator.clipboard.writeText(document.getElementById('p-num').innerText).then(()=>{alert('Copied!');});}
-    function setPay(m){document.getElementById('pay_method').value=m;document.getElementById('t1').classList.toggle('active',m==='KBZPay');document.getElementById('t2').classList.toggle('active',m==='WaveMoney');}
+    function sel(el,d,p){
+        document.querySelectorAll('.pkg-card').forEach(c=>c.classList.remove('selected'));
+        el.classList.add('selected');
+        document.getElementById('p_val').value=d;
+        document.getElementById('a_val').value=p;
+    }
+    function setPay(m){
+        document.getElementById('pay_method').value=m;
+        document.getElementById('t1').classList.toggle('active',m==='KBZPay');
+        document.getElementById('t2').classList.toggle('active',m==='WaveMoney');
+    }
+    function validateForm(){
+        const p = document.getElementById('p_val').value;
+        const u = document.getElementById('u_id').value;
+        const z = document.getElementById('z_id').value;
+        const img = document.getElementById('photo_id').value;
+        if(!p){ alert("ကျေးဇူးပြု၍ Diamond Amount တစ်ခုရွေးချယ်ပေးပါဗျ။"); return false; }
+        if(!u || !z){ alert("Game ID နှင့် Zone ID ကို အမှန်ကန်ဖြည့်ပေးပါဗျ။"); return false; }
+        if(!img){ alert("ငွေလွှဲပြေစာ (Screenshot) ထည့်သွင်းပေးပါဗျ။"); return false; }
+        return true;
+    }
     </script>
 </body></html>''', pkg_items=pkg_items, pay_no=PAY_NO, name=PAY_NAME, cs=CS_TELEGRAM)
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 10000)))
