@@ -69,8 +69,8 @@ def check():
 
 @app.route('/')
 def index():
-        # Category အလိုက် စျေးနှုန်းစာရင်းများ (အစဉ်လိုက် ပြန်ပြင်ထားသည်)
-        cats = {
+    # Category အလိုက် စျေးနှုန်းစာရင်းများ (ကော်မာ အကုန်ဖြုတ်ထားသည်)
+    cats = {
         "Normal Dia": [
             {"d": "11", "p": "700"}, {"d": "22", "p": "1400"}, {"d": "33", "p": "2100"}, {"d": "44", "p": "2800"},
             {"d": "56", "p": "3500"}, {"d": "112", "p": "7000"}, {"d": "86", "p": "4750"}, {"d": "172", "p": "9450"},
@@ -93,8 +93,9 @@ def index():
             {"d": "Weekly elite bundle", "p": "3050"}, {"d": "Monthly epic bundle", "p": "15350"}, {"d": "Twilight pass", "p": "31500"}
         ]
     }
-
     
+    import json
+    return render_template_string('''
 <!DOCTYPE html><html><head><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
     body { background:#0f172a; color:white; font-family:sans-serif; padding:15px; max-width:500px; margin:auto; }
@@ -150,7 +151,7 @@ def index():
         pkgBox.innerHTML = data[catName].map(p => `
             <div class="pkg-card" onclick="sel(this,'${p.d}','${p.p}')">
                 <span>${p.d} ${catName.includes('Dia') ? '💎' : ''}</span><br>
-                <b style="color:#fbbf24">${p.p} Ks</b>
+                <b style="color:#fbbf24">${Number(p.p).toLocaleString()} Ks</b>
             </div>`).join('');
     }
     Object.keys(data).forEach((cat, i) => {
@@ -179,8 +180,8 @@ def index():
         return true;
     }
     </script>
-    return render_template_string('''
 </body></html>''', pay_no=PAY_NO, name=PAY_NAME, cs=CS_TELEGRAM)
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 10000)))
