@@ -180,6 +180,8 @@ def index():
         return true;
     }
     </script>
-return render_template_string('''</body></html>''', pay_no=PAY_NO, name=PAY_NAME, cs=CS_TELEGRAM)
+    return render_template_string('''
+</body></html>''', pay_no=PAY_NO, name=PAY_NAME, cs=CS_TELEGRAM)
+
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 10000)))
