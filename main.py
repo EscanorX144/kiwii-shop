@@ -94,7 +94,6 @@ def index():
         ]
     }
 
-    import json
     return render_template_string('''
 <!DOCTYPE html><html><head><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
@@ -114,10 +113,8 @@ def index():
 </style></head>
 <body>
     <h2 style="text-align:center;color:#fbbf24;">KIWII GAME SHOP</h2>
-    
     <div class="cat-tabs" id="tabs"></div>
     <div class="scroll-box" id="pkg-list"></div>
-
     <div class="pay-box">
         <div style="display: flex; gap: 8px; justify-content: center; margin-bottom: 15px;">
             <button id="kbz" class="cat-tab active" onclick="setPay('KBZPay')">KBZ PAY</button>
@@ -128,75 +125,63 @@ def index():
         <div style="color:#fbbf24; font-size:14px; margin: 10px 0;">NAME - {{name}}</div>
         <div class="note-tag">NOTE မှာ "PAYMENT" လို့ရေးပေးပါ</div>
     </div>
-
     <form action="/order" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
         <input type="number" name="u" id="u_id" placeholder="Game Player ID" required>
         <input type="number" name="z" id="z_id" placeholder="Zone ID" required>
-        <input id="p_val" name="p" type="hidden">
-        <input id="a_val" name="a" type="hidden">
+        <input id="p_val" name="p" type="hidden"><input id="a_val" name="a" type="hidden">
         <input id="pay_method" name="pay" type="hidden" value="KBZPay">
         <p style="font-size:13px;color:#94a3b8;text-align:center;">ငွေလွှဲ Screenshot တင်ပေးပါ</p>
         <input type="file" name="photo" id="photo_id" required accept="image/*">
         <button type="submit" class="buy-btn">CONFIRM ORDER</button>
     </form>
-    
     <div style="display: flex; gap: 10px; margin-top: 20px; margin-bottom: 30px;">
         <a href="/check" style="flex:1; background:#334155; color:white; padding:12px; border-radius:10px; text-decoration:none; text-align:center; font-size: 14px;">🔍 Check</a>
         <a href="https://t.me/{{cs}}" style="flex:1; background:#fbbf24; color:black; padding:12px; border-radius:10px; text-decoration:none; text-align:center; font-weight:bold; font-size: 14px;">💬 Admin</a>
     </div>
-
     <script>
-    const data = {{cats|tojson}};
+    const data = %s;
     const tabsBox = document.getElementById('tabs');
     const pkgBox = document.getElementById('pkg-list');
-
-    function renderPkgs(catName) {
+    function renderPkgs(catName, event) {
         document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
-        event.target.classList.add('active');
+        if(event) event.target.classList.add('active');
         pkgBox.innerHTML = data[catName].map(p => `
             <div class="pkg-card" onclick="sel(this,'${p.d}','${p.p}')">
-                <span>${p.d} ${catName.includes('Pass') || catName.includes('bundle') ? '' : '💎'}</span><br>
+                <span>${p.d} ${catName.includes('Dia') ? '💎' : ''}</span><br>
                 <b style="color:#fbbf24">${p.p} Ks</b>
-            </div>
-        `).join('');
+            </div>`).join('');
     }
-
-    // Initial Render
     Object.keys(data).forEach((cat, i) => {
         const btn = document.createElement('div');
         btn.className = 'cat-tab' + (i === 0 ? ' active' : '');
-        btn.innerText = cat;
-        btn.onclick = (e) => renderPkgs(cat);
+        btn.innerText = cat; btn.onclick = (e) => renderPkgs(cat, e);
         tabsBox.appendChild(btn);
-        if(i === 0) { pkgBox.innerHTML = data[cat].map(p => `<div class="pkg-card" onclick="sel(this,'${p.d}','${p.p}')"><span>${p.d} 💎</span><br><b style="color:#fbbf24">${p.p} Ks</b></div>`).join(''); }
+        if(i === 0) renderPkgs(cat);
     });
-
     function sel(el, d, p) {
         document.querySelectorAll('.pkg-card').forEach(c => c.classList.remove('selected'));
         el.classList.add('selected');
-        document.getElementById('p_val').value = d;
-        document.getElementById('a_val').value = p;
+        document.getElementById('p_val').value = d; document.getElementById('a_val').value = p;
     }
-
     function setPay(m) {
         document.getElementById('pay_method').value = m;
         document.getElementById('kbz').classList.toggle('active', m === 'KBZPay');
         document.getElementById('wave').classList.toggle('active', m === 'WaveMoney');
     }
-
     function copyNum() {
         const num = document.getElementById('p-num').innerText;
         navigator.clipboard.writeText(num).then(() => alert('Copy ကူးလိုက်ပါပြီ- ' + num));
     }
-
     function validateForm() {
         if(!document.getElementById('p_val').value) { alert("အမျိုးအစား တစ်ခုရွေးချယ်ပေးပါ"); return false; }
         return true;
     }
     </script>
-</body></html>''', cats=cats, pay_no=PAY_NO, name=PAY_NAME, cs=CS_TELEGRAM)
+</body></html>''' %% (import_json().dumps(cats)), pay_no=PAY_NO, name=PAY_NAME, cs=CS_TELEGRAM)
 
-
+def import_json():
+    import json
+    return json
 
 
 
