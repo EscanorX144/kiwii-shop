@@ -91,12 +91,28 @@ def index():
     .scroll-box { display:grid; grid-template-columns: 1fr 1fr; gap:12px; height: 350px; overflow-y: auto; padding:15px; background:rgba(30, 41, 59, 0.5); border-radius:15px; margin-bottom:20px; border:1px solid #334155; }
     .pkg-card { background:#1e293b; border:1px solid #334155; padding:18px; border-radius:12px; cursor:pointer; text-align:center; transition: 0.3s; }
     .selected { border: 2px solid #fbbf24; background: #1e3a8a; }
-    input { width:100%; padding:14px; margin:8px 0; border-radius:12px; border:1px solid #334155; background:#1e293b; color:white; box-sizing:border-box; }
+    input { width:100%; padding:14px; margin:8px 0; border-radius:12px; border:1px solid #334155; background:#1e293b; color:white; box-sizing:border-box; font-size: 14px; }
     input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
     .pay-tabs { display: flex; gap: 8px; margin-bottom: 12px; justify-content: center; }
     .pay-tab { padding: 8px 18px; background: #1e293b; border-radius: 12px; cursor: pointer; border: 1px solid #334155; font-size: 13px; color: #94a3b8; }
     .pay-tab.active { background: #fbbf24; color: #000; border-color: #fbbf24; }
     .pay-box { background:#1e293b; padding:20px; border-radius:18px; border:1px solid #334155; text-align:center; margin-bottom: 25px; }
+    .copy-btn { background:#334155; color:#fff; border:none; padding:4px 10px; border-radius:8px; cursor:pointer; font-size:12px; vertical-align:middle; margin-left:5px; }
+    
+    /* NOTE: Modern RED Glow Style (Border & Shadow only, no solid red bg) */
+    .note-tag { 
+        border: 1px solid rgba(239, 68, 68, 0.6); /* Red Border */
+        color: rgba(239, 68, 68, 1); /* Red Text */
+        padding: 6px 16px; 
+        border-radius: 20px; 
+        font-size: 12px; 
+        display: inline-block; 
+        font-weight: bold; 
+        box-shadow: 0 0 10px rgba(239, 68, 68, 0.2); /* Red Glow around the border */
+        background: rgba(239, 68, 68, 0.05); /* Very faint red bg for text readability, almost invisible */
+    }
+    /* ------------------------------------------- */
+    
     .buy-btn { width:100%; padding:16px; background:#fbbf24; border:none; border-radius:12px; font-weight:bold; cursor:pointer; font-size: 18px; color:#000; }
 </style></head>
 <body>
@@ -108,13 +124,15 @@ def index():
         <div id="t2" class="pay-tab" onclick="setPay('WaveMoney')">WAVE MONEY</div>
     </div>
     <div class="pay-box">
-        <div id="p-num" style="font-size: 26px; font-weight: bold;">{{pay_no}}</div>
+        <span id="p-num" style="font-size: 26px; font-weight: bold;">{{pay_no}}</span>
+        <button class="copy-btn" onclick="copyNum()">COPY</button>
         <div style="color:#fbbf24; font-size:14px; margin: 10px 0;">NAME - {{name}}</div>
+        <div class="note-tag">NOTE မှာ "PAYMENT" လို့ရေးပေးပါ</div>
     </div>
 
     <form action="/order" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
-        <input type="number" name="u" id="u_id" placeholder="Game Player ID (ဂဏန်းများသာ)" required>
-        <input type="number" name="z" id="z_id" placeholder="Zone ID (ဂဏန်းများသာ)" required>
+        <input type="number" name="u" id="u_id" placeholder="Game ID" required>
+        <input type="number" name="z" id="z_id" placeholder="Server ID" required>
         <input id="p_val" name="p" type="hidden">
         <input id="a_val" name="a" type="hidden">
         <input id="pay_method" name="pay" type="hidden" value="KBZPay">
@@ -140,18 +158,23 @@ def index():
         document.getElementById('t1').classList.toggle('active',m==='KBZPay');
         document.getElementById('t2').classList.toggle('active',m==='WaveMoney');
     }
+    function copyNum() {
+        const num = document.getElementById('p-num').innerText;
+        navigator.clipboard.writeText(num).then(() => alert('Copy ကူးလိုက်ပါပြီ- ' + num));
+    }
     function validateForm(){
         const p = document.getElementById('p_val').value;
         const u = document.getElementById('u_id').value;
         const z = document.getElementById('z_id').value;
         const img = document.getElementById('photo_id').value;
-        if(!p){ alert("ကျေးဇူးပြု၍ Diamond Amount တစ်ခုရွေးချယ်ပေးပါဗျ။"); return false; }
-        if(!u || !z){ alert("Game ID နှင့် Zone ID ကို အမှန်ကန်ဖြည့်ပေးပါဗျ။"); return false; }
-        if(!img){ alert("ငွေလွှဲပြေစာ (Screenshot) ထည့်သွင်းပေးပါဗျ။"); return false; }
+        if(!p){ alert("ကျေးဇူးပြု၍ Diamond Amount တစ်ခုရွေးချယ်ပေးပါ။"); return false; }
+        if(!u || !z){ alert("Game ID နှင့် Zone ID ကို အမှန်ကန်ဖြည့်ပေးပါ။"); return false; }
+        if(!img){ alert("ငွေလွှဲပြေစာ (Screenshot) ထည့်သွင်းပေးပါ။"); return false; }
         return true;
     }
     </script>
 </body></html>''', pkg_items=pkg_items, pay_no=PAY_NO, name=PAY_NAME, cs=CS_TELEGRAM)
+
 
 
 if __name__ == "__main__":
