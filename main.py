@@ -5,19 +5,19 @@ import requests
 
 app = Flask(__name__)
 
-# --- CONFIGURATION (ဒီနေရာမှာ ပြင်ပေးပါ) ---
+# --- CONFIGURATION ---
 ADMIN_PASSWORD = "1234"
 BOT_TOKEN = "8089066962:AAFOHBGeuDF7E3YgeJ3mUu000sQNJ4uJVok"
 ADMIN_ID = "7089720301"
+CS_TELEGRAM = "@Bby_kiwii7" # Customer Service Username
 
 # --- MONGODB SETUP ---
-# <password> နေရာမှာ သင့် Database Password ကို အစားထိုးထည့်ပါ
-MONGO_URL = "သင့်_MongoDB_Connection_Link_ကို_ဒီမှာထည့်ပါ"
+MONGO_URL = "mongodb+srv://contisarto_db_user:sta1YjKJxKmuvpxg@cluster0.m2mtomm.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 client = pymongo.MongoClient(MONGO_URL)
 db = client.gameshop_db
 orders_col = db.orders
 
-# Diamond List အစုံအလင် (Dia အသေးမှ အကြီးထိ)
+# Diamond List
 packages = [
     {"d": "11", "p": "700"}, {"d": "22", "p": "1,400"}, {"d": "33", "p": "2,100"},
     {"d": "44", "p": "2,800"}, {"d": "56", "p": "3,500"}, {"d": "112", "p": "7,000"},
@@ -39,7 +39,6 @@ def order():
     pay = request.form.get('pay'); photo = request.files.get('photo')
     oid = os.urandom(2).hex().upper()
     
-    # MongoDB ထဲသိမ်းခြင်း (Data မပျက်အောင်)
     orders_col.insert_one({
         "id": oid, "uid": uid, "zone": zone, "pkg": pkg_name, 
         "amt": amt, "status": "Pending ⏳", "note": ""
@@ -54,15 +53,23 @@ def order():
                       data={'chat_id': ADMIN_ID, 'caption': msg, 'parse_mode': 'Markdown'}, 
                       files={'photo': photo})
                       
-    return render_template_string('<html><body style="background:#0f172a;color:white;text-align:center;padding:100px;font-family:sans-serif;"><h2>Order Success! ✅</h2><p>Order ID: #{{oid}}</p><p>Status ကို Website တွင် ပြန်စစ်နိုင်ပါသည်</p><a href="/" style="color:#fbbf24;text-decoration:none;">Back to Shop</a></body></html>', oid=oid)
+    return render_template_string('''
+    <html><body style="background:#0f172a;color:white;text-align:center;padding:80px 20px;font-family:sans-serif;">
+        <h2 style="color:#22c55e;">Order Success! ✅</h2>
+        <p style="font-size:18px;">Order ID: <b style="color:#fbbf24;">#{{oid}}</b></p>
+        <p>Status ကို Website တွင် ပြန်စစ်နိုင်ပါသည်</p>
+        <div style="margin:30px 0; padding:20px; background:#1e293b; border-radius:15px;">
+            <p>တစ်ခုခု အဆင်မပြေပါက ဆက်သွယ်ရန်</p>
+            <a href="https://t.me/{{cs_link}}" style="color:#38bdf8;text-decoration:none;font-weight:bold;">💬 Customer Service: {{cs}}</a>
+        </div>
+        <a href="/" style="background:#fbbf24;color:#0f172a;padding:12px 25px;border-radius:10px;text-decoration:none;font-weight:bold;">Back to Shop</a>
+    </body></html>''', oid=oid, cs=CS_TELEGRAM, cs_link=CS_TELEGRAM.replace("@",""))
 
 @app.route('/admin')
 def admin():
     pw = request.args.get('pw')
     if pw != ADMIN_PASSWORD: return "Unauthorized", 401
-    
     order_rows = ""
-    # MongoDB မှ order များအားလုံး ဆွဲထုတ်ခြင်း
     for v in orders_col.find().sort("_id", -1):
         order_rows += f'''
         <div style="border:1px solid #334155; margin-bottom:10px; padding:15px; background:#1e293b; border-radius:12px;">
@@ -70,7 +77,7 @@ def admin():
             <a href="/done/{v['id']}?pw={ADMIN_PASSWORD}" style="background:#22c55e; color:white; padding:8px 16px; border-radius:8px; text-decoration:none;">DONE</a>
             <form action="/reject/{v['id']}" style="display:inline;margin-left:10px;">
                 <input name="pw" type="hidden" value="{ADMIN_PASSWORD}">
-                <input name="msg" placeholder="Reason (eg. ငွေမပြည့်)" style="padding:8px;border-radius:8px;background:#0f172a;color:white;border:1px solid #334155;">
+                <input name="msg" placeholder="Reason" style="padding:8px;border-radius:8px;background:#0f172a;color:white;border:1px solid #334155;">
                 <button type="submit" style="background:#ef4444; color:white; border:none; padding:8px 16px; border-radius:8px;">REJECT</button>
             </form>
         </div>'''
@@ -112,6 +119,7 @@ def index():
     .selected { border-color: #fbbf24; background: #334155; transform: scale(0.95); }
     input, select { width:100%; padding:14px; margin:8px 0; border-radius:12px; border:1px solid #334155; background:#0f172a; color:white; box-sizing:border-box; }
     .buy-btn { width:100%; padding:16px; background:#fbbf24; border:none; border-radius:12px; font-weight:bold; cursor:pointer; font-size:16px; margin-top:10px; }
+    .footer { text-align:center; margin-top:30px; padding:20px; color:#94a3b8; font-size:14px; }
 </style></head>
 <body>
     <h2 style="text-align:center;color:#fbbf24;">KIWII GAME SHOP</h2>
@@ -126,8 +134,12 @@ def index():
         <button type="submit" class="buy-btn">PLACE ORDER</button>
         <a href="/check" style="display:block;text-align:center;margin-top:15px;color:#94a3b8;text-decoration:none;">🔍 Check Status</a>
     </form>
+    <div class="footer">
+        <p>Support: <a href="https://t.me/{{cs_link}}" style="color:#fbbf24;text-decoration:none;">{{cs}}</a></p>
+    </div>
     <script>function sel(el,d,p){var cards=document.getElementsByClassName('pkg-card');for(var i=0;i<cards.length;i++){cards[i].classList.remove('selected');}el.classList.add('selected');document.getElementById('p_val').value=d;document.getElementById('a_val').value=p;}</script>
-</body></html>''', pkg_items=pkg_items)
+</body></html>''', pkg_items=pkg_items, cs=CS_TELEGRAM, cs_link=CS_TELEGRAM.replace("@",""))
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 10000)))
+    
