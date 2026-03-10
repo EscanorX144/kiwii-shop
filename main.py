@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template_string, request, redirect
+from flask import Flask, render_template_string, request
 import requests
 
 app = Flask(__name__)
@@ -28,56 +28,55 @@ db = {}
 
 @app.route('/order', methods=['POST'])
 def order():
-    uid = request.form.get('u')
-    zone = request.form.get('z')
-    pkg = request.form.get('p')
-    amt = request.form.get('a')
-    pay = request.form.get('pay')
-    photo = request.files.get('photo')
-    
-    if not pkg:
-        return "Please select a Diamond Package first!"
-    
+    uid = request.form.get('u'); zone = request.form.get('z')
+    pkg = request.form.get('p'); amt = request.form.get('a')
+    pay = request.form.get('pay'); photo = request.files.get('photo')
+    if not pkg: return "Error: Please select a package!"
     oid = os.urandom(2).hex().upper()
     db[oid] = {'u': uid, 'z': zone, 'p': pkg, 'a': amt, 'status': 'Pending'}
-    
-    msg = f"🔔 *NEW ORDER: #{oid}*\n🆔 {uid} ({zone})\n💎 {pkg}\n💰 Price: {amt} Ks\n💵 Method: {pay}\n\n🔗 Admin: https://kiwiigameshop.onrender.com/admin?pw={ADMIN_PASSWORD}"
-    
+    msg = f"🔔 *NEW ORDER: #{oid}*\n🆔 {uid} ({zone})\n💎 {pkg}\n💰 {amt} Ks\n💵 {pay}\n\n🔗 Admin: https://kiwiigameshop.onrender.com/admin?pw={ADMIN_PASSWORD}"
     if photo:
         requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto", 
                       data={'chat_id': ADMIN_ID, 'caption': msg, 'parse_mode': 'Markdown'}, 
                       files={'photo': photo.read()})
-    return f"Order Success! ID: #{oid}. Please wait for processing."
+    return f"Order Success! ID: #{oid}"
 
 @app.route('/admin')
 def admin():
     pw = request.args.get('pw')
     if pw != ADMIN_PASSWORD: return "Unauthorized"
-    return f"<h1>Admin Panel</h1>" + "".join([f"<div>#{k}: {v['u']} - {v['p']} [{v['status']}]</div>" for k, v in db.items()])
+    orders = "".join([f"<div style='border:1px solid #444;margin:5px;padding:10px;'>#{k}: {v['u']} - {v['p']} ({v['a']} Ks)</div>" for k, v in db.items()])
+    return f"<html><body style='background:#111;color:white;'><h1>Admin Panel</h1>{orders}</body></html>"
 
 @app.route('/')
 def index():
-    pkg_html = "".join([f'<div onclick="sel(this, \'{p["d"]}\',\'{p["p"]}\')" class="pkg-card border border-slate-700 p-3 rounded-xl cursor-pointer bg-slate-800 hover:border-yellow-400 transition-all text-center">💎 {p["d"]}<br><b class="text-yellow-400">{p["p"]} Ks</b></div>' for p in packages])
+    pkg_items = "".join([f'<div onclick="sel(this,\'{p["d"]}\',\'{p["p"]}\')" style="background:#1e293b;border:1px solid #334155;padding:10px;border-radius:10px;cursor:pointer;text-align:center;">💎 {p["d"]}<br><b style="color:#facc15">{p["p"]} Ks</b></div>' for p in packages])
     return render_template_string(f'''
-<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width, initial-scale=1.0"><script src="https://cdn.tailwindcss.com"></script>
-<style>.selected {{ border-color: #facc15 !important; background-color: #1e293b !important; }}</style></head>
-<body class="bg-[#0f172a] text-white p-4 font-sans">
-    <div id="mUI" class="max-w-md mx-auto">
-        <h1 class="text-3xl font-black text-yellow-400 text-center mb-6 tracking-tighter">KIWII GAME SHOP</h1>
-        <div class="grid grid-cols-2 gap-3 mb-6">{pkg_html}</div>
-        <form action="/order" method="post" enctype="multipart/form-data" class="space-y-4 bg-slate-900 p-5 rounded-2xl shadow-xl">
-            <div><label class="text-xs text-slate-400 ml-1">USER ID</label><input name="u" placeholder="e.g. 12345678" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 focus:outline-none focus:border-yellow-400" required></div>
-            <div><label class="text-xs text-slate-400 ml-1">ZONE ID</label><input name="z" placeholder="e.g. 1234" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 focus:outline-none focus:border-yellow-400" required></div>
-            <input id="p_val" name="p" type="hidden" required>
-            <input id="a_val" name="a" type="hidden" required>
-            <div><label class="text-xs text-slate-400 ml-1">PAYMENT METHOD</label><select name="pay" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 focus:outline-none"><option>KBZPay</option><option>WaveMoney</option></select></div>
-            <div><label class="text-xs text-slate-400 ml-1">PAYMENT RECEIPT</label><input type="file" name="photo" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-yellow-500 file:text-black hover:file:bg-yellow-600" required></div>
-            <button type="submit" class="w-full bg-yellow-500 p-4 rounded-xl font-black text-black text-lg shadow-lg shadow-yellow-500/20 active:scale-95 transition-transform">CONFIRM ORDER</button>
-        </form>
-    </div>
+<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+    body {{ background:#0f172a; color:white; font-family:sans-serif; padding:20px; }}
+    .grid {{ display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:20px; }}
+    .selected {{ border-color: #facc15 !important; background: #334155 !important; }}
+    input, select {{ width:100%; padding:12px; margin:5px 0; border-radius:8px; border:1px solid #334155; background:#1e293b; color:white; box-sizing:border-box; }}
+    button {{ width:100%; padding:15px; background:#facc15; border:none; border-radius:10px; font-weight:bold; font-size:16px; margin-top:10px; cursor:pointer; }}
+</style></head>
+<body>
+    <h2 style="text-align:center; color:#facc15;">KIWII GAME SHOP</h2>
+    <div class="grid">{pkg_items}</div>
+    <form action="/order" method="post" enctype="multipart/form-data" style="background:#1e293b; padding:20px; border-radius:15px;">
+        <input name="u" placeholder="User ID" required>
+        <input name="z" placeholder="Zone ID" required>
+        <input id="p_val" name="p" type="hidden">
+        <input id="a_val" name="a" type="hidden">
+        <select name="pay"><option>KBZPay</option><option>WaveMoney</option></select>
+        <p style="font-size:12px; color:#94a3b8; margin:10px 0 5px 0;">Payment Screenshot:</p>
+        <input type="file" name="photo" required>
+        <button type="submit">CONFIRM ORDER</button>
+    </form>
     <script>
     function sel(el, d, p) {{
-        document.querySelectorAll('.pkg-card').forEach(c => c.classList.remove('selected'));
+        var cards = document.getElementsByClassName('grid')[0].children;
+        for (var i=0; i<cards.length; i++) {{ cards[i].classList.remove('selected'); }}
         el.classList.add('selected');
         document.getElementById('p_val').value = d;
         document.getElementById('a_val').value = p;
