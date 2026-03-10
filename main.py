@@ -21,7 +21,6 @@ client = pymongo.MongoClient(MONGO_URL)
 db = client.gameshop_db
 orders_col = db.orders
 
-# Diamond List (Pass များကို အပေါ်ဆုံးတွင် ထားရှိသည်)
 packages = [
     {"d": "Weekly Pass", "p": "5,800"}, {"d": "Twilight Pass", "p": "32,000"},
     {"d": "11", "p": "700"}, {"d": "22", "p": "1,400"}, {"d": "33", "p": "2,100"},
@@ -49,13 +48,6 @@ def order():
         requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto", data={'chat_id': ADMIN_ID, 'caption': msg, 'parse_mode': 'Markdown'}, files={'photo': photo})
     return render_template_string('<html><body style="background:#0f172a;color:white;text-align:center;padding:80px;font-family:sans-serif;"><h2>Order Success! ✅</h2><p>Order ID: #{{oid}}</p><a href="/" style="color:#fbbf24;">Back to Shop</a></body></html>', oid=oid)
 
-@app.route('/admin')
-def admin():
-    pw = request.args.get('pw')
-    if pw != ADMIN_PASSWORD: return "Unauthorized", 401
-    order_rows = "".join([f'<div style="border:1px solid #334155;padding:15px;background:#1e293b;border-radius:12px;margin-bottom:10px;"><b>#{v["id"]}</b>: {v["uid"]} - {v["pkg"]} <br>Status: {v["status"]}<br><a href="/done/{v["id"]}?pw={ADMIN_PASSWORD}" style="color:#22c55e;">DONE</a></div>' for v in orders_col.find().sort("_id", -1)])
-    return f"<html><body style='background:#0f172a;color:white;padding:20px;'><h2>Admin Control</h2>{order_rows}</body></html>"
-
 @app.route('/')
 def index():
     pkg_items = "".join([f'<div class="pkg-card" onclick="sel(this,\'{p["d"]}\',\'{p["p"]}\')"><span>{p["d"]} 💎</span><br><b style="color:#fbbf24">{p["p"]} Ks</b></div>' for p in packages])
@@ -64,15 +56,15 @@ def index():
 <style>
     body { background:#0f172a; color:white; font-family:sans-serif; padding:15px; max-width:500px; margin:auto; }
     .scroll-box { display:grid; grid-template-columns: 1fr 1fr; gap:10px; height: 350px; overflow-y: auto; padding:10px; background:#111827; border-radius:15px; margin-bottom:20px; border:1px solid #334155; }
-    .pkg-card { background:#1e293b; border:1px solid #334155; padding:15px; border-radius:12px; cursor:pointer; text-align:center; transition: box-shadow 0.3s ease; }
     
-    /* ရွှေရောင်ဖြာထွက်တဲ့ effect */
-    .selected { 
-        border-color: #fbbf24; 
+    .pkg-card { background:#1e293b; border:2px solid #334155; padding:15px; border-radius:12px; cursor:pointer; text-align:center; transition: all 0.3s ease; }
+    
+    /* နှိပ်လိုက်ရင် ရွှေရောင်ဖြာထွက်မည့် ပတန် effect */
+    .pkg-card.selected { 
+        border-color: #fbbf24 !important; 
         background: #334155; 
-        box-shadow: 0 0 20px 5px rgba(251, 191, 36, 0.5); /* Glowing gold halo */
-        position: relative;
-        z-index: 1; /* Bring selected item above non-selected ones to show full shadow */
+        box-shadow: 0 0 15px #fbbf24, inset 0 0 10px rgba(251, 191, 36, 0.4); 
+        transform: scale(1.02);
     }
 
     input, select { width:100%; padding:14px; margin:8px 0; border-radius:12px; border:1px solid #334155; background:#0f172a; color:white; box-sizing:border-box; }
@@ -102,8 +94,20 @@ def index():
         <button type="submit" class="buy-btn">CONFIRM ORDER</button>
     </form>
     <div style="text-align:center; margin-top:30px; color:#94a3b8; font-size:13px;">Support: <a href="https://t.me/Bby_kiwii7" style="color:#fbbf24;text-decoration:none;">{{cs}}</a></div>
-    <script>function sel(el,d,p){var cards=document.getElementsByClassName('pkg-card');for(var i=0;i<cards.length;i++){cards[i].classList.remove('selected');}el.classList.add('selected');document.getElementById('p_val').value=d;document.getElementById('a_val').value=p;}</script>
+    
+    <script>
+    function sel(el, d, p){
+        var cards = document.getElementsByClassName('pkg-card');
+        for(var i=0; i<cards.length; i++){
+            cards[i].classList.remove('selected');
+        }
+        el.classList.add('selected');
+        document.getElementById('p_val').value = d;
+        document.getElementById('a_val').value = p;
+    }
+    </script>
 </body></html>''', pkg_items=pkg_items, pay_no=PAY_NO, name=PAY_NAME, cs=CS_TELEGRAM)
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 10000)))
+    
