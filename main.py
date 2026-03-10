@@ -127,10 +127,11 @@ def index():
         <button type="submit" class="buy-btn">CONFIRM ORDER</button>
     </form>
     
-    <div class="footer-links">
-        <a href="/check">🔍 Check Order</a>
-        <a href="https://t.me/{{cs}}">💬 Customer Service</a>
-    </div>
+    <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
+    <a href="/check" style="background:#334155; color:white; padding:10px 20px; border-radius:10px; text-decoration:none; font-weight:bold; flex: 1; text-align: center;">🔍 Check Order</a>
+    <a href="https://t.me/Bby_kiwii7" style="background:#fbbf24; color:black; padding:10px 20px; border-radius:10px; text-decoration:none; font-weight:bold; flex: 1; text-align: center;">💬 Admin</a>
+</div>
+
 
     <script>
     function sel(el,d,p){document.querySelectorAll('.pkg-card').forEach(c=>c.classList.remove('selected'));el.classList.add('selected');document.getElementById('p_val').value=d;document.getElementById('a_val').value=p;}
