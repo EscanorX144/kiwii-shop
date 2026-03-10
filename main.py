@@ -94,6 +94,7 @@ def index():
         ]
     }
 
+    import json
     return render_template_string('''
 <!DOCTYPE html><html><head><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
@@ -139,12 +140,14 @@ def index():
         <a href="https://t.me/{{cs}}" style="flex:1; background:#fbbf24; color:black; padding:12px; border-radius:10px; text-decoration:none; text-align:center; font-weight:bold; font-size: 14px;">💬 Admin</a>
     </div>
     <script>
-    const data = %s;
+    const data = ''' + json.dumps(cats) + ''';
     const tabsBox = document.getElementById('tabs');
     const pkgBox = document.getElementById('pkg-list');
-    function renderPkgs(catName, event) {
-        document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
-        if(event) event.target.classList.add('active');
+    function renderPkgs(catName, target) {
+        if(target) {
+            document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+            target.classList.add('active');
+        }
         pkgBox.innerHTML = data[catName].map(p => `
             <div class="pkg-card" onclick="sel(this,'${p.d}','${p.p}')">
                 <span>${p.d} ${catName.includes('Dia') ? '💎' : ''}</span><br>
@@ -154,7 +157,7 @@ def index():
     Object.keys(data).forEach((cat, i) => {
         const btn = document.createElement('div');
         btn.className = 'cat-tab' + (i === 0 ? ' active' : '');
-        btn.innerText = cat; btn.onclick = (e) => renderPkgs(cat, e);
+        btn.innerText = cat; btn.onclick = (e) => renderPkgs(cat, e.target);
         tabsBox.appendChild(btn);
         if(i === 0) renderPkgs(cat);
     });
@@ -177,15 +180,6 @@ def index():
         return true;
     }
     </script>
-</body></html>''' %% (import_json().dumps(cats)), pay_no=PAY_NO, name=PAY_NAME, cs=CS_TELEGRAM)
-
-def import_json():
-    import json
-    return json
-
-
-
+return render_template_string('''</body></html>''', pay_no=PAY_NO, name=PAY_NAME, cs=CS_TELEGRAM)
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 10000)))
-
-
