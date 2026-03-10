@@ -140,4 +140,3 @@ if __name__ == "__main__":
     # Render အတွက် လိုအပ်သော Port dynamic ဖတ်သည့်အပိုင်း
     port = int(os.environ.get("PORT", 10000))
     app.run(host='0.0.0.0', port=port)
-    
