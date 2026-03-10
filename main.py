@@ -94,8 +94,7 @@ def index():
         ]
     }
 
-    import json
-    return render_template_string('''
+    
 <!DOCTYPE html><html><head><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
     body { background:#0f172a; color:white; font-family:sans-serif; padding:15px; max-width:500px; margin:auto; }
