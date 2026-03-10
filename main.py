@@ -69,58 +69,60 @@ def check():
 
 @app.route('/')
 def index():
-    # စျေးနှုန်းအသစ်များ သတ်မှတ်ခြင်း
-    normal_list = [
-        {"d": "Weekly Pass", "p": "5,800"}, {"d": "Twilight Pass", "p": "31,300"}, {"d": "86", "p": "4,750"}, {"d": "172", "p": "9,450"}, {"d": "257", "p": "13,800"},
-        {"d": "279", "p": "15,200"}, {"d": "343", "p": "18,600"}, {"d": "429", "p": "23,350"},
-        {"d": "514", "p": "27,650"}, {"d": "600", "p": "32,650"}, {"d": "706", "p": "37,450"},
-        {"d": "792", "p": "42,200"}, {"d": "878", "p": "46,850"}, {"d": "963", "p": "51,200"},
-        {"d": "1049", "p": "56,000"}, {"d": "1135", "p": "60,850"}, {"d": "1412", "p": "74,900"},
-        {"d": "2195", "p": "114,200"}, {"d": "3688", "p": "190,500"}, {"d": "5532", "p": "287,000"},
-        {"d": "9288", "p": "475,200"}
-    ]
-    
-    double_list = [
-        {"d": "50+", "p": "3,050"}, {"d": "150+", "p": "9,100"},
-        {"d": "250+", "p": "14,650"}, {"d": "500+", "p": "29,950"}
-    ]
+    # Category အလိုက် စျေးနှုန်းစာရင်းများ
+    cats = {
+        "Normal Dia": [
+            {"d": "11", "p": "700"}, {"d": "22", "p": "1,400"}, {"d": "33", "p": "2,100"}, {"d": "44", "p": "2,800"},
+            {"d": "56", "p": "3,500"}, {"d": "112", "p": "7,000"}, {"d": "86", "p": "4,750"}, {"d": "172", "p": "9,450"},
+            {"d": "257", "p": "13,800"}, {"d": "279", "p": "15,200"}, {"d": "343", "p": "18,600"}, {"d": "429", "p": "23,350"},
+            {"d": "514", "p": "27,650"}, {"d": "600", "p": "32,650"}, {"d": "706", "p": "37,450"}, {"d": "792", "p": "42,200"},
+            {"d": "878", "p": "46,850"}, {"d": "963", "p": "51,200"}, {"d": "1049", "p": "56,000"}, {"d": "1135", "p": "60,850"},
+            {"d": "1412", "p": "74,900"}, {"d": "2195", "p": "114,200"}, {"d": "3688", "p": "190,500"}, {"d": "5532", "p": "287,000"},
+            {"d": "7376", "p": "381,000"}, {"d": "9288", "p": "475,200"}
+        ],
+        "Weekly Pass": [
+            {"d": "Weekly Pass", "p": "5,900"}, {"d": "Weekly Pass 2X", "p": "11,800"}, {"d": "Weekly Pass 3X", "p": "17,700"},
+            {"d": "Weekly Pass 4X", "p": "23,600"}, {"d": "Weekly Pass 5X", "p": "29,500"}, {"d": "Weekly Pass 6X", "p": "35,400"},
+            {"d": "Weekly Pass 7X", "p": "41,300"}, {"d": "Weekly Pass 8X", "p": "47,200"}, {"d": "Weekly Pass 9X", "p": "53,100"},
+            {"d": "Weekly Pass 10X", "p": "59,000"}
+        ],
+        "Dia 2X": [
+            {"d": "50+", "p": "3,050"}, {"d": "150+", "p": "9,100"}, {"d": "250+", "p": "14,650"}, {"d": "500+", "p": "29,950"}
+        ],
+        "Bundle Pack": [
+            {"d": "Weekly elite bundle", "p": "3,050"}, {"d": "Monthly epic bundle", "p": "15,350"}, {"d": "Twilight pass", "p": "31,500"}
+        ]
+    }
 
-    def gen_items(p_list):
-        return "".join([f'<div class="pkg-card" onclick="sel(this,\'{p["d"]}\',\'{p["p"]}\')"><span>{p["d"]} 💎</span><br><b style="color:#fbbf24">{p["p"]} Ks</b></div>' for p in p_list])
-
+    import json
     return render_template_string('''
 <!DOCTYPE html><html><head><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
     body { background:#0f172a; color:white; font-family:sans-serif; padding:15px; max-width:500px; margin:auto; }
-    .list-title { color: #fbbf24; font-size: 13px; font-weight: bold; margin: 20px 0 10px 5px; display: flex; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 1px; }
-    .list-title::after { content: ""; height: 1px; background: rgba(251, 191, 36, 0.3); flex: 1; }
-    .scroll-box { display:grid; grid-template-columns: 1fr 1fr; gap:12px; max-height: 380px; overflow-y: auto; padding:12px; background:rgba(30, 41, 59, 0.4); border-radius:15px; border:1px solid #334155; margin-bottom: 10px; }
+    .cat-tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 15px; scrollbar-width: none; }
+    .cat-tabs::-webkit-scrollbar { display: none; }
+    .cat-tab { padding: 10px 18px; background: #1e293b; border-radius: 12px; cursor: pointer; border: 1px solid #334155; font-size: 13px; white-space: nowrap; color: #94a3b8; }
+    .cat-tab.active { background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3); }
+    .scroll-box { display:grid; grid-template-columns: 1fr 1fr; gap:12px; max-height: 400px; overflow-y: auto; padding:12px; background:rgba(30, 41, 59, 0.4); border-radius:18px; border:1px solid #334155; }
     .pkg-card { background:#1e293b; border:1px solid #334155; padding:15px; border-radius:12px; cursor:pointer; text-align:center; transition: 0.3s; }
-    .selected { border: 2px solid #fbbf24; background: #1e3a8a; box-shadow: 0 0 15px rgba(251, 191, 36, 0.2); }
-    input { width:100%; padding:14px; margin:8px 0; border-radius:12px; border:1px solid #334155; background:#1e293b; color:white; box-sizing:border-box; font-size: 14px; }
-    input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-    .pay-tabs { display: flex; gap: 8px; margin: 20px 0 12px 0; justify-content: center; }
-    .pay-tab { padding: 10px 20px; background: #1e293b; border-radius: 12px; cursor: pointer; border: 1px solid #334155; font-size: 13px; color: #94a3b8; font-weight: bold; }
-    .pay-tab.active { background: #fbbf24; color: #000; border-color: #fbbf24; }
-    .pay-box { background:#1e293b; padding:20px; border-radius:18px; border:1px solid #334155; text-align:center; margin-bottom: 25px; }
-    .copy-btn { background:#334155; color:#fff; border:none; padding:5px 12px; border-radius:8px; cursor:pointer; font-size:11px; margin-left:8px; vertical-align: middle; }
+    .pkg-card.selected { border: 2px solid #fbbf24; background: #1e3a8a; }
+    input { width:100%; padding:14px; margin:8px 0; border-radius:12px; border:1px solid #334155; background:#1e293b; color:white; box-sizing:border-box; }
+    .pay-box { background:#1e293b; padding:20px; border-radius:18px; border:1px solid #334155; text-align:center; margin: 20px 0; }
+    .copy-btn { background:#334155; color:#fff; border:none; padding:5px 12px; border-radius:8px; cursor:pointer; font-size:11px; margin-left:8px; }
     .note-tag { border: 1px solid rgba(239, 68, 68, 0.6); color: #f87171; padding: 7px 18px; border-radius: 20px; font-size: 11px; display: inline-block; margin-top: 12px; box-shadow: 0 0 10px rgba(239, 68, 68, 0.2); font-weight: bold; }
-    .buy-btn { width:100%; padding:16px; background:#fbbf24; border:none; border-radius:12px; font-weight:bold; cursor:pointer; font-size: 18px; color:#000; margin-top: 10px; }
+    .buy-btn { width:100%; padding:16px; background:#fbbf24; border:none; border-radius:12px; font-weight:bold; cursor:pointer; font-size: 18px; color:#000; }
 </style></head>
 <body>
-    <h2 style="text-align:center;color:#fbbf24;margin-bottom:10px; font-size: 24px;">KIWII GAME SHOP</h2>
+    <h2 style="text-align:center;color:#fbbf24;">KIWII GAME SHOP</h2>
     
-    <div class="list-title">Normal Diamond Among</div>
-    <div class="scroll-box">{{norm_items|safe}}</div>
+    <div class="cat-tabs" id="tabs"></div>
+    <div class="scroll-box" id="pkg-list"></div>
 
-    <div class="list-title">2X Diamond Among</div>
-    <div class="scroll-box" style="max-height: 200px;">{{double_items|safe}}</div>
-    
-    <div class="pay-tabs">
-        <div id="t1" class="pay-tab active" onclick="setPay('KBZPay')">KBZ PAY</div>
-        <div id="t2" class="pay-tab" onclick="setPay('WaveMoney')">WAVE MONEY</div>
-    </div>
     <div class="pay-box">
+        <div style="display: flex; gap: 8px; justify-content: center; margin-bottom: 15px;">
+            <button id="kbz" class="cat-tab active" onclick="setPay('KBZPay')">KBZ PAY</button>
+            <button id="wave" class="cat-tab" onclick="setPay('WaveMoney')">WAVE MONEY</button>
+        </div>
         <span id="p-num" style="font-size: 26px; font-weight: bold;">{{pay_no}}</span>
         <button class="copy-btn" onclick="copyNum()">COPY</button>
         <div style="color:#fbbf24; font-size:14px; margin: 10px 0;">NAME - {{name}}</div>
@@ -128,49 +130,72 @@ def index():
     </div>
 
     <form action="/order" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
-        <input type="number" name="u" id="u_id" placeholder="Game ID" required>
-        <input type="number" name="z" id="z_id" placeholder="Server ID" required>
+        <input type="number" name="u" id="u_id" placeholder="Game Player ID" required>
+        <input type="number" name="z" id="z_id" placeholder="Zone ID" required>
         <input id="p_val" name="p" type="hidden">
         <input id="a_val" name="a" type="hidden">
         <input id="pay_method" name="pay" type="hidden" value="KBZPay">
-        <p style="font-size:13px;color:#94a3b8;text-align:center; margin-top: 15px;">ငွေလွှဲ Screenshot တင်ပေးပါ</p>
+        <p style="font-size:13px;color:#94a3b8;text-align:center;">ငွေလွှဲ Screenshot တင်ပေးပါ</p>
         <input type="file" name="photo" id="photo_id" required accept="image/*">
         <button type="submit" class="buy-btn">CONFIRM ORDER</button>
     </form>
     
-    <div style="display: flex; gap: 10px; margin-top: 25px; margin-bottom: 30px;">
+    <div style="display: flex; gap: 10px; margin-top: 20px; margin-bottom: 30px;">
         <a href="/check" style="flex:1; background:#334155; color:white; padding:12px; border-radius:10px; text-decoration:none; text-align:center; font-size: 14px;">🔍 Check</a>
         <a href="https://t.me/{{cs}}" style="flex:1; background:#fbbf24; color:black; padding:12px; border-radius:10px; text-decoration:none; text-align:center; font-weight:bold; font-size: 14px;">💬 Admin</a>
     </div>
 
     <script>
-    function sel(el,d,p){
-        document.querySelectorAll('.pkg-card').forEach(c=>c.classList.remove('selected'));
+    const data = {{cats|tojson}};
+    const tabsBox = document.getElementById('tabs');
+    const pkgBox = document.getElementById('pkg-list');
+
+    function renderPkgs(catName) {
+        document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+        event.target.classList.add('active');
+        pkgBox.innerHTML = data[catName].map(p => `
+            <div class="pkg-card" onclick="sel(this,'${p.d}','${p.p}')">
+                <span>${p.d} ${catName.includes('Pass') || catName.includes('bundle') ? '' : '💎'}</span><br>
+                <b style="color:#fbbf24">${p.p} Ks</b>
+            </div>
+        `).join('');
+    }
+
+    // Initial Render
+    Object.keys(data).forEach((cat, i) => {
+        const btn = document.createElement('div');
+        btn.className = 'cat-tab' + (i === 0 ? ' active' : '');
+        btn.innerText = cat;
+        btn.onclick = (e) => renderPkgs(cat);
+        tabsBox.appendChild(btn);
+        if(i === 0) { pkgBox.innerHTML = data[cat].map(p => `<div class="pkg-card" onclick="sel(this,'${p.d}','${p.p}')"><span>${p.d} 💎</span><br><b style="color:#fbbf24">${p.p} Ks</b></div>`).join(''); }
+    });
+
+    function sel(el, d, p) {
+        document.querySelectorAll('.pkg-card').forEach(c => c.classList.remove('selected'));
         el.classList.add('selected');
-        document.getElementById('p_val').value=d;
-        document.getElementById('a_val').value=p;
+        document.getElementById('p_val').value = d;
+        document.getElementById('a_val').value = p;
     }
-    function setPay(m){
-        document.getElementById('pay_method').value=m;
-        document.getElementById('t1').classList.toggle('active',m==='KBZPay');
-        document.getElementById('t2').classList.toggle('active',m==='WaveMoney');
+
+    function setPay(m) {
+        document.getElementById('pay_method').value = m;
+        document.getElementById('kbz').classList.toggle('active', m === 'KBZPay');
+        document.getElementById('wave').classList.toggle('active', m === 'WaveMoney');
     }
+
     function copyNum() {
         const num = document.getElementById('p-num').innerText;
         navigator.clipboard.writeText(num).then(() => alert('Copy ကူးလိုက်ပါပြီ- ' + num));
     }
-    function validateForm(){
-        const p = document.getElementById('p_val').value;
-        const u = document.getElementById('u_id').value;
-        const z = document.getElementById('z_id').value;
-        const img = document.getElementById('photo_id').value;
-        if(!p){ alert("ကျေးဇူးပြု၍ Diamond Amount တစ်ခုရွေးချယ်ပေးပါ။"); return false; }
-        if(!u || !z){ alert("Game ID နှင့် Zone ID ကို အမှန်ကန်ဖြည့်ပေးပါ။"); return false; }
-        if(!img){ alert("ငွေလွှဲပြေစာ (Screenshot) ထည့်သွင်းပေးပါ။"); return false; }
+
+    function validateForm() {
+        if(!document.getElementById('p_val').value) { alert("အမျိုးအစား တစ်ခုရွေးချယ်ပေးပါ"); return false; }
         return true;
     }
     </script>
-</body></html>''', norm_items=gen_items(normal_list), double_items=gen_items(double_list), pay_no=PAY_NO, name=PAY_NAME, cs=CS_TELEGRAM)
+</body></html>''', cats=cats, pay_no=PAY_NO, name=PAY_NAME, cs=CS_TELEGRAM)
+
 
 
 
