@@ -9,7 +9,11 @@ app = Flask(__name__)
 ADMIN_PASSWORD = "1234"
 BOT_TOKEN = "8089066962:AAFOHBGeuDF7E3YgeJ3mUu000sQNJ4uJVok"
 ADMIN_ID = "7089720301"
-CS_TELEGRAM = "@Bby_kiwii7" # Customer Service Username
+CS_TELEGRAM = "@Bby_kiwii7"
+
+# --- PAYMENT INFO ---
+PAY_NO = "09775394979"
+PAY_NAME = "THANSIN KYAW"
 
 # --- MONGODB SETUP ---
 MONGO_URL = "mongodb+srv://contisarto_db_user:sta1YjKJxKmuvpxg@cluster0.m2mtomm.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
@@ -17,11 +21,11 @@ client = pymongo.MongoClient(MONGO_URL)
 db = client.gameshop_db
 orders_col = db.orders
 
-# Diamond List
+# Diamond List (Pass များကို အပေါ်ဆုံးတွင် ထားရှိသည်)
 packages = [
+    {"d": "Weekly Pass", "p": "5,800"}, {"d": "Twilight Pass", "p": "32,000"},
     {"d": "11", "p": "700"}, {"d": "22", "p": "1,400"}, {"d": "33", "p": "2,100"},
     {"d": "44", "p": "2,800"}, {"d": "56", "p": "3,500"}, {"d": "112", "p": "7,000"},
-    {"d": "Weekly Pass", "p": "5,800"}, {"d": "Twilight Pass", "p": "32,000"},
     {"d": "86", "p": "4,800"}, {"d": "172", "p": "9,600"}, {"d": "257", "p": "14,400"},
     {"d": "343", "p": "19,200"}, {"d": "429", "p": "24,000"}, {"d": "514", "p": "28,800"},
     {"d": "600", "p": "33,600"}, {"d": "706", "p": "38,400"}, {"d": "878", "p": "48,000"},
@@ -38,74 +42,19 @@ def order():
     pkg_name = request.form.get('p'); amt = request.form.get('a')
     pay = request.form.get('pay'); photo = request.files.get('photo')
     oid = os.urandom(2).hex().upper()
-    
-    orders_col.insert_one({
-        "id": oid, "uid": uid, "zone": zone, "pkg": pkg_name, 
-        "amt": amt, "status": "Pending ⏳", "note": ""
-    })
-    
-    admin_link = f"https://kiwiigameshop.onrender.com/admin?pw={ADMIN_PASSWORD}"
-    msg = f"🔔 *NEW ORDER: #{oid}*\n🆔 *ID:* `{uid}` (`{zone}`)\n💎 *Item:* {pkg_name}\n💰 *Price:* {amt} Ks\n💵 *Pay:* {pay}\n\n🔗 [Open Admin Panel]({admin_link})"
-
+    orders_col.insert_one({"id": oid, "uid": uid, "zone": zone, "pkg": pkg_name, "amt": amt, "status": "Pending ⏳", "note": ""})
+    msg = f"🔔 *NEW ORDER: #{oid}*\n🆔 *ID:* `{uid}` (`{zone}`)\n💎 *Item:* {pkg_name}\n💰 *Price:* {amt} Ks\n💵 *Pay:* {pay}"
     if photo:
         photo.seek(0)
-        requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto", 
-                      data={'chat_id': ADMIN_ID, 'caption': msg, 'parse_mode': 'Markdown'}, 
-                      files={'photo': photo})
-                      
-    return render_template_string('''
-    <html><body style="background:#0f172a;color:white;text-align:center;padding:80px 20px;font-family:sans-serif;">
-        <h2 style="color:#22c55e;">Order Success! ✅</h2>
-        <p style="font-size:18px;">Order ID: <b style="color:#fbbf24;">#{{oid}}</b></p>
-        <p>Status ကို Website တွင် ပြန်စစ်နိုင်ပါသည်</p>
-        <div style="margin:30px 0; padding:20px; background:#1e293b; border-radius:15px;">
-            <p>တစ်ခုခု အဆင်မပြေပါက ဆက်သွယ်ရန်</p>
-            <a href="https://t.me/{{cs_link}}" style="color:#38bdf8;text-decoration:none;font-weight:bold;">💬 Customer Service: {{cs}}</a>
-        </div>
-        <a href="/" style="background:#fbbf24;color:#0f172a;padding:12px 25px;border-radius:10px;text-decoration:none;font-weight:bold;">Back to Shop</a>
-    </body></html>''', oid=oid, cs=CS_TELEGRAM, cs_link=CS_TELEGRAM.replace("@",""))
+        requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto", data={'chat_id': ADMIN_ID, 'caption': msg, 'parse_mode': 'Markdown'}, files={'photo': photo})
+    return render_template_string('<html><body style="background:#0f172a;color:white;text-align:center;padding:80px;font-family:sans-serif;"><h2>Order Success! ✅</h2><p>Order ID: #{{oid}}</p><a href="/" style="color:#fbbf24;">Back to Shop</a></body></html>', oid=oid)
 
 @app.route('/admin')
 def admin():
     pw = request.args.get('pw')
     if pw != ADMIN_PASSWORD: return "Unauthorized", 401
-    order_rows = ""
-    for v in orders_col.find().sort("_id", -1):
-        order_rows += f'''
-        <div style="border:1px solid #334155; margin-bottom:10px; padding:15px; background:#1e293b; border-radius:12px;">
-            <b>#{v['id']}</b>: {v['uid']} ({v['zone']}) - {v['pkg']} <br> Status: <b style="color:#fbbf24">{v['status']}</b> {f'({v["note"]})' if v['note'] else ''}<br><br>
-            <a href="/done/{v['id']}?pw={ADMIN_PASSWORD}" style="background:#22c55e; color:white; padding:8px 16px; border-radius:8px; text-decoration:none;">DONE</a>
-            <form action="/reject/{v['id']}" style="display:inline;margin-left:10px;">
-                <input name="pw" type="hidden" value="{ADMIN_PASSWORD}">
-                <input name="msg" placeholder="Reason" style="padding:8px;border-radius:8px;background:#0f172a;color:white;border:1px solid #334155;">
-                <button type="submit" style="background:#ef4444; color:white; border:none; padding:8px 16px; border-radius:8px;">REJECT</button>
-            </form>
-        </div>'''
-    return f"<html><body style='background:#0f172a;color:white;padding:20px;font-family:sans-serif;'><h2>Admin Control</h2>{order_rows or 'No orders'}</body></html>"
-
-@app.route('/done/<oid>')
-def done(oid):
-    if request.args.get('pw') == ADMIN_PASSWORD:
-        orders_col.update_one({"id": oid}, {"$set": {"status": "Success ✅"}})
-    return redirect(url_for('admin', pw=ADMIN_PASSWORD))
-
-@app.route('/reject/<oid>')
-def reject(oid):
-    pw = request.args.get('pw'); msg = request.args.get('msg') or "Payment Incorrect"
-    if pw == ADMIN_PASSWORD:
-        orders_col.update_one({"id": oid}, {"$set": {"status": "Rejected ❌", "note": msg}})
-    return redirect(url_for('admin', pw=ADMIN_PASSWORD))
-
-@app.route('/check', methods=['GET', 'POST'])
-def check():
-    res = ""
-    if request.method == 'POST':
-        oid = request.form.get('oid', '').strip().upper().replace("#", "")
-        o = orders_col.find_one({"id": oid})
-        if o:
-            res = f"<div style='background:#1e293b;padding:20px;border-radius:15px;margin-top:20px;border:1px solid #fbbf24;'>Status: <b>{o['status']}</b><br>Note: {o['note'] or '-'}</div>"
-        else: res = "<p style='color:#ef4444;margin-top:15px;'>ID မမှန်ပါဗျ။</p>"
-    return render_template_string('<html><body style="background:#0f172a;color:white;text-align:center;padding:50px;font-family:sans-serif;"><h3>Check Order Status</h3><form method="post"><input name="oid" placeholder="Order ID" style="padding:14px;border-radius:10px;"><button type="submit" style="padding:14px;background:#fbbf24;border:none;border-radius:10px;margin-left:5px;">CHECK</button></form>{{res|safe}}<br><a href="/" style="color:#94a3b8;text-decoration:none;">Back</a></body></html>', res=res)
+    order_rows = "".join([f'<div style="border:1px solid #334155;padding:15px;background:#1e293b;border-radius:12px;margin-bottom:10px;"><b>#{v["id"]}</b>: {v["uid"]} - {v["pkg"]} <br>Status: {v["status"]}<br><a href="/done/{v["id"]}?pw={ADMIN_PASSWORD}" style="color:#22c55e;">DONE</a></div>' for v in orders_col.find().sort("_id", -1)])
+    return f"<html><body style='background:#0f172a;color:white;padding:20px;'><h2>Admin Control</h2>{order_rows}</body></html>"
 
 @app.route('/')
 def index():
@@ -114,32 +63,47 @@ def index():
 <!DOCTYPE html><html><head><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
     body { background:#0f172a; color:white; font-family:sans-serif; padding:15px; max-width:500px; margin:auto; }
-    .grid { display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:20px; }
-    .pkg-card { background:#1e293b; border:1px solid #334155; padding:15px; border-radius:12px; cursor:pointer; text-align:center; transition: 0.3s; }
-    .selected { border-color: #fbbf24; background: #334155; transform: scale(0.95); }
+    .scroll-box { display:grid; grid-template-columns: 1fr 1fr; gap:10px; height: 350px; overflow-y: auto; padding:10px; background:#111827; border-radius:15px; margin-bottom:20px; border:1px solid #334155; }
+    .pkg-card { background:#1e293b; border:1px solid #334155; padding:15px; border-radius:12px; cursor:pointer; text-align:center; transition: box-shadow 0.3s ease; }
+    
+    /* ရွှေရောင်ဖြာထွက်တဲ့ effect */
+    .selected { 
+        border-color: #fbbf24; 
+        background: #334155; 
+        box-shadow: 0 0 20px 5px rgba(251, 191, 36, 0.5); /* Glowing gold halo */
+        position: relative;
+        z-index: 1; /* Bring selected item above non-selected ones to show full shadow */
+    }
+
     input, select { width:100%; padding:14px; margin:8px 0; border-radius:12px; border:1px solid #334155; background:#0f172a; color:white; box-sizing:border-box; }
-    .buy-btn { width:100%; padding:16px; background:#fbbf24; border:none; border-radius:12px; font-weight:bold; cursor:pointer; font-size:16px; margin-top:10px; }
-    .footer { text-align:center; margin-top:30px; padding:20px; color:#94a3b8; font-size:14px; }
+    .pay-container { background:#1e293b; padding:20px; border-radius:20px; border:1px solid #334155; margin-top:20px; text-align:center; }
+    .pay-no { font-size: 24px; font-weight: bold; color: #fbbf24; margin: 10px 0; letter-spacing: 1px; }
+    .note-tag { background: #ef4444; color: white; padding: 4px 12px; border-radius: 20px; font-size: 12px; display: inline-block; margin-top: 5px; }
+    .buy-btn { width:100%; padding:16px; background:#fbbf24; border:none; border-radius:12px; font-weight:bold; cursor:pointer; margin-top:10px; font-size: 16px; }
 </style></head>
 <body>
     <h2 style="text-align:center;color:#fbbf24;">KIWII GAME SHOP</h2>
-    <div class="grid">{{pkg_items | safe}}</div>
+    <div class="scroll-box">{{pkg_items | safe}}</div>
     <form action="/order" method="post" enctype="multipart/form-data" style="background:#1e293b;padding:20px;border-radius:20px;">
         <input name="u" placeholder="User ID" required>
         <input name="z" placeholder="Zone ID" required>
         <input id="p_val" name="p" type="hidden"><input id="a_val" name="a" type="hidden">
-        <select name="pay"><option>KBZPay</option><option>WaveMoney</option></select>
-        <p style="font-size:12px;color:#94a3b8;">ငွေလွှဲ Screenshot ထည့်ပေးပါ</p>
+        
+        <div class="pay-container">
+            <p style="margin:0; font-size:12px; color:#94a3b8; text-transform: uppercase;">KBZPay / Wave Pay Number</p>
+            <div class="pay-no">{{pay_no}}</div>
+            <p style="margin:0; font-size:14px; font-weight: bold;">NAME - {{name}}</p>
+            <div class="note-tag">NOTE မှာ "PAYMENT" လို့ရေးပေးပါ</div>
+            <select name="pay" style="margin-top:15px;"><option>KBZPay</option><option>WaveMoney</option></select>
+        </div>
+
+        <p style="font-size:12px;color:#94a3b8;margin-top:20px;">ငွေလွှဲ Screenshot ထည့်ပေးပါ</p>
         <input type="file" name="photo" required accept="image/*">
-        <button type="submit" class="buy-btn">PLACE ORDER</button>
-        <a href="/check" style="display:block;text-align:center;margin-top:15px;color:#94a3b8;text-decoration:none;">🔍 Check Status</a>
+        <button type="submit" class="buy-btn">CONFIRM ORDER</button>
     </form>
-    <div class="footer">
-        <p>Support: <a href="https://t.me/{{cs_link}}" style="color:#fbbf24;text-decoration:none;">{{cs}}</a></p>
-    </div>
+    <div style="text-align:center; margin-top:30px; color:#94a3b8; font-size:13px;">Support: <a href="https://t.me/Bby_kiwii7" style="color:#fbbf24;text-decoration:none;">{{cs}}</a></div>
     <script>function sel(el,d,p){var cards=document.getElementsByClassName('pkg-card');for(var i=0;i<cards.length;i++){cards[i].classList.remove('selected');}el.classList.add('selected');document.getElementById('p_val').value=d;document.getElementById('a_val').value=p;}</script>
-</body></html>''', pkg_items=pkg_items, cs=CS_TELEGRAM, cs_link=CS_TELEGRAM.replace("@",""))
+</body></html>''', pkg_items=pkg_items, pay_no=PAY_NO, name=PAY_NAME, cs=CS_TELEGRAM)
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 10000)))
-    
