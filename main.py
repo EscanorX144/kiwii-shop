@@ -46,15 +46,50 @@ def order():
     orders_col.insert_one({"id": oid, "uid": uid, "zone": zone, "pkg": pkg_name, "amt": amt, "status": "Pending ⏳", "note": ""})
     
     msg = f"🔔 *NEW ORDER: #{oid}*\n🆔 *ID:* `{uid}` (`{zone}`)\n💎 *Item:* {pkg_name}\n💰 *Price:* {amt} Ks\n💵 *Pay:* {pay}"
+    
     admin_url = f"https://kiwiigameshop.onrender.com/admin?pw={ADMIN_PASSWORD}"
-    reply_markup = {"inline_keyboard": [[{"text": "📝 အော်ဒါစစ်ဆေးရန် (Admin Panel)", "url": admin_url}]]}
+    reply_markup = json.dumps({"inline_keyboard": [[{"text": "📝 အော်ဒါစစ်ဆေးရန် (Admin Panel)", "url": admin_url}]]})
     
     if photo:
         photo.seek(0)
         requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto", 
-                      data={'chat_id': ADMIN_ID, 'caption': msg, 'parse_mode': 'Markdown', 'reply_markup': json.dumps(reply_markup)}, 
+                      data={'chat_id': ADMIN_ID, 'caption': msg, 'parse_mode': 'Markdown', 'reply_markup': reply_markup}, 
                       files={'photo': photo})
     return render_template_string('<html><body style="background:#0f172a;color:white;text-align:center;padding:80px;font-family:sans-serif;"><h2>Order Success! ✅</h2><p>Order ID: #{{oid}}</p><a href="/" style="color:#fbbf24;">Back to Shop</a></body></html>', oid=oid)
+
+@app.route('/admin', methods=['GET', 'POST'])
+def admin():
+    pw = request.args.get('pw')
+    if pw != ADMIN_PASSWORD: return "Unauthorized", 401
+    
+    if request.method == 'POST':
+        oid = request.form.get('oid')
+        action = request.form.get('action')
+        reason = request.form.get('reason', '')
+        if action == 'done':
+            orders_col.update_one({"id": oid}, {"$set": {"status": "Diamond ထည့်သွင်းပြီးပါပြီ ✅", "note": "ကျေးဇူးတင်ပါတယ်!"}})
+        elif action == 'reject':
+            orders_col.update_one({"id": oid}, {"$set": {"status": "Order ငြင်းပယ်ခံရသည် ❌", "note": reason}})
+            
+    orders = orders_col.find().sort("_id", -1)
+    order_html = "".join([f'''<div style="border:1px solid #334155;padding:15px;background:#1e293b;border-radius:12px;margin-bottom:15px;">
+            <b>Order: #{v["id"]}</b> | {v["uid"]} ({v["zone"]}) <br> Status: <b style="color:#fbbf24;">{v["status"]}</b><br>
+            <form method="post" style="margin-top:10px;">
+                <input type="hidden" name="oid" value="{v["id"]}">
+                <input name="reason" placeholder="Reason (if reject)" style="padding:5px; border-radius:5px;">
+                <button name="action" value="done" style="background:#22c55e; color:white; border:none; padding:8px; border-radius:5px;">DONE</button>
+                <button name="action" value="reject" style="background:#ef4444; color:white; border:none; padding:8px; border-radius:5px;">REJECT</button>
+            </form></div>''' for v in orders])
+    return f"<html><body style='background:#0f172a;color:white;padding:20px; font-family:sans-serif;'><h2>Admin Dashboard</h2>{order_html}</body></html>"
+
+@app.route('/check', methods=['GET', 'POST'])
+def check():
+    res = ""
+    if request.method == 'POST':
+        o = orders_col.find_one({"id": request.form.get('oid', '').upper().replace("#","")})
+        if o: res = f"<div style='background:#1e293b;padding:20px;border-radius:15px;'>Status: <b>{o['status']}</b><br>Note: {o['note']}</div>"
+        else: res = "<p style='color:#ef4444;'>Order ID မတွေ့ပါ</p>"
+    return render_template_string('<html><body style="background:#0f172a;color:white;text-align:center;padding:50px; font-family:sans-serif;"><h3>🔍 Check Order</h3><form method="post"><input name="oid" placeholder="Order ID"><button type="submit">CHECK</button></form>{{res|safe}}</body></html>', res=res)
 
 @app.route('/')
 def index():
@@ -64,88 +99,49 @@ def index():
 <style>
     body { background:#0f172a; color:white; font-family:sans-serif; padding:15px; max-width:500px; margin:auto; }
     .scroll-box { display:grid; grid-template-columns: 1fr 1fr; gap:12px; height: 350px; overflow-y: auto; padding:15px; background:rgba(30, 41, 59, 0.5); border-radius:15px; margin-bottom:20px; border:1px solid #334155; }
-    .pkg-card { background:#1e293b; border:1px solid #334155; padding:18px; border-radius:12px; cursor:pointer; text-align:center; transition: all 0.4s; }
-    .selected { border: 2px solid #fbbf24 !important; box-shadow: 0 0 20px rgba(251, 191, 36, 0.8); transform: scale(1.05); }
-    input, select { width:100%; padding:14px; margin:8px 0; border-radius:12px; border:1px solid #334155; background:#0f172a; color:white; box-sizing:border-box; outline:none; }
-    input:focus { border-color: #fbbf24; }
-    
-    /* Image 5 Style Payment Box */
-    .pay-tabs { display: flex; gap: 10px; margin-bottom: 15px; }
-    .pay-tab { flex: 1; padding: 12px; background: #1e293b; border-radius: 20px; text-align: center; cursor: pointer; border: 1px solid #334155; font-weight: bold; font-size: 14px; }
+    .pkg-card { background:#1e293b; border:1px solid #334155; padding:18px; border-radius:12px; cursor:pointer; text-align:center; transition: 0.3s; }
+    .selected { border: 2px solid #fbbf24; box-shadow: 0 0 15px rgba(251, 191, 36, 0.5); }
+    input { width:100%; padding:14px; margin:8px 0; border-radius:12px; border:1px solid #334155; background:#0f172a; color:white; box-sizing:border-box; }
+    .pay-tabs { display: flex; gap: 8px; margin-bottom: 12px; justify-content: center; }
+    .pay-tab { padding: 8px 18px; background: #1e293b; border-radius: 12px; cursor: pointer; border: 1px solid #334155; font-size: 13px; color: #94a3b8; }
     .pay-tab.active { background: #fbbf24; color: #000; border-color: #fbbf24; }
-    
-    .pay-container { background:#1e293b; padding:25px; border-radius:20px; border:1px solid #334155; text-align:center; position: relative; }
-    .pay-label { font-size: 12px; color: #94a3b8; text-transform: uppercase; margin-bottom: 5px; }
-    .pay-no { font-size: 32px; font-weight: bold; color: #fff; margin: 5px 0 10px 0; letter-spacing: 1px; }
-    
-    .copy-btn { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); background: #334155; color: #fff; border: none; padding: 8px 15px; border-radius: 10px; cursor: pointer; font-size: 12px; font-weight: bold; text-transform: uppercase; }
-    .copy-btn:active { background: #fbbf24; color: #000; }
-    
-    .pay-name { font-weight: bold; color: #fbbf24; font-size: 15px; margin: 10px 0; }
-    .note-tag { background: #ef4444; color: white; padding: 6px 18px; border-radius: 20px; font-size: 13px; display: inline-block; font-weight: bold; margin-top: 5px; }
-    
-    .buy-btn { width:100%; padding:16px; background:#fbbf24; border:none; border-radius:12px; font-weight:bold; cursor:pointer; margin-top:20px; font-size: 18px; color:#000; }
+    .pay-box { background:#1e293b; padding:20px; border-radius:18px; border:1px solid #334155; text-align:center; margin-bottom: 25px; }
+    .pay-no { font-size: 26px; font-weight: bold; color: #fff; margin: 5px 0; }
+    .copy-btn { background: #334155; color: #fff; border: none; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 11px; }
+    .note-tag { border: 1px solid rgba(239, 68, 68, 0.6); color: #ef4444; padding: 6px 16px; border-radius: 20px; font-size: 12px; display: inline-block; font-weight: bold; box-shadow: 0 0 10px rgba(239, 68, 68, 0.2); }
+    .buy-btn { width:100%; padding:16px; background:#fbbf24; border:none; border-radius:12px; font-weight:bold; cursor:pointer; font-size: 18px; color:#000; }
 </style></head>
 <body>
     <h2 style="text-align:center;color:#fbbf24;">KIWII GAME SHOP</h2>
-    <div class="scroll-box">{{pkg_items | safe}}</div>
-    
-    <div style="background:#1e293b;padding:25px;border-radius:20px; border: 1px solid #334155; margin-bottom: 20px;">
-        <div class="pay-tabs">
-            <div id="tab-kbz" class="pay-tab active" onclick="setPay('KBZPay')">KBZ PAY</div>
-            <div id="tab-wave" class="pay-tab" onclick="setPay('WaveMoney')">WAVE MONEY</div>
-        </div>
-
-        <div class="pay-container">
-            <div class="pay-label">KBZ PAY NUMBER</div>
-            <div id="pay-num-display" class="pay-no">{{pay_no}}</div>
-            <button class="copy-btn" onclick="copyNum()">COPY</button>
-            
-            <div class="pay-name">NAME - {{name}}</div>
-            <div class="note-tag">NOTE မှာ "PAYMENT" လို့ရေးပေးပါ</div>
-        </div>
+    <div class="scroll-box">{{pkg_items|safe}}</div>
+    <div class="pay-tabs">
+        <div id="t1" class="pay-tab active" onclick="setPay('KBZPay')">KBZ PAY</div>
+        <div id="t2" class="pay-tab" onclick="setPay('WaveMoney')">WAVE MONEY</div>
     </div>
-
+    <div class="pay-box">
+        <div style="font-size:11px; color:#94a3b8;">PAYMENT NUMBER</div>
+        <div id="p-num" class="pay-no">{{pay_no}}</div>
+        <button class="copy-btn" onclick="copyNum()">COPY</button>
+        <div style="color:#fbbf24; font-size:14px; margin: 10px 0;">NAME - {{name}}</div>
+        <div class="note-tag">NOTE မှာ "PAYMENT" လို့ရေးပေးပါ</div>
+    </div>
     <form action="/order" method="post" enctype="multipart/form-data" style="background:#1e293b;padding:25px;border-radius:20px; border: 1px solid #334155;">
         <input name="u" placeholder="Game Player ID" required>
         <input name="z" placeholder="Zone ID" required>
         <input id="p_val" name="p" type="hidden" required><input id="a_val" name="a" type="hidden" required>
-        <input id="pay_method_val" name="pay" type="hidden" value="KBZPay"> <p style="font-size:13px;color:#94a3b8;margin-top:20px; text-align:center;">ငွေလွှဲ Screenshot ထည့်ပေးပါ</p>
+        <input id="pay_method" name="pay" type="hidden" value="KBZPay">
+        <p style="font-size:13px;color:#94a3b8;text-align:center;">Screenshot တင်ပေးပါ</p>
         <input type="file" name="photo" required accept="image/*">
         <button type="submit" class="buy-btn">CONFIRM ORDER</button>
+        <a href="/check" style="display:block;text-align:center;margin-top:15px;color:#94a3b8;text-decoration:none;font-size:14px;">🔍 Check Order</a>
     </form>
-    
-    <div style="text-align:center; margin-top:30px; color:#94a3b8; font-size:14px;">
-        Website Support: <a href="https://t.me/{{cs}}" style="color:#fbbf24;text-decoration:none; font-weight:bold;">@{{cs}}</a>
-    </div>
-
+    <div style="text-align:center; margin-top:20px; color:#94a3b8; font-size:14px;">Support: <a href="https://t.me/{{cs}}" style="color:#fbbf24;text-decoration:none;">@{{cs}}</a></div>
     <script>
-    function sel(el,d,p){const cards=document.querySelectorAll('.pkg-card');cards.forEach(c=>c.classList.remove('selected'));el.classList.add('selected');document.getElementById('p_val').value=d;document.getElementById('a_val').value=p;}
-    
-    // Copy Function
-    function copyNum() {
-        const num = document.getElementById('pay-num-display').innerText;
-        navigator.clipboard.writeText(num).then(() => {
-            alert('Payment Number Copy လုပ်ပြီးပါပြီ: ' + num);
-        });
-    }
-
-    // Payment Tab Switching (Image 5)
-    function setPay(method) {
-        document.getElementById('pay_method_val').value = method;
-        const tabKbz = document.getElementById('tab-kbz');
-        const tabWave = document.getElementById('tab-wave');
-        if (method === 'KBZPay') {
-            tabKbz.classList.add('active');
-            tabWave.classList.remove('active');
-        } else {
-            tabWave.classList.add('active');
-            tabKbz.classList.remove('active');
-        }
-    }
+    function sel(el,d,p){document.querySelectorAll('.pkg-card').forEach(c=>c.classList.remove('selected'));el.classList.add('selected');document.getElementById('p_val').value=d;document.getElementById('a_val').value=p;}
+    function copyNum(){navigator.clipboard.writeText(document.getElementById('p-num').innerText).then(()=>{alert('Copied!');});}
+    function setPay(m){document.getElementById('pay_method').value=m;document.getElementById('t1').classList.toggle('active',m==='KBZPay');document.getElementById('t2').classList.toggle('active',m==='WaveMoney');}
     </script>
 </body></html>''', pkg_items=pkg_items, pay_no=PAY_NO, name=PAY_NAME, cs=CS_TELEGRAM)
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 10000)))
-    
