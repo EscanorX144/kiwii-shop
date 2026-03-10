@@ -1,7 +1,7 @@
 import os
 import pymongo
 import json
-from flask import Flask, render_template_string, request
+from flask import Flask, render_template_string, request, redirect, url_for
 import requests
 
 app = Flask(__name__)
@@ -42,26 +42,44 @@ def order():
     pkg_name = request.form.get('p'); amt = request.form.get('a')
     pay = request.form.get('pay'); photo = request.files.get('photo')
     oid = os.urandom(2).hex().upper()
+    
     orders_col.insert_one({"id": oid, "uid": uid, "zone": zone, "pkg": pkg_name, "amt": amt, "status": "Pending ⏳", "note": ""})
+    
     msg = f"🔔 *NEW ORDER: #{oid}*\n🆔 *ID:* `{uid}` (`{zone}`)\n💎 *Item:* {pkg_name}\n💰 *Price:* {amt} Ks\n💵 *Pay:* {pay}"
     admin_url = f"https://kiwiigameshop.onrender.com/admin?pw={ADMIN_PASSWORD}"
     reply_markup = json.dumps({"inline_keyboard": [[{"text": "📝 Admin Panel", "url": admin_url}]]})
+    
     if photo:
         photo.seek(0)
-        requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto", data={'chat_id': ADMIN_ID, 'caption': msg, 'parse_mode': 'Markdown', 'reply_markup': reply_markup}, files={'photo': photo})
+        requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto", 
+                      data={'chat_id': ADMIN_ID, 'caption': msg, 'parse_mode': 'Markdown', 'reply_markup': reply_markup}, 
+                      files={'photo': photo})
     return render_template_string('<html><body style="background:#0f172a;color:white;text-align:center;padding:80px;font-family:sans-serif;"><h2>Order Success! ✅</h2><p>Order ID: #{{oid}}</p><a href="/" style="color:#fbbf24;">Back to Shop</a></body></html>', oid=oid)
 
 @app.route('/admin', methods=['GET', 'POST'])
 def admin():
     pw = request.args.get('pw')
     if pw != ADMIN_PASSWORD: return "Unauthorized", 401
+    
     if request.method == 'POST':
         oid = request.form.get('oid'); action = request.form.get('action'); reason = request.form.get('reason', '')
-        if action == 'done': orders_col.update_one({"id": oid}, {"$set": {"status": "Diamond ထည့်သွင်းပြီးပါပြီ ✅", "note": "ကျေးဇူးတင်ပါတယ်!"}})
-        elif action == 'reject': orders_col.update_one({"id": oid}, {"$set": {"status": "Order ငြင်းပယ်ခံရသည် ❌", "note": reason}})
+        if action == 'done':
+            orders_col.update_one({"id": oid}, {"$set": {"status": "Diamond ထည့်သွင်းပြီးပါပြီ ✅", "note": "ကျေးဇူးတင်ပါတယ်!"}})
+        elif action == 'reject':
+            orders_col.update_one({"id": oid}, {"$set": {"status": "Order ငြင်းပယ်ခံရသည် ❌", "note": reason}})
+            
     orders = orders_col.find().sort("_id", -1)
-    order_html = "".join([f'<div style="border:1px solid #334155;padding:15px;background:#1e293b;border-radius:12px;margin-bottom:15px;"><b>#{v["id"]}</b> | {v["uid"]} | {v["status"]}<form method="post"><input type="hidden" name="oid" value="{v["id"]}"><input name="reason" placeholder="Reason (if reject)"><button name="action" value="done">DONE</button><button name="action" value="reject">REJECT</button></form></div>' for v in orders])
-    return f"<html><body style='background:#0f172a;color:white;padding:20px;'><h2>Admin Panel</h2>{order_html}</body></html>"
+    order_html = "".join([f'<div style="border:1px solid #334155;padding:15px;background:#1e293b;border-radius:12px;margin-bottom:15px;"><b>#{v["id"]}</b> | {v["uid"]} | {v["status"]}<form method="post" style="margin-top:10px;"><input type="hidden" name="oid" value="{v["id"]}"><input name="reason" placeholder="Reject Reason" style="margin-right:5px;padding:5px;border-radius:5px;"><button name="action" value="done" style="background:green;color:white;border:none;padding:5px 10px;border-radius:5px;cursor:pointer;">DONE</button> <button name="action" value="reject" style="background:red;color:white;border:none;padding:5px 10px;border-radius:5px;cursor:pointer;">REJECT</button></form></div>' for v in orders])
+    return f"<html><body style='background:#0f172a;color:white;padding:20px;font-family:sans-serif;'><h2>Admin Panel</h2>{order_html}</body></html>"
+
+@app.route('/check', methods=['GET', 'POST'])
+def check():
+    res = ""
+    if request.method == 'POST':
+        o = orders_col.find_one({"id": request.form.get('oid', '').upper().replace("#","")})
+        if o: res = f"<div style='background:#1e293b;padding:20px;border-radius:15px;margin-top:20px;border:1px solid #334155;'>Order ID: <b>#{o['id']}</b><br>Status: <b style='color:#fbbf24;'>{o['status']}</b><br>Note: {o['note']}</div>"
+        else: res = "<p style='color:#ef4444;margin-top:20px;'>Order ID မတွေ့ပါ၊ ပြန်စစ်ပေးပါဗျ။</p>"
+    return render_template_string('''<html><head><meta name="viewport" content="width=device-width, initial-scale=1.0"></head><body style="background:#0f172a;color:white;text-align:center;padding:50px; font-family:sans-serif;"><h3>🔍 Check Order Status</h3><form method="post"><input name="oid" placeholder="Order ID (ဥပမာ- A1B2)" style="padding:12px;border-radius:10px;border:1px solid #334155;background:#1e293b;color:white;width:80%;max-width:300px;"><br><button type="submit" style="margin-top:15px;padding:10px 30px;background:#fbbf24;border:none;border-radius:10px;font-weight:bold;cursor:pointer;">CHECK</button></form>{{res|safe}}<br><a href="/" style="color:#94a3b8;text-decoration:none;display:block;margin-top:30px;">Back to Shop</a></body></html>''', res=res)
 
 @app.route('/')
 def index():
@@ -80,8 +98,11 @@ def index():
     .pay-box { background:#1e293b; padding:20px; border-radius:18px; border:1px solid #334155; text-align:center; margin-bottom: 25px; }
     .pay-no { font-size: 26px; font-weight: bold; color: #fff; margin-bottom: 5px; }
     .copy-btn { background: #334155; color: #fff; border: none; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 11px; }
-    .note-tag { border: 1px solid rgba(239, 68, 68, 0.6); color: #ef4444; padding: 6px 16px; border-radius: 20px; font-size: 12px; display: inline-block; font-weight: bold; box-shadow: 0 0 10px rgba(239, 68, 68, 0.2); }
+    .note-tag { border: 1px solid rgba(239, 68, 68, 0.6); color: #ef4444; padding: 6px 16px; border-radius: 20px; font-size: 12px; display: inline-block; font-weight: bold; }
     .buy-btn { width:100%; padding:16px; background:#fbbf24; border:none; border-radius:12px; font-weight:bold; cursor:pointer; font-size: 18px; color:#000; }
+    .footer-links { text-align:center; margin-top:20px; display:flex; justify-content: space-around; font-size: 14px; }
+    .footer-links a { color:#94a3b8; text-decoration:none; }
+    .footer-links a:hover { color:#fbbf24; }
 </style></head>
 <body>
     <h2 style="text-align:center;color:#fbbf24;">KIWII GAME SHOP</h2>
@@ -96,15 +117,21 @@ def index():
         <div style="color:#fbbf24; font-size:14px; margin: 10px 0;">NAME - {{name}}</div>
         <div class="note-tag">NOTE မှာ "PAYMENT" လို့ရေးပေးပါ</div>
     </div>
-    <form action="/order" method="post" enctype="multipart/form-data">
+    <form action="/order" method="post" enctype="multipart/form-data" style="background:#1e293b;padding:25px;border-radius:20px; border: 1px solid #334155;">
         <input name="u" placeholder="Game Player ID" required>
         <input name="z" placeholder="Zone ID" required>
         <input id="p_val" name="p" type="hidden" required><input id="a_val" name="a" type="hidden" required>
         <input id="pay_method" name="pay" type="hidden" value="KBZPay">
-        <p style="font-size:13px;color:#94a3b8;text-align:center;">Screenshot တင်ပေးပါ</p>
+        <p style="font-size:13px;color:#94a3b8;text-align:center;">ငွေလွှဲ Screenshot ထည့်ပေးပါ</p>
         <input type="file" name="photo" required accept="image/*">
         <button type="submit" class="buy-btn">CONFIRM ORDER</button>
     </form>
+    
+    <div class="footer-links">
+        <a href="/check">🔍 Check Order</a>
+        <a href="https://t.me/{{cs}}">💬 Customer Service</a>
+    </div>
+
     <script>
     function sel(el,d,p){document.querySelectorAll('.pkg-card').forEach(c=>c.classList.remove('selected'));el.classList.add('selected');document.getElementById('p_val').value=d;document.getElementById('a_val').value=p;}
     function copyNum(){navigator.clipboard.writeText(document.getElementById('p-num').innerText).then(()=>{alert('Copied!');});}
@@ -114,4 +141,5 @@ def index():
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 10000)))
-    
+
+
