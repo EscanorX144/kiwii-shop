@@ -160,21 +160,15 @@ HTML_TEMPLATE = '''
         <div class="pay-card">
     <div class="pay-methods">
         <div class="pay-icon">
-            <img src="https://raw.githubusercontent.com/EscanorX144/kiwii-shop/main/static/kpay.png" 
-                 onerror="this.src='https://img.icons8.com/color/144/kbz-pay.png'" 
-                 alt="KPay" style="width:45px; height:45px; border-radius:10px;">
+            <img src="{{ url_for('static', filename='kpay.jpg') }}" alt="KPay" style="width:45px; height:45px; border-radius:10px;">
             <br><span>KPay</span>
         </div>
         <div class="pay-icon">
-            <img src="https://raw.githubusercontent.com/EscanorX144/kiwii-shop/main/static/wave.png" 
-                 onerror="this.src='https://img.icons8.com/color/144/wave-money.png'" 
-                 alt="Wave" style="width:45px; height:45px; border-radius:10px;">
+            <img src="{{ url_for('static', filename='wave.jpg') }}" alt="Wave" style="width:45px; height:45px; border-radius:10px;">
             <br><span>Wave</span>
         </div>
         <div class="pay-icon">
-            <img src="https://raw.githubusercontent.com/EscanorX144/kiwii-shop/main/static/ayapay.png" 
-                 onerror="this.src='https://img.icons8.com/fluency/144/bank-card-back-side.png'" 
-                 alt="Aya" style="width:45px; height:45px; border-radius:10px;">
+            <img src="{{ url_for('static', filename='ayapay.png') }}" alt="Aya" style="width:45px; height:45px; border-radius:10px;">
             <br><span>AyaPay</span>
         </div>
     </div>
@@ -185,6 +179,7 @@ HTML_TEMPLATE = '''
         <small style="color:#94a3b8;">Note: {{pay.Note}}</small>
     </div>
 </div>
+
 
 
         <form id="order-form" action="/order" method="post" enctype="multipart/form-data">
