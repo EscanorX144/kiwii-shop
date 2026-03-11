@@ -16,6 +16,7 @@ ADMIN_PASS = "kiwii123"
 BASE_URL = "https://kiwiigameshop.onrender.com"
 
 # --- 💎 DIAMOND LIST DATA ---
+# --- 💎 DIAMOND LIST DATA ---
 GAMES_DATA = [
     {
         "name": "Normal Server (🇲🇲)",
@@ -25,6 +26,30 @@ GAMES_DATA = [
             "Weekly Pass": [{"d": f"Weekly Pass {i}X 💎", "p": str(5900 * i)} for i in range(1, 11)],
             "2X Dia": [{"d": "50+50 💎", "p": "3200"}, {"d": "250+250 💎", "p": "15500"}, {"d": "500+500 💎", "p": "31000"}, {"d": "1000+1000 💎", "p": "61000"}],
             "Bundle Pack": [{"d": "Weekly elite bundle 💎", "p": "3050"}, {"d": "Monthly epic bundle 💎", "p": "15350"}, {"d": "Twilight pass 💎", "p": "31500"}]
+        }
+    },
+    {
+        "name": "Malaysia (🇲🇾)",
+        "img": "https://img.icons8.com/color/144/malaysia.png",
+        "cats": {
+            "Mal & SGP Dia": [{"d": "14 💎", "p": "1050"}, {"d": "42 💎", "p": "3100"}, {"d": "70 💎", "p": "5050"}, {"d": "140 💎", "p": "10100"}, {"d": "210 💎", "p": "15100"}, {"d": "284 💎", "p": "20200"}, {"d": "355 💎", "p": "25200"}, {"d": "429 💎", "p": "30300"}, {"d": "716 💎", "p": "50200"}, {"d": "1446 💎", "p": "100500"}, {"d": "2976 💎", "p": "201000"}, {"d": "7502 💎", "p": "503500"}],
+            "Weekly Pass": [{"d": f"Weekly Pass {i}X 💎", "p": str(8400 * i)} for i in range(1, 11)]
+        }
+    },
+   {
+        "name": "Singapore (🇸🇬)",
+        "img": "https://img.icons8.com/color/144/Singapore.png",
+        "cats": {
+            "Mal & SGP Dia": [{"d": "14 💎", "p": "1050"}, {"d": "42 💎", "p": "3100"}, {"d": "70 💎", "p": "5050"}, {"d": "140 💎", "p": "10100"}, {"d": "210 💎", "p": "15100"}, {"d": "284 💎", "p": "20200"}, {"d": "355 💎", "p": "25200"}, {"d": "429 💎", "p": "30300"}, {"d": "716 💎", "p": "50200"}, {"d": "1446 💎", "p": "100500"}, {"d": "2976 💎", "p": "201000"}, {"d": "7502 💎", "p": "503500"}],
+            "Weekly Pass": [{"d": f"Weekly Pass {i}X 💎", "p": str(8400 * i)} for i in range(1, 11)]
+        }
+    },
+    {
+        "name": "Philippines (🇵🇭)",
+        "img": "https://img.icons8.com/color/144/philippines.png",
+        "cats": {
+            "Philippines Dia": [{"d": "11 💎", "p": "750"}, {"d": "22 💎", "p": "1500"}, {"d": "56 💎", "p": "3500"}, {"d": "112 💎", "p": "7000"}, {"d": "223 💎", "p": "14000"}, {"d": "336 💎", "p": "21300"}, {"d": "570 💎", "p": "36000"}, {"d": "1163 💎", "p": "70500"}, {"d": "2398 💎", "p": "140000"}, {"d": "6042 💎", "p": "350000"}],
+            "Weekly Pass": [{"d": f"Weekly Pass {i}X 💎", "p": str(6500 * i)} for i in range(1, 11)]
         }
     },
     {
@@ -38,11 +63,11 @@ GAMES_DATA = [
         }
     },
     {
-        "name": "Malaysia (🇲🇾)",
-        "img": "https://img.icons8.com/color/144/malaysia.png",
+        "name": "Russia (🇷🇺)",
+        "img": "https://img.icons8.com/color/144/russian-federation.png",
         "cats": {
-            "Mal & SGP Dia": [{"d": "14 💎", "p": "1050"}, {"d": "42 💎", "p": "3100"}, {"d": "70 💎", "p": "5050"}, {"d": "140 💎", "p": "10100"}, {"d": "210 💎", "p": "15100"}, {"d": "284 💎", "p": "20200"}, {"d": "355 💎", "p": "25200"}, {"d": "429 💎", "p": "30300"}, {"d": "716 💎", "p": "50200"}, {"d": "1446 💎", "p": "100500"}, {"d": "2976 💎", "p": "201000"}, {"d": "7502 💎", "p": "503500"}],
-            "Weekly Pass": [{"d": f"Weekly Pass {i}X 💎", "p": str(8400 * i)} for i in range(1, 11)]
+            "Russia Dia": [{"d": "35 💎", "p": "2750"}, {"d": "55 💎", "p": "4450"}, {"d": "165 💎", "p": "13000"}, {"d": "275 💎", "p": "22000"}, {"d": "565 💎", "p": "44500"}, {"d": "1155 💎", "p": "88000"}, {"d": "1765 💎", "p": "132000"}, {"d": "2975 💎", "p": "220000"}, {"d": "6000 💎", "p": "435000"}],
+            "Weekly Pass": [{"d": f"Weekly Pass {i}X 💎", "p": str(8600 * i)} for i in range(1, 11)]
         }
     }
 ]
