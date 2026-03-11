@@ -19,7 +19,7 @@ CS_LINK = "https://t.me/Bby_kiwii7"
 ADMIN_PASS = "kiwii123"
 ADMIN_URL = "https://kiwiigameshop.onrender.com/admin"
 
-# --- DIAMOND DATA (သေချာ အစဉ်စီထားသည်) ---
+# --- DIAMOND DATA ---
 GAMES_DATA = [
     {
         "name": "Normal Server",
@@ -37,7 +37,6 @@ GAMES_DATA = [
         "cats": {
             "Indo Dia": [{"d": "5", "p": "450"}, {"d": "12", "p": "950"}, {"d": "19", "p": "1500"}, {"d": "28", "p": "2200"}, {"d": "44", "p": "3300"}, {"d": "59", "p": "4300"}, {"d": "85", "p": "5850"}, {"d": "170", "p": "11700"}, {"d": "240", "p": "16600"}, {"d": "296", "p": "20500"}, {"d": "408", "p": "28000"}, {"d": "568", "p": "37500"}, {"d": "875", "p": "58500"}, {"d": "2010", "p": "123500"}, {"d": "4830", "p": "299000"}],
             "Weekly Pass": [{"d": f"Weekly Pass {i}X", "p": str(7500 * i)} for i in range(1, 11)],
-            "2X Dia": [],
             "Bundle Pack": [{"d": "Twilight Pass", "p": "45000"}]
         }
     },
@@ -70,7 +69,6 @@ GAMES_DATA = [
     }
 ]
 
-
 @app.route('/')
 def index():
     return render_template_string(HTML_TEMPLATE, games=GAMES_DATA, pay=PAY_DATA, cs=CS_LINK)
@@ -93,11 +91,6 @@ def order():
     db.insert({'id': order_id, 'server': server, 'uid': u_id, 'zid': z_id, 'pkg': pkg, 'amt': amt, 'status': 'Pending', 'time': datetime.now().strftime("%d/%m %I:%M %p")})
     return f"<html><body style='background:#0f172a;color:white;text-align:center;padding:50px;'><h2>Order Success! ✅</h2><script>let h=JSON.parse(localStorage.getItem('kiwii_h')||'[]'); h.unshift({{id:'{order_id}', s:'{server}', p:'{pkg}', a:'{amt}', t:'{datetime.now().strftime('%d/%m %I:%M %p')}'}}); localStorage.setItem('kiwii_h', JSON.stringify(h)); setTimeout(()=>location.href='/', 1500);</script></body></html>"
 
-@app.route('/get_status/<oid>')
-def get_status(oid):
-    res = db.search(Query().id == oid)
-    return res[0]['status'] if res else "Pending"
-
 @app.route('/admin')
 def admin():
     if not session.get('logged_in'):
@@ -115,7 +108,6 @@ def update(oid, status):
     if session.get('logged_in'): db.update({'status': status}, Query().id == oid)
     return redirect('/admin')
 
-# --- UI TEMPLATES ---
 HTML_TEMPLATE = '''
 <!DOCTYPE html><html><head><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -140,7 +132,6 @@ HTML_TEMPLATE = '''
     .pay-icon { display: flex; flex-direction: column; align-items: center; gap: 5px; }
     .pay-icon img { width: 45px; height: 45px; border-radius: 10px; object-fit: cover; }
     .hist-item { background: #1e293b; padding: 15px; border-radius: 12px; margin-bottom: 12px; border-left: 4px solid #fbbf24; position: relative; }
-    .status-badge { position: absolute; right: 15px; top: 15px; font-size: 11px; padding: 4px 8px; border-radius: 6px; background: #fbbf24; color: black; font-weight: bold; }
 </style></head>
 <body>
     <div id="home-section">
@@ -160,30 +151,18 @@ HTML_TEMPLATE = '''
         <div class="pkg-grid" id="pkg-list"></div>
         
         <div class="pay-card">
-    <div class="pay-methods">
-        <div class="pay-icon">
-            <img src="{{ url_for('static', filename='kpay.jpg') }}" alt="KPay" style="width:45px; height:45px; border-radius:10px;">
-            <br><span>KPay</span>
+            <div class="pay-methods">
+                <div class="pay-icon"><img src="/static/kpay.jpg"><br><span>KPay</span></div>
+                <div class="pay-icon"><img src="/static/wave.jpg"><br><span>Wave</span></div>
+                <div class="pay-icon"><img src="/static/ayapay.jpg"><br><span>AyaPay</span></div>
+            </div>
+            <div style="border-top: 1px solid #334155; padding-top: 15px; margin-top:10px;">
+                <small>Payment To</small><br>
+                <b style="color:#fbbf24; font-size: 18px;">{{pay.Number}}</b><br>
+                <small>Name: {{pay.Name}}</small><br>
+                <small style="color:#94a3b8;">Note: {{pay.Note}}</small>
+            </div>
         </div>
-        <div class="pay-icon">
-            <img src="{{ url_for('static', filename='wave.jpg') }}" alt="Wave" style="width:45px; height:45px; border-radius:10px;">
-            <br><span>Wave</span>
-        </div>
-       <div class="pay-icon">
-    <img src="{{ url_for('static', filename='ayapay.jpg') }}" alt="Aya" style="width:45px; height:45px; border-radius:10px;">
-    <br><span>AyaPay</span>
-</div>
-
-    </div>
-    <div style="border-top: 1px solid #334155; padding-top: 15px; margin-top:10px;">
-        <small>Payment To</small><br>
-        <b style="color:#fbbf24; font-size: 18px;">{{pay.Number}}</b><br>
-        <small>Name: {{pay.Name}}</small><br>
-        <small style="color:#94a3b8;">Note: {{pay.Note}}</small>
-    </div>
-</div>
-
-
 
         <form id="order-form" action="/order" method="post" enctype="multipart/form-data">
             <input type="hidden" name="server_name" id="s_name">
@@ -202,7 +181,7 @@ HTML_TEMPLATE = '''
         <a href="{{cs}}" class="nav-btn" style="text-decoration:none;"><i class="fas fa-comment"></i><br>CS</a>
     </div>
 
- <script>
+    <script>
     const data = {{ games | tojson }};
     function init() {
         document.getElementById('game-list').innerHTML = data.map(game => `
@@ -294,7 +273,7 @@ HTML_TEMPLATE = '''
         document.getElementById('history-section').style.display = 'none';
     }
     init();
-</scrip
+    </script>
 </body></html>
 '''
 
