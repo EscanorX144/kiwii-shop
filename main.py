@@ -44,25 +44,8 @@ GAMES_DATA = [
             "Mal & SGP Dia": [{"d": "14 💎", "p": "1050"}, {"d": "42 💎", "p": "3100"}, {"d": "70 💎", "p": "5050"}, {"d": "140 💎", "p": "10100"}, {"d": "210 💎", "p": "15100"}, {"d": "284 💎", "p": "20200"}, {"d": "355 💎", "p": "25200"}, {"d": "429 💎", "p": "30300"}, {"d": "716 💎", "p": "50200"}, {"d": "1446 💎", "p": "100500"}, {"d": "2976 💎", "p": "201000"}, {"d": "7502 💎", "p": "503500"}],
             "Weekly Pass": [{"d": f"Weekly Pass {i}X 💎", "p": str(8400 * i)} for i in range(1, 11)]
         }
-    },
-    {
-        "name": "Philippines (🇵🇭)",
-        "img": "https://img.icons8.com/color/144/philippines.png",
-        "cats": {
-            "Philippines Dia": [{"d": "11 💎", "p": "750"}, {"d": "22 💎", "p": "1500"}, {"d": "56 💎", "p": "3500"}, {"d": "112 💎", "p": "7000"}, {"d": "223 💎", "p": "14000"}, {"d": "336 💎", "p": "21300"}, {"d": "570 💎", "p": "36000"}, {"d": "1163 💎", "p": "70500"}, {"d": "2398 💎", "p": "140000"}, {"d": "6042 💎", "p": "350000"}],
-            "Weekly Pass": [{"d": f"Weekly Pass {i}X 💎", "p": str(6500 * i)} for i in range(1, 11)]
-        }
-    },
-    {
-        "name": "Russia (🇷🇺)",
-        "img": "https://img.icons8.com/color/144/russian-federation.png",
-        "cats": {
-            "Russia Dia": [{"d": "35 💎", "p": "2750"}, {"d": "55 💎", "p": "4450"}, {"d": "165 💎", "p": "13000"}, {"d": "275 💎", "p": "22000"}, {"d": "565 💎", "p": "44500"}, {"d": "1155 💎", "p": "88000"}, {"d": "1765 💎", "p": "132000"}, {"d": "2975 💎", "p": "220000"}, {"d": "6000 💎", "p": "435000"}],
-            "Weekly Pass": [{"d": f"Weekly Pass {i}X 💎", "p": str(8600 * i)} for i in range(1, 11)]
-        }
     }
 ]
-
 
 HTML_CODE = '''
 <!DOCTYPE html><html><head>
@@ -85,24 +68,12 @@ HTML_CODE = '''
     .pkg-card { background:#1e293b; border:1px solid #334155; padding:12px; border-radius:10px; text-align:center; }
     .pkg-card.selected { border:2px solid #fbbf24; background:#1e3a8a; }
     
-    /* Glow Box Style */
-    .glow-box {
-        border: 1px solid #ff4444;
-        padding: 4px 12px;
-        border-radius: 8px;
-        color: #ff4444;
-        font-weight: bold;
-        font-size: 13px;
-        box-shadow: 0 0 10px rgba(255, 68, 68, 0.4);
-        display: inline-block;
-        margin-top: 8px;
-        animation: pulse 1.5s infinite;
-    }
-    @keyframes pulse {
-        0% { box-shadow: 0 0 5px rgba(255, 68, 68, 0.4); opacity: 0.8; }
-        50% { box-shadow: 0 0 15px rgba(255, 68, 68, 0.7); opacity: 1; }
-        100% { box-shadow: 0 0 5px rgba(255, 68, 68, 0.4); opacity: 0.8; }
-    }
+    /* Copy Button & Glow Box Style */
+    .glow-box { border: 1px solid #ff4444; padding: 4px 12px; border-radius: 8px; color: #ff4444; font-weight: bold; font-size: 13px; box-shadow: 0 0 10px rgba(255, 68, 68, 0.4); display: inline-block; margin-top: 8px; animation: pulse 1.5s infinite; }
+    @keyframes pulse { 0% { box-shadow: 0 0 5px rgba(255, 68, 68, 0.4); } 50% { box-shadow: 0 0 15px rgba(255, 68, 68, 0.7); } 100% { box-shadow: 0 0 5px rgba(255, 68, 68, 0.4); } }
+    
+    .copy-btn { background: #fbbf24; color: black; border: none; padding: 4px 8px; border-radius: 5px; font-size: 12px; cursor: pointer; margin-left: 8px; font-weight: bold; }
+    .copy-btn:active { transform: scale(0.9); }
 
     .pay-card { background:#1e293b; border-radius:15px; padding:15px; margin:20px 0; text-align:center; border:1px solid #334155; }
     .pay-logos { display:flex; justify-content:center; gap:10px; margin-bottom:10px; }
@@ -131,7 +102,10 @@ HTML_CODE = '''
         <div class="pay-logos">
             <img src="/static/kpay.jpg"> <img src="/static/wave.jpg"> <img src="/static/ayapay.jpg">
         </div>
-        <b style="color:#fbbf24;font-size:20px; letter-spacing:1px;">{{pay.Number}}</b><br>
+        <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 5px;">
+            <b id="pay-num" style="color:#fbbf24;font-size:20px; letter-spacing:1px;">{{pay.Number}}</b>
+            <button class="copy-btn" onclick="copyNum()"><i class="fas fa-copy"></i> Copy</button>
+        </div>
         <span style="color:#cbd5e1; font-size:15px;">{{pay.Name}}</span><br>
         <div class="glow-box">Note - {{pay.Note}}</div>
     </div>
@@ -170,6 +144,21 @@ HTML_CODE = '''
 const data = {{ games | tojson }};
 function init() {
     document.getElementById('game-list').innerHTML = data.map(g => `<div class="game-card" onclick="selectGame('${g.name}')"><img src="${g.img}"><h4>${g.name}</h4></div>`).join('');
+}
+
+function copyNum() {
+    const num = document.getElementById('pay-num').innerText;
+    navigator.clipboard.writeText(num).then(() => {
+        const btn = document.querySelector('.copy-btn');
+        btn.innerHTML = '<i class="fas fa-check"></i> Copied';
+        btn.style.background = '#10b981';
+        btn.style.color = 'white';
+        setTimeout(() => {
+            btn.innerHTML = '<i class="fas fa-copy"></i> Copy';
+            btn.style.background = '#fbbf24';
+            btn.style.color = 'black';
+        }, 2000);
+    });
 }
 
 function selectGame(name) {
@@ -319,5 +308,4 @@ def update(oid, status):
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
-
-
+    
