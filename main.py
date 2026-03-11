@@ -80,7 +80,20 @@ HTML_CODE = '''
     .cat-tabs-container { overflow-x: auto; white-space: nowrap; padding: 5px 0 15px 0; -webkit-overflow-scrolling: touch; }
     .cat-tab { padding:10px 18px; background:#1e293b; border-radius:10px; font-size:12px; border:1px solid #334155; display:inline-block; margin-right:5px; color:#94a3b8; }
     .cat-tab.active { background:#fbbf24; color:black; font-weight:bold; border-color:#fbbf24; }
-    .pkg-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    
+    /* 🚀 Scrollable Box ပြင်ဆင်မှု */
+    .pkg-grid { 
+        display:grid; 
+        grid-template-columns:1fr 1fr; 
+        gap:10px; 
+        max-height: 350px; /* အမြင့်ကို 350px သတ်မှတ်ထားသည် */
+        overflow-y: auto;  /* အပေါ်အောက် ဆွဲကြည့်နိုင်ရန် */
+        padding: 5px;
+        background: rgba(30, 41, 59, 0.5);
+        border-radius: 12px;
+        border: 1px solid #334155;
+    }
+    
     .pkg-card { background:#1e293b; border:1px solid #334155; padding:12px; border-radius:10px; text-align:center; }
     .pkg-card.selected { border:2px solid #fbbf24; background:#1e3a8a; }
     .pay-card { background:#1e293b; border-radius:15px; padding:15px; margin:20px 0; text-align:center; border:1px solid #334155; }
@@ -102,8 +115,9 @@ HTML_CODE = '''
 
 <div id="order-sec" class="section">
     <button onclick="goHome()" style="background:none;color:white;border:1px solid #334155;padding:8px 15px;border-radius:8px;margin-bottom:15px;">← Back</button>
-    <h3 id="game-title" style="color:#fbbf24;margin:0;"></h3>
+    <h3 id="game-title" style="color:#fbbf24;margin:10px 0;"></h3>
     <div class="cat-tabs-container" id="tabs"></div>
+    
     <div class="pkg-grid" id="pkg-list"></div>
 
     <div class="pay-card">
@@ -159,7 +173,6 @@ function selectGame(name) {
     const g = data.find(i => i.name === name);
     const cats = g.cats;
     
-    // --- 🚀 သင်ပေးထားတဲ့ Sorting Code နေရာ ---
     const order = ["Normal Dia", "Indo Dia", "Mal & SGP Dia", "Philippines Dia", "Russia Dia", "Weekly Pass", "2X Dia", "Bundle Pack"];
     const sortedKeys = Object.keys(cats).sort((a, b) => {
         let indexA = order.indexOf(a);
@@ -213,7 +226,6 @@ init();
 </script></body></html>
 '''
 
-# --- (ADMIN & ORDER ROUTES - SAME AS BEFORE) ---
 @app.route('/')
 def index(): return render_template_string(HTML_CODE, games=GAMES_DATA, pay=PAY_DATA, cs=CS_LINK)
 
@@ -228,7 +240,7 @@ def order():
     msg = f"🔔 *New Order!*\nID: #{order_id}\nServer: {server}\nGameID: {u_id} ({z_id})\nPkg: {pkg}\nAmt: {amt} Ks\n\n🔗 [Open Admin]({BASE_URL}/admin)"
     if photo: requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto", data={"chat_id": CHAT_ID, "caption": msg, "parse_mode": "Markdown"}, files={'photo': photo.read()})
     db.insert({'id': order_id, 'status': 'Pending', 'server': server, 'uid': u_id, 'pkg': pkg, 'amt': amt, 'time': time_now})
-    return f"<html><body style='background:#0f172a;color:white;text-align:center;padding:50px;'><h2>Odrer Success! ✅</h2><script>let h=JSON.parse(localStorage.getItem('kiwi_h')||'[]'); h.unshift({{id:'{order_id}', s:'{server}', p:'{pkg}', t:'{time_now}'}}); localStorage.setItem('kiwi_h', JSON.stringify(h)); setTimeout(()=>location.href='/', 1500);</script></body></html>"
+    return f"<html><body style='background:#0f172a;color:white;text-align:center;padding:50px;'><h2>Order Success! ✅</h2><script>let h=JSON.parse(localStorage.getItem('kiwi_h')||'[]'); h.unshift({{id:'{order_id}', s:'{server}', p:'{pkg}', t:'{time_now}'}}); localStorage.setItem('kiwi_h', JSON.stringify(h)); setTimeout(()=>location.href='/', 1500);</script></body></html>"
 
 @app.route('/get_status/<id>')
 def get_status(id):
