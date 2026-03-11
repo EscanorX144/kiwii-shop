@@ -89,7 +89,27 @@ def order():
         requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto", data={"chat_id": CHAT_ID, "caption": msg, "parse_mode": "Markdown"}, files=files)
     
     db.insert({'id': order_id, 'server': server, 'uid': u_id, 'zid': z_id, 'pkg': pkg, 'amt': amt, 'status': 'Pending', 'time': datetime.now().strftime("%d/%m %I:%M %p")})
-    return f"<html><body style='background:#0f172a;color:white;text-align:center;padding:50px;'><h2>Order Success! ✅</h2><script>let h=JSON.parse(localStorage.getItem('kiwii_h')||'[]'); h.unshift({{id:'{order_id}', s:'{server}', p:'{pkg}', a:'{amt}', t:'{datetime.now().strftime('%d/%m %I:%M %p')}'}}); localStorage.setItem('kiwii_h', JSON.stringify(h)); setTimeout(()=>location.href='/', 1500);</script></body></html>"
+    
+    # --- ဒီအောက်က return အပိုင်းကို အစားထိုးလိုက်ပါ ---
+    return f"""
+    <html>
+    <body style='background:#0f172a;color:white;text-align:center;padding:50px;'>
+        <h2>Order Success! ✅</h2>
+        <script>
+            let h = JSON.parse(localStorage.getItem('kiwi_h') || '[]');
+            h.unshift({{
+                id: '{order_id}', 
+                s: '{server}', 
+                p: '{pkg}', 
+                a: '{amt}', 
+                t: '{datetime.now().strftime('%d/%m %I:%M %p')}'
+            }});
+            localStorage.setItem('kiwi_h', JSON.stringify(h));
+            setTimeout(() => location.href='/', 1500);
+        </script>
+    </body>
+    </html>
+    """
 
 @app.route('/admin')
 def admin():
