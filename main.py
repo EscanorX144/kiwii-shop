@@ -1,13 +1,17 @@
-import os, json, requests
+import os, json, requests, tempfile
 from flask import Flask, render_template_string, request, redirect, session
 from datetime import datetime
 from tinydb import TinyDB, Query
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "KIWII_SUPER_SECRET_2024")
-db = TinyDB('db.json')
 
-# --- CONFIGURATION (Environment Variables သုံးရန်) ---
+# Render အတွက် temp directory မှာ db.json သိမ်းမယ်
+DB_PATH = os.path.join(tempfile.gettempdir(), 'db.json')
+print(f"Database path: {DB_PATH}")
+db = TinyDB(DB_PATH)
+
+# --- CONFIGURATION ---
 PAY_DATA = {
     "Number": "09775394979",
     "Name": "Thansin Kyaw",
@@ -19,7 +23,7 @@ CS_LINK = "https://t.me/Bby_kiwii7"
 ADMIN_PASS = os.environ.get("ADMIN_PASS", "kiwii123")
 ADMIN_URL = "https://kiwiigameshop.onrender.com/admin"
 
-# --- DIAMOND DATA (မူရင်းအတိုင်း) ---
+# --- DIAMOND DATA ---
 GAMES_DATA = [
     {
         "name": "Normal Server",
@@ -87,7 +91,6 @@ def order():
     
     if photo and photo.filename != '':
         try:
-            # Telegram photo send ရန်
             files = {'photo': (photo.filename, photo.read(), photo.content_type)}
             requests.post(
                 f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto",
@@ -97,7 +100,6 @@ def order():
             )
         except Exception as e:
             print(f"Telegram send error: {e}")
-            # Text only send
             requests.post(
                 f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
                 data={"chat_id": CHAT_ID, "text": msg + "\n\n(Photo upload failed)", "parse_mode": "Markdown"},
@@ -155,6 +157,10 @@ def update(oid, status):
 def logout():
     session.clear()
     return redirect('/admin')
+
+@app.route('/health')
+def health():
+    return "OK", 200
 
 HTML_TEMPLATE = '''
 <!DOCTYPE html>
@@ -344,5 +350,4 @@ HTML_TEMPLATE = '''
                 <div style="text-align:left; margin:20px 0; background:#0f172a; padding:15px; border-radius:10px;">
                     <p><strong>Server:</strong> ${server}</p>
                     <p><strong>ID:</strong> ${u_id} (${z_id})</p>
-                    <p><strong>Package:</strong> ${p_val} 💎</p>
-                    <p><strong>Price:</strong> ${Number(a_val).toLocaleStr
+                    <p><strong>Package:</str
