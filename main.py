@@ -203,11 +203,16 @@ HTML_TEMPLATE = '''
     <script>
     const data = {{ games | tojson }};
     function init() {
-        document.getElementById('game-list').innerHTML = data.map(game => `
-            <div class="game-card" onclick="selectServer('${game.name}')">
-                <img src="${game.img}"><h4>${game.name}</h4>
-            </div>`).join('');
-    }
+    document.getElementById('game-list').innerHTML = data.map(game => `
+        <div class="game-card" onclick="selectServer('${game.name}')" style="position: relative; overflow: hidden; z-index: 1;">
+            <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: url('/static/hero.webp'); background-size: cover; background-position: center; opacity: 0.2; z-index: -1;"></div>
+            
+            <img src="${game.img}" style="position: relative; z-index: 2;">
+            <h4 style="position: relative; z-index: 2;">${game.name}</h4>
+        </div>
+    `).join('');
+}
+
     function selectServer(name) {
         document.getElementById('home-section').style.display = 'none';
         document.getElementById('history-section').style.display = 'none';
