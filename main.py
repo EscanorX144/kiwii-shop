@@ -202,6 +202,7 @@ HTML_TEMPLATE = '''
         <a href="{{cs}}" class="nav-btn" style="text-decoration:none;"><i class="fas fa-comment"></i><br>CS</a>
     </div>
 
+ <script>
     const data = {{ games | tojson }};
     function init() {
         document.getElementById('game-list').innerHTML = data.map(game => `
@@ -222,7 +223,6 @@ HTML_TEMPLATE = '''
         const game = data.find(g => g.name === name);
         const cats = game.cats;
 
-        // ခလုတ်တွေကို အစဉ်လိုက်ဖြစ်အောင် စီခိုင်းခြင်း
         const order = ["Normal Dia", "Indo Dia", "Mal & SGP Dia", "Philippines Dia", "Russia Dia", "Weekly Pass", "2X Dia", "Bundle Pack"];
         const sortedKeys = Object.keys(cats).sort((a, b) => {
             let indexA = order.indexOf(a);
@@ -275,25 +275,26 @@ HTML_TEMPLATE = '''
         `;
         document.body.appendChild(modal);
     }
+
     async function showHistory() {
-        document.getElementById('home-section').style.display='none';
-        document.getElementById('order-section').style.display='none';
-        document.getElementById('history-section').style.display='block';
-        const h = JSON.parse(localStorage.getItem('kiwii_h') || '[]');
-        let html = h.length ? "" : "<div style='text-align:center; margin-top:50px; color:#94a3b8;'>No history found.</div>";
+        document.getElementById('home-section').style.display = 'none';
+        document.getElementById('order-section').style.display = 'none';
+        document.getElementById('history-section').style.display = 'block';
+        const h = JSON.parse(localStorage.getItem('kiwi_h') || '[]');
+        let html = h.length === 0 ? '<div style="text-align:center; margin-top:50px; color:#94a3b8;">No history found.</div>' : '';
         for(let i=0; i<h.length; i++){
-            const status = await fetch('/get_status/'+h[i].id).then(r=>r.text());
-            html += `<div class="hist-item"><span class="status-badge">${status}</span><b>ID: #${h[i].id}</b><br><small>${h[i].s} | ${h[i].p} 💎</small><br><small style="color:#94a3b8;">${h[i].t}</small></div>`;
+            html += `<div class="hist-item"><span>ID: ${h[i].id}</span></div>`;
         }
         document.getElementById('history-list').innerHTML = html;
     }
-    function goHome() { 
+
+    function goHome() {
         document.getElementById('home-section').style.display = 'grid';
         document.getElementById('order-section').style.display = 'none';
         document.getElementById('history-section').style.display = 'none';
     }
     init();
-    </script>
+</scrip
 </body></html>
 '''
 
