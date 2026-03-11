@@ -6,9 +6,8 @@ from pymongo import MongoClient
 app = Flask(__name__)
 app.secret_key = "KIWII_ULTIMATE_SECRET"
 
-# --- 🛰️ MONGODB CONNECTION (Standard Connection String သုံးပြီး Timeout Error ကို ဖြေရှင်းထားသည်) ---
-# Shard တွေ အများကြီး မထည့်ဘဲ Cluster တစ်ခုတည်း ချိတ်ခြင်းက Render ပေါ်မှာ ပိုငြိမ်ပါတယ်
-MONGO_URI = "mongodb+srv://EscanorX:Conti144@cluster0.m2tomm.mongodb.net/kiwii_game_shop?retryWrites=true&w=majority"
+# standard connection format ကို သုံးခြင်းဖြင့် DNS error ကို ကျော်လွှားနိုင်ပါသည်
+MONGO_URI = "mongodb://EscanorX:Conti144@cluster0-shard-00-00.m2tomm.mongodb.net:27017,cluster0-shard-00-01.m2tomm.mongodb.net:27017,cluster0-shard-00-02.m2tomm.mongodb.net:27017/kiwii_game_shop?ssl=true&replicaSet=atlas-m2tomm-shard-0&authSource=admin&retryWrites=true&w=majority"
 client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=10000, connectTimeoutMS=10000)
 db_mongo = client['kiwii_game_shop']
 orders_col = db_mongo['orders']
