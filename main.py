@@ -157,24 +157,24 @@ HTML_TEMPLATE = '''
         <div class="cat-tabs" id="tabs"></div>
         <div class="pkg-grid" id="pkg-list"></div>
         
-        <div class="pay-card">
-    <div class="pay-methods">
-        <div class="pay-icon">
-            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjD9M8vP0K6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6/s1600/kbzpay.png" alt="KPay" style="width:50px; height:50px; border-radius:10px; display:block; margin:0 auto; object-fit: cover;">
-            <span style="font-size:12px;">KPay</span>
+        <div class="pay-card" style="background:#1e293b; padding:15px; border-radius:15px; border:1px solid #334155; margin:15px 0;">
+    <div class="pay-methods" style="display: flex; justify-content: space-around; align-items: center; margin-bottom: 15px;">
+        <div style="text-align: center;">
+            <svg width="45" height="45" viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="#0066b3"/><text x="50%" y="65%" text-anchor="middle" fill="white" font-weight="bold" font-size="25">KPay</text></svg>
+            <br><span style="font-size:12px;">KPay</span>
         </div>
-        <div class="pay-icon">
-            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjD9M8vP0K6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6/s1600/wave.png" alt="Wave" style="width:50px; height:50px; border-radius:10px; display:block; margin:0 auto; object-fit: cover;">
-            <span style="font-size:12px;">Wave</span>
+        <div style="text-align: center;">
+            <svg width="45" height="45" viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="#fbc02d"/><text x="50%" y="65%" text-anchor="middle" fill="black" font-weight="bold" font-size="25">Wave</text></svg>
+            <br><span style="font-size:12px;">Wave</span>
         </div>
-        <div class="pay-icon">
-            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjD9M8vP0K6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6/s1600/ayapay.png" alt="Aya" style="width:50px; height:50px; border-radius:10px; display:block; margin:0 auto; object-fit: cover;">
-            <span style="font-size:12px;">AyaPay</span>
+        <div style="text-align: center;">
+            <svg width="45" height="45" viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="#ed1c24"/><text x="50%" y="65%" text-anchor="middle" fill="white" font-weight="bold" font-size="25">Aya</text></svg>
+            <br><span style="font-size:12px;">AyaPay</span>
         </div>
     </div>
-    <div style="border-top: 1px solid #334155; padding-top: 15px; margin-top:15px; text-align:center;">
+    <div style="border-top: 1px solid #334155; padding-top: 15px; text-align:center;">
         <small style="color:#94a3b8;">Payment To</small><br>
-        <b style="color:#fbbf24; font-size: 20px; letter-spacing: 1px;">{{pay.Number}}</b><br>
+        <b style="color:#fbbf24; font-size: 20px;">{{pay.Number}}</b><br>
         <small>Name: {{pay.Name}}</small><br>
         <small style="color:#94a3b8;">Note: {{pay.Note}}</small>
     </div>
