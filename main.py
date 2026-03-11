@@ -1,27 +1,27 @@
 import os, requests
-from flask import Flask, render_template_string, request, redirect, session, url_for
+from flask import Flask, render_template_string, request, jsonify
 from datetime import datetime, timedelta, timezone
 from pymongo import MongoClient
 
 app = Flask(__name__)
 app.secret_key = "KIWII_ULTIMATE_SECRET"
 
-# --- 🛰️ MONGODB CONNECTION (Fixed DNS Issue) ---
-# DNS Query Error မဖြစ်အောင် IP-based shard format ကို သုံးထားပါတယ်
+# --- 🛰️ MONGODB CONNECTION (Standard Driver Format to fix DNS Error) ---
 MONGO_URI = "mongodb://EscanorX:Conti144@cluster0-shard-00-00.m2tomm.mongodb.net:27017,cluster0-shard-00-01.m2tomm.mongodb.net:27017,cluster0-shard-00-02.m2tomm.mongodb.net:27017/?ssl=true&replicaSet=atlas-m2tomm-shard-0&authSource=admin"
-client = MongoClient(MONGO_URI)
+client = MongoClient(MONGO_URI, connectTimeoutMS=30000)
 db_mongo = client['kiwii_game_shop']
 orders_col = db_mongo['orders']
 
-# --- ⚙️ CONFIGURATION (Updated with your new IDs) ---
-BOT_TOKEN = "8089066962:AAFOHBGeuDF7E3YgeJ3mUu000sQNJ4uJVok" # သင်ပေးထားသော Token အသစ်
-CHAT_ID = "7089720301" # သင်ပေးထားသော ID အသစ်
-CS_LINK = "https://t.me/Bby_kiwii7" # သင်ပေးထားသော Username အသစ်
+# --- ⚙️ CONFIGURATION ---
+# Bot Token ကို အစအဆုံး သေချာပြန်စစ်ပြီး ထည့်ထားသည်
+BOT_TOKEN = "8089066962:AAFOHBGeuDF7E3Ygej3mUu000sQNJ4uJVok"
+CHAT_ID = "7089720301"
+CS_LINK = "https://t.me/Bby_kiwii7"
 
 PAY_DATA = {
-    "KPay": {"Number": "09775394979", "Name": "Thansin Kyaw", "img": "/static/kpay.jpg"},
-    "Wave": {"Number": "09775394979", "Name": "Thansin Kyaw", "img": "/static/wave.jpg"},
-    "AYAPay": {"Number": "09775394979", "Name": "Thansin Kyaw", "img": "/static/ayapay.jpg"},
+    "KPay": {"Number": "09775394979", "Name": "Thansin Kyaw", "img": "/static/1000030839.jpg"},
+    "Wave": {"Number": "09775394979", "Name": "Thansin Kyaw", "img": "/static/1000030841.jpg"},
+    "AYAPay": {"Number": "09775394979", "Name": "Thansin Kyaw", "img": "/static/1000030837.jpg"},
     "Note": "Payment သာရေးပါ"
 }
 
@@ -83,7 +83,7 @@ GAMES_DATA = [
     }
 ]
 
-# --- UI HTML (Payment, History & Design fixes) ---
+# --- UI HTML ---
 HTML_CODE = '''
 <!DOCTYPE html><html><head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -91,35 +91,23 @@ HTML_CODE = '''
 <style>
     @keyframes glow { 0%, 100% { box-shadow: 0 0 5px #ff4444; } 50% { box-shadow: 0 0 20px #ff4444; } }
     body { background: #0f172a; color:white; font-family:sans-serif; margin:0; padding:15px; padding-bottom:80px; }
-    
-    #home-sec { 
-        background: linear-gradient(rgba(15,23,42,0.6), rgba(15,23,42,0.8)), url('/static/hero.webp');
-        background-size: cover; background-position: center; border-radius: 20px; padding: 25px 10px; min-height: 450px;
-    }
+    #home-sec { background: linear-gradient(rgba(15,23,42,0.6), rgba(15,23,42,0.8)), url('/static/hero.webp'); background-size: cover; border-radius: 20px; padding: 25px 10px; }
     .game-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-    .game-card { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; padding: 20px 10px; text-align: center; }
-    .game-card img { width:50px; height:35px; border-radius:4px; margin-bottom:8px; }
-    
-    .cat-tabs-container { display:flex; gap:8px; overflow-x:auto; padding: 10px 0; }
-    .cat-tab { padding:10px 18px; background:#1e293b; border-radius:10px; font-size:12px; border:1px solid #334155; color:#94a3b8; cursor:pointer; white-space: nowrap; }
+    .game-card { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(8px); border-radius: 15px; padding: 20px 10px; text-align: center; border: 1px solid rgba(255,255,255,0.1); }
+    .game-card img { width:50px; border-radius:4px; }
+    .cat-tab { padding:10px 15px; background:#1e293b; border-radius:10px; font-size:12px; cursor:pointer; display:inline-block; margin-right:5px; }
     .cat-tab.active { background:#fbbf24; color:black; font-weight:bold; }
-    
-    .pkg-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; max-height: 350px; overflow-y: auto; padding: 5px; }
+    .pkg-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:15px; }
     .pkg-card { background:#1e293b; border:1px solid #334155; padding:12px; border-radius:10px; text-align:center; }
     .pkg-card.selected { border:2px solid #fbbf24; background:#1e3a8a; }
-
-    .pay-selector { display: flex; gap: 15px; justify-content: center; margin: 15px 0; }
-    .pay-btn-icon { width: 55px; height: 55px; border-radius: 12px; border: 2px solid transparent; cursor: pointer; }
+    .pay-btn-icon { width: 55px; height: 55px; border-radius: 12px; border: 2px solid transparent; cursor: pointer; margin: 0 5px; }
     .pay-btn-icon.active { border-color: #fbbf24; box-shadow: 0 0 10px #fbbf24; }
-    
-    .pay-card { background:rgba(30, 41, 59, 0.95); border-radius:15px; padding:20px; text-align:center; border:1px solid #fbbf24; margin-bottom: 15px; }
-    .glow-box { animation: glow 1.5s infinite; background: rgba(255, 68, 68, 0.1); border: 1px solid #ff4444; padding: 10px; border-radius: 8px; color: #ff4444; font-weight: bold; font-size: 13px; margin-top:10px; }
-
+    .pay-card { background:rgba(30, 41, 59, 0.95); border-radius:15px; padding:20px; text-align:center; border:1px solid #fbbf24; margin: 15px 0; }
+    .glow-box { animation: glow 1.5s infinite; background: rgba(255, 68, 68, 0.1); border: 1px solid #ff4444; padding: 10px; border-radius: 8px; color: #ff4444; font-size: 13px; }
     input { width:100%; padding:14px; margin:8px 0; border-radius:10px; border:1px solid #334155; background:#0f172a; color:white; box-sizing:border-box; }
-    .buy-btn { width:100%; padding:16px; background:#fbbf24; border:none; border-radius:10px; font-weight:bold; color:black; font-size:16px; margin-top:10px; cursor:pointer; }
-    
+    .buy-btn { width:100%; padding:16px; background:#fbbf24; border:none; border-radius:10px; font-weight:bold; color:black; font-size:16px; cursor:pointer; }
     .history-card { background:#1e293b; border-radius:12px; padding:15px; margin-bottom:12px; border-left:4px solid #fbbf24; }
-    .nav-bar { position:fixed; bottom:0; left:0; right:0; background:#1e293b; display:flex; padding:12px; border-top:1px solid #334155; z-index:100; }
+    .nav-bar { position:fixed; bottom:0; left:0; right:0; background:#1e293b; display:flex; padding:12px; border-top:1px solid #334155; }
     .nav-btn { flex:1; text-align:center; color:#94a3b8; font-size:12px; text-decoration:none; cursor:pointer; }
 </style>
 </head><body>
@@ -129,34 +117,31 @@ HTML_CODE = '''
     <div class="game-grid" id="game-list"></div>
 </div>
 
-<div id="history-sec" style="display:none;">
+<div id="history-sec" style="display:none; padding:10px;">
     <h2 style="color:#fbbf24;">Order History</h2>
     <div id="history-list"></div>
 </div>
 
 <div id="order-sec" style="display:none;">
     <button onclick="goHome()" style="background:none;color:white;border:1px solid #334155;padding:8px 15px;border-radius:8px;margin-bottom:15px;">← Back</button>
-    <h3 id="game-title" style="color:#fbbf24; margin-top:0;"></h3>
-    <div class="cat-tabs-container" id="tabs"></div>
+    <h3 id="game-title" style="color:#fbbf24;"></h3>
+    <div id="tabs" style="overflow-x:auto; white-space:nowrap;"></div>
     <div class="pkg-grid" id="pkg-list"></div>
-
-    <div class="pay-selector">
+    <div style="text-align:center; margin-top:20px;">
         <img src="{{pay.KPay.img}}" class="pay-btn-icon active" onclick="setPay('KPay', this)">
         <img src="{{pay.Wave.img}}" class="pay-btn-icon" onclick="setPay('Wave', this)">
         <img src="{{pay.AYAPay.img}}" class="pay-btn-icon" onclick="setPay('AYAPay', this)">
     </div>
-
     <div class="pay-card">
-        <b id="pay-num" style="color:#fbbf24;font-size:22px;"></b>
-        <span id="pay-name" style="display:block; color:#cbd5e1; font-size:14px; margin-top:5px;"></span>
+        <b id="pay-num" style="color:#fbbf24;font-size:22px;"></b><br>
+        <span id="pay-name" style="color:#cbd5e1; font-size:14px;"></span>
         <div class="glow-box">Note - {{pay.Note}}</div>
     </div>
-
     <form action="/order" method="post" enctype="multipart/form-data">
         <input type="hidden" name="server" id="s_name"><input type="hidden" name="p" id="p_val"><input type="hidden" name="a" id="a_val">
         <input type="text" name="u" placeholder="Player ID" required>
         <input type="text" name="z" placeholder="Zone ID">
-        <input type="file" name="photo" required accept="image/*" style="border:none; margin:10px 0;">
+        <input type="file" name="photo" required accept="image/*">
         <button type="submit" class="buy-btn">CONFIRM & BUY</button>
     </form>
 </div>
@@ -180,8 +165,7 @@ function init() {
 }
 
 function selectGame(name) {
-    hideAll();
-    document.getElementById('order-sec').style.display='block';
+    hideAll(); document.getElementById('order-sec').style.display='block';
     document.getElementById('game-title').innerText=name;
     document.getElementById('s_name').value=name;
     const g=data.find(i=>i.name===name);
@@ -212,16 +196,15 @@ function setPay(type, el) {
 }
 
 function showHistory() {
-    hideAll();
-    document.getElementById('history-sec').style.display='block';
+    hideAll(); document.getElementById('history-sec').style.display='block';
     fetch('/api/history').then(res=>res.json()).then(orders=>{
         document.getElementById('history-list').innerHTML = orders.length ? orders.map(o=>`
             <div class="history-card">
-                <small style="color:#94a3b8;">${o.date}</small>
-                <div style="font-weight:bold; margin:5px 0;">${o.pkg}</div>
-                <div style="font-size:13px;">ID: ${o.uid} | Price: ${o.price} Ks</div>
-                <div style="color:#fbbf24; font-size:12px; margin-top:5px;">Status: Pending ⏳</div>
-            </div>`).join('') : '<p style="text-align:center;color:#94a3b8;">No orders yet.</p>';
+                <small>${o.date}</small>
+                <div style="font-weight:bold;">${o.pkg}</div>
+                <div>ID: ${o.uid} | ${o.price} Ks</div>
+                <div style="color:#fbbf24; font-size:12px;">Status: Pending ⏳</div>
+            </div>`).join('') : '<p>No orders yet.</p>';
     });
 }
 
@@ -237,39 +220,41 @@ def index(): return render_template_string(HTML_CODE, games=GAMES_DATA, pay=PAY_
 
 @app.route('/order', methods=['POST'])
 def order():
-    order_id = str(int(datetime.now().timestamp()))
-    server = request.form.get('server')
-    uid = request.form.get('u')
-    zone = request.form.get('z') or "-"
-    pkg = request.form.get('p')
-    amt = request.form.get('a')
-    photo = request.files.get('photo')
-    
-    # 💾 Save to MongoDB
-    orders_col.insert_one({
-        "order_id": order_id, "uid": uid, "pkg": pkg, "price": amt,
-        "date": datetime.now(timezone(timedelta(hours=6, minutes=30))).strftime("%Y-%m-%d %H:%M"),
-        "status": "pending"
-    })
-
-    # 🔔 Send to Telegram
-    msg = f"🔔 *New Order!*\nServer: {server}\nID: `{uid} ({zone})`\nPkg: {pkg}\nAmt: {amt} Ks"
     try:
+        server = request.form.get('server')
+        uid = request.form.get('u')
+        zone = request.form.get('z') or "-"
+        pkg = request.form.get('p')
+        amt = request.form.get('a')
+        photo = request.files.get('photo')
+        
+        # 💾 MongoDB Save (Wait for insert to finish)
+        orders_col.insert_one({
+            "uid": uid, "pkg": pkg, "price": amt,
+            "date": datetime.now(timezone(timedelta(hours=6, minutes=30))).strftime("%Y-%m-%d %H:%M"),
+            "status": "pending"
+        })
+
+        # 🔔 Telegram Notification
+        msg = f"🔔 *New Order!*\nServer: {server}\nID: `{uid} ({zone})`\nPkg: {pkg}\nAmt: {amt} Ks"
         if photo:
             requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto", 
                           data={"chat_id": CHAT_ID, "caption": msg, "parse_mode": "Markdown"}, 
                           files={'photo': photo.read()})
-    except: pass
+    except Exception as e:
+        print(f"Error logic: {e}")
                       
-    return "<html><body style='background:#0f172a;color:white;text-align:center;padding:100px;'><h2>Order Success! ✅</h2><script>setTimeout(()=>location.href='/', 2000);</script></body></html>"
+    return "<html><body style='background:#0f172a;color:white;text-align:center;padding-top:100px;'><h2>Order Success! ✅</h2><script>setTimeout(()=>location.href='/', 2000);</script></body></html>"
 
 @app.route('/api/history')
 def get_history():
-    history = list(orders_col.find().sort("_id", -1).limit(10))
-    for h in history: h["_id"] = str(h["_id"])
-    return history
+    try:
+        history = list(orders_col.find().sort("_id", -1).limit(10))
+        for h in history: h["_id"] = str(h["_id"])
+        return jsonify(history)
+    except:
+        return jsonify([])
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
-
-
+    
