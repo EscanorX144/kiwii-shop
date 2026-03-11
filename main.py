@@ -17,7 +17,7 @@ PAY_DATA = {"Number": "09775394979", "Name": "Thansin Kyaw", "Note": "Payment á€
 BOT_TOKEN = "8089066962:AAFOHB6euDF7E3Ygej3nAwOODSNj4ujVvk"
 CHAT_ID = "7089720301"
 CS_LINK = "https://t.me/Why_kiwii?"
-ADMIN_PASS = "kiwi1123"
+ADMIN_PASS = "kiwii123"
 BASE_URL = "https://kiwiigameshop.onrender.com"
 
 # --- ðŸ’Ž DIAMOND LIST DATA ---
