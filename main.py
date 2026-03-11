@@ -8,7 +8,7 @@ app.secret_key = "KIWII_ULTIMATE_SECRET_STAY_SAFE"
 db = TinyDB('db.json')
 
 # --- CONFIGURATION ---
-PAY_DATA = {"Number": "09775394979", "Name": "Thansin Kyaw", "Note": "Payment"}
+PAY_DATA = {"Number": "09775394979", "Name": "Thansin Kyaw", "Note": "Payment သာရေးပါ"}
 BOT_TOKEN = "8089066962:AAFOHBGeuDF7E3YgeJ3mUu000sQNJ4uJVok"
 CHAT_ID = "7089720301"
 CS_LINK = "https://t.me/Bby_kiwii7"
@@ -84,6 +84,26 @@ HTML_CODE = '''
     .pkg-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; max-height: 350px; overflow-y: auto; padding: 5px; background: rgba(30, 41, 59, 0.5); border-radius: 12px; border: 1px solid #334155; }
     .pkg-card { background:#1e293b; border:1px solid #334155; padding:12px; border-radius:10px; text-align:center; }
     .pkg-card.selected { border:2px solid #fbbf24; background:#1e3a8a; }
+    
+    /* Glow Box Style */
+    .glow-box {
+        border: 1px solid #ff4444;
+        padding: 4px 12px;
+        border-radius: 8px;
+        color: #ff4444;
+        font-weight: bold;
+        font-size: 13px;
+        box-shadow: 0 0 10px rgba(255, 68, 68, 0.4);
+        display: inline-block;
+        margin-top: 8px;
+        animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+        0% { box-shadow: 0 0 5px rgba(255, 68, 68, 0.4); opacity: 0.8; }
+        50% { box-shadow: 0 0 15px rgba(255, 68, 68, 0.7); opacity: 1; }
+        100% { box-shadow: 0 0 5px rgba(255, 68, 68, 0.4); opacity: 0.8; }
+    }
+
     .pay-card { background:#1e293b; border-radius:15px; padding:15px; margin:20px 0; text-align:center; border:1px solid #334155; }
     .pay-logos { display:flex; justify-content:center; gap:10px; margin-bottom:10px; }
     .pay-logos img { width:40px; height:40px; border-radius:8px; }
@@ -111,8 +131,9 @@ HTML_CODE = '''
         <div class="pay-logos">
             <img src="/static/kpay.jpg"> <img src="/static/wave.jpg"> <img src="/static/ayapay.jpg">
         </div>
-        <b style="color:#fbbf24;font-size:18px;">{{pay.Number}}</b><br>
-        <small>{{pay.Name}} | {{pay.Note}}</small>
+        <b style="color:#fbbf24;font-size:20px; letter-spacing:1px;">{{pay.Number}}</b><br>
+        <span style="color:#cbd5e1; font-size:15px;">{{pay.Name}}</span><br>
+        <div class="glow-box">Note - {{pay.Note}}</div>
     </div>
 
     <form id="order-form" action="/order" method="post" enctype="multipart/form-data">
