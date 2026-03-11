@@ -167,10 +167,11 @@ HTML_TEMPLATE = '''
             <img src="{{ url_for('static', filename='wave.jpg') }}" alt="Wave" style="width:45px; height:45px; border-radius:10px;">
             <br><span>Wave</span>
         </div>
-        <div class="pay-icon">
-            <img src="{{ url_for('static', filename='ayapay.png') }}" alt="Aya" style="width:45px; height:45px; border-radius:10px;">
-            <br><span>AyaPay</span>
-        </div>
+       <div class="pay-icon">
+    <img src="{{ url_for('static', filename='ayapay.PNG') }}" alt="Aya" style="width:45px; height:45px; border-radius:10px;">
+    <br><span>AyaPay</span>
+</div>
+
     </div>
     <div style="border-top: 1px solid #334155; padding-top: 15px; margin-top:10px;">
         <small>Payment To</small><br>
