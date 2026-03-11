@@ -223,8 +223,8 @@ async function showHistory() {
             let color = currentStatus === 'Success' ? '#10b981' : (currentStatus === 'Cancel' ? '#ef4444' : '#fbbf24');
             html = (i === 0 ? '' : html) + `
                 <div style="background:#1e293b;padding:15px;border-radius:12px;margin-bottom:10px;border-left:5px solid ${color};">
-                    <b>#${h[i].id}</b> <small style="float:right;color:${color}">${currentStatus}</small><br>
-                    <small>${h[i].s} | ${h[i].p} | ${h[i].t}</small>
+                    <b style="color:#fbbf24;">ID: ${h[i].gid || 'N/A'}</b> <small style="float:right;color:${color}">${currentStatus}</small><br>
+                    <small style="color:#cbd5e1;">${h[i].s} | ${h[i].p} | ${h[i].t}</small>
                 </div>`;
         } catch (err) { console.error(err); }
     }
@@ -254,7 +254,7 @@ def order():
     msg = f"🔔 *New Order!*\nID: #{order_id}\nServer: {server}\nGameID: {u_id} ({z_id})\nPkg: {pkg}\nAmt: {amt} Ks\n\n🔗 [Open Admin]({BASE_URL}/admin)"
     if photo: requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto", data={"chat_id": CHAT_ID, "caption": msg, "parse_mode": "Markdown"}, files={'photo': photo.read()})
     db.insert({'id': order_id, 'status': 'Pending', 'server': server, 'uid': u_id, 'pkg': pkg, 'amt': amt, 'time': time_now})
-    return f"<html><body style='background:#0f172a;color:white;text-align:center;padding:50px;'><h2>Order Success! ✅</h2><script>let h=JSON.parse(localStorage.getItem('kiwi_h')||'[]'); h.unshift({{id:'{order_id}', s:'{server}', p:'{pkg}', t:'{time_now}', status:'Pending'}}); localStorage.setItem('kiwi_h', JSON.stringify(h)); setTimeout(()=>location.href='/', 1500);</script></body></html>"
+    return f"<html><body style='background:#0f172a;color:white;text-align:center;padding:50px;'><h2>Order Success! ✅</h2><script>let h=JSON.parse(localStorage.getItem('kiwi_h')||'[]'); h.unshift({{id:'{order_id}', s:'{server}', p:'{pkg}', t:'{time_now}', gid:'{u_id}', status:'Pending'}}); localStorage.setItem('kiwi_h', JSON.stringify(h)); setTimeout(()=>location.href='/', 1500);</script></body></html>"
 
 @app.route('/get_status/<id>')
 def get_status(id):
