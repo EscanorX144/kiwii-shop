@@ -223,9 +223,16 @@ HTML_TEMPLATE = '''
         document.getElementById('s_name').value = name;
         const game = data.find(g => g.name === name);
         const cats = game.cats;
-        document.getElementById('tabs').innerHTML = Object.keys(cats).map((c, i) => `
-            <div class="cat-tab ${i===0?'active':''}" onclick="renderPkgs('${name}','${c}',this)">${c}</div>`).join('');
-        renderPkgs(name, Object.keys(cats)[0]);
+                const cats = game.cats;
+        // ခလုတ်တွေကို အစီအစဉ်တကျဖြစ်အောင် သတ်မှတ်ခြင်း
+        const order = ["Normal Dia", "Indo Dia", "Mal & SGP Dia", "Philippines Dia", "Russia Dia", "Weekly Pass", "2X Dia", "Bundle Pack"];
+        const sortedKeys = Object.keys(cats).sort((a, b) => order.indexOf(a) - order.indexOf(b));
+
+        document.getElementById('tabs').innerHTML = sortedKeys.map((c, i) => `
+            <div class="cat-tab ${i === 0 ? 'active' : ''}" onclick="renderPkgs('${name}','${c}',this)">${c}</div>
+        `).join('');
+        renderPkgs(name, sortedKeys[0]);
+
     }
     function renderPkgs(sName, cat, el) {
         if(el) { document.querySelectorAll('.cat-tab').forEach(t=>t.classList.remove('active')); el.classList.add('active'); }
