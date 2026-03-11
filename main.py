@@ -7,6 +7,7 @@ app = Flask(__name__)
 app.secret_key = "KIWII_ULTIMATE_SECRET_STAY_SAFE"
 
 # --- 🛰️ MONGODB CONNECTION ---
+# username, password နှင့် cluster address ကို သေချာစစ်ဆေးထားပါသည်
 MONGO_URI = "mongodb+srv://EscanorX:Conti144@cluster0.m2tomm.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 client = MongoClient(MONGO_URI)
 db_mongo = client['kiwii_game_shop']
@@ -248,4 +249,3 @@ def delete(id):
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
-    
