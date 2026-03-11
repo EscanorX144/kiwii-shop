@@ -1,6 +1,6 @@
 import os, json, requests
 from flask import Flask, render_template_string, request, redirect, session
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from tinydb import TinyDB, Query
 
 app = Flask(__name__)
@@ -8,16 +8,13 @@ app.secret_key = "KIWII_SUPER_SECRET"
 db = TinyDB('db.json')
 
 # --- CONFIGURATION ---
-PAY_DATA = {
-    "Number": "09775394979",
-    "Name": "Thansin Kyaw",
-    "Note": "Payment"
-}
+PAY_DATA = {"Number": "09775394979", "Name": "Thansin Kyaw", "Note": "Payment"}
 BOT_TOKEN = "8089066962:AAFOHBGeuDF7E3YgeJ3mUu000sQNJ4uJVok"
 CHAT_ID = "7089720301"
 CS_LINK = "https://t.me/Bby_kiwii7"
 ADMIN_PASS = "kiwii123"
-ADMIN_URL = "https://kiwiigameshop.onrender.com/admin"
+# သင့် Website URL ကို ဒီမှာမှန်အောင်ပြင်ပေးပါ
+BASE_URL = "https://kiwiigameshop.onrender.com" 
 
 # --- DIAMOND DATA ---
 GAMES_DATA = [
@@ -39,33 +36,6 @@ GAMES_DATA = [
             "Weekly Pass": [{"d": f"Weekly Pass {i}X", "p": str(7500 * i)} for i in range(1, 11)],
             "Bundle Pack": [{"d": "Twilight Pass", "p": "45000"}]
         }
-    },
-    {
-        "name": "Malaysia & Singapore (🇲🇾🇸🇬)",
-        "img": "https://img.icons8.com/color/144/malaysia.png",
-        "cats": {
-            "Mal & SGP Dia": [{"d": "14", "p": "1050"}, {"d": "42", "p": "3100"}, {"d": "56", "p": "4150"}, {"d": "70", "p": "5050"}, {"d": "140", "p": "10100"}, {"d": "210", "p": "15100"}, {"d": "284", "p": "20200"}, {"d": "355", "p": "25200"}, {"d": "429", "p": "30300"}, {"d": "583", "p": "41200"}, {"d": "716", "p": "50200"}, {"d": "870", "p": "61400"}, {"d": "1145", "p": "80500"}, {"d": "1446", "p": "100500"}, {"d": "2162", "p": "150500"}, {"d": "2976", "p": "201000"}, {"d": "3606", "p": "223000"}, {"d": "6012", "p": "371000"}, {"d": "7502", "p": "503500"}],
-            "Weekly Pass": [{"d": f"Weekly Pass {i}X", "p": str(8400 * i)} for i in range(1, 11)],
-            "2X Dia": [{"d": "50+", "p": "4100"}, {"d": "150+", "p": "12000"}, {"d": "250+", "p": "19700"}, {"d": "500+", "p": "40000"}],
-            "Bundle Pack": [{"d": "Weekly Elite Bundle", "p": "4000"}, {"d": "Monthly Epic Bundle", "p": "19600"}, {"d": "Twilight Pass", "p": "46000"}]
-        }
-    },
-    {
-        "name": "Philippines (🇵🇭)",
-        "img": "https://img.icons8.com/color/144/philippines.png",
-        "cats": {
-            "Philippines Dia": [{"d": "11", "p": "750"}, {"d": "22", "p": "1500"}, {"d": "56", "p": "3500"}, {"d": "112", "p": "7000"}, {"d": "223", "p": "14000"}, {"d": "336", "p": "21300"}, {"d": "570", "p": "36000"}, {"d": "1163", "p": "70500"}, {"d": "2398", "p": "140000"}, {"d": "6042", "p": "350000"}],
-            "Weekly Pass": [{"d": f"Weekly Pass {i}X", "p": str(6500 * i)} for i in range(1, 11)],
-            "Bundle Pack": [{"d": "Twilight Pass", "p": "35500"}]
-        }
-    },
-    {
-        "name": "Russia (🇷🇺)",
-        "img": "https://img.icons8.com/color/144/russian-federation.png",
-        "cats": {
-            "Russia Dia": [{"d": "35", "p": "2750"}, {"d": "55", "p": "4450"}, {"d": "165", "p": "13000"}, {"d": "275", "p": "22000"}, {"d": "565", "p": "44500"}, {"d": "1155", "p": "88000"}, {"d": "1765", "p": "182000"}, {"d": "2975", "p": "220000"}, {"d": "6000", "p": "435000"}],
-            "Weekly Pass": [{"d": f"Weekly Pass {i}X", "p": str(8600 * i)} for i in range(1, 11)],
-        }
     }
 ]
 
@@ -75,6 +45,10 @@ def index():
 
 @app.route('/order', methods=['POST'])
 def order():
+    # မြန်မာစံတော်ချိန် သတ်မှတ်ခြင်း (GMT+6:30)
+    mm_tz = timezone(timedelta(hours=6, minutes=30))
+    time_now = datetime.now(mm_tz).strftime('%d/%m %I:%M %p')
+    
     order_id = str(int(datetime.now().timestamp()))
     u_id = request.form.get('u')
     z_id = request.form.get('z')
@@ -82,12 +56,15 @@ def order():
     amt = request.form.get('a')
     server = request.form.get('server_name')
     photo = request.files.get('photo')
-    time_now = datetime.now().strftime('%d/%m %I:%M %p')
 
-    msg = f"🔔 *New Order!*\nID: #{order_id}\nServer: {server}\nGameID: {u_id} ({z_id})\nPkg: {pkg}\nAmt: {amt} Ks"
+    # Bot ဆီပို့မယ့် Message (Admin Link တွဲလျက်)
+    admin_link = f"{BASE_URL}/admin"
+    msg = f"🔔 *New Order!*\nID: #{order_id}\nServer: {server}\nGameID: {u_id} ({z_id})\nPkg: {pkg}\nAmt: {amt} Ks\n\n🔗 [Open Admin Panel]({admin_link})"
+    
     if photo:
-        files = {'photo': photo.read()}
-        requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto", data={"chat_id": CHAT_ID, "caption": msg}, files=files)
+        requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto", 
+                      data={"chat_id": CHAT_ID, "caption": msg, "parse_mode": "Markdown"}, 
+                      files={'photo': photo.read()})
     
     db.insert({'id': order_id, 'server': server, 'uid': u_id, 'zid': z_id, 'pkg': pkg, 'amt': amt, 'status': 'Pending', 'time': time_now})
     
@@ -96,9 +73,7 @@ def order():
         <h2>Order Success! ✅</h2>
         <script>
             let h = JSON.parse(localStorage.getItem('kiwi_h') || '[]');
-            h.unshift({{
-                id: '{order_id}', s: '{server}', u: '{u_id}', z: '{z_id}', p: '{pkg}', a: '{amt}', t: '{time_now}'
-            }});
+            h.unshift({{ id:'{order_id}', s:'{server}', u:'{u_id}', z:'{z_id}', p:'{pkg}', a:'{amt}', t:'{time_now}' }});
             localStorage.setItem('kiwi_h', JSON.stringify(h));
             setTimeout(() => location.href='/', 1500);
         </script>
@@ -113,7 +88,7 @@ def get_status(id):
 @app.route('/admin')
 def admin():
     if not session.get('logged_in'):
-        return '<body style="background:#0f172a;color:white;display:flex;justify-content:center;padding:50px;"><form action="/login" method="post"><h2>Admin Login</h2><input name="pw" type="password"><button>Login</button></form></body>'
+        return '<body style="background:#0f172a;color:white;display:flex;justify-content:center;padding:50px;"><form action="/login" method="post"><h2>Admin Login</h2><input name="pw" type="password" style="padding:10px;border-radius:5px;"><button style="padding:10px;margin-left:5px;">Login</button></form></body>'
     orders = db.all()[::-1]
     return render_template_string(ADMIN_TEMPLATE, orders=orders)
 
@@ -137,18 +112,19 @@ HTML_TEMPLATE = '''
     .game-card { background: #1e293b; border: 1px solid #334155; border-radius: 15px; padding: 15px; text-align: center; cursor: pointer; }
     .game-card img { width: 80px; height: 80px; border-radius: 12px; margin-bottom: 10px; }
     #order-section, #history-section { display: none; }
-    .cat-tabs { display: flex; gap: 8px; overflow-x: auto; margin-bottom: 15px; padding-bottom:5px; }
+    .cat-tabs { display: flex; gap: 8px; overflow-x: auto; margin-bottom: 15px; }
     .cat-tab { padding: 10px 18px; background: #1e293b; border-radius: 12px; font-size: 12px; white-space:nowrap; border:1px solid #334155; color:#94a3b8; cursor: pointer; }
-    .cat-tab.active { background: #10b981; color: white; border-color:#10b981; }
-    .pkg-grid { display:grid; grid-template-columns: 1fr 1fr; gap:12px; max-height: 400px; overflow-y:auto; }
+    .cat-tab.active { background: #fbbf24; color: black; border-color:#fbbf24; }
+    .pkg-grid { display:grid; grid-template-columns: 1fr 1fr; gap:12px; max-height: 350px; overflow-y:auto; }
     .pkg-card { background:#1e293b; border:1px solid #334155; padding:15px; border-radius:12px; text-align:center; cursor: pointer; }
     .pkg-card.selected { border: 2px solid #fbbf24; background: #1e3a8a; }
     input { width:100%; padding:14px; margin:8px 0; border-radius:12px; border:1px solid #334155; background:#1e293b; color:white; box-sizing:border-box; }
     .buy-btn { width:100%; padding:16px; background:#fbbf24; border:none; border-radius:12px; font-weight:bold; cursor:pointer; color:black; margin-top: 10px; }
-    .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #1e293b; display: flex; padding: 12px; gap: 10px; border-top: 1px solid #334155; max-width: 500px; margin: auto; z-index: 1000; }
+    .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #1e293b; display: flex; padding: 12px; border-top: 1px solid #334155; max-width: 500px; margin: auto; z-index: 1000; }
     .nav-btn { flex: 1; text-align: center; font-size: 13px; color: white; text-decoration: none; cursor:pointer; }
-    .pay-card { background:#1e293b; padding:15px; border-radius:15px; border: 1px solid #334155; margin:15px 0; text-align:center; }
-    .pay-methods { display: flex; justify-content: center; gap: 20px; margin-bottom: 15px; }
+    /* Modal Style */
+    #confirm-modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:2000; align-items:center; justify-content:center; }
+    .modal-content { background:#1e293b; width:85%; max-width:350px; padding:25px; border-radius:20px; text-align:center; }
 </style></head>
 <body>
     <div id="home-section">
@@ -157,42 +133,39 @@ HTML_TEMPLATE = '''
     </div>
 
     <div id="history-section">
+        <button onclick="goHome()" style="background:none; color:white; border:1px solid #334155; padding:5px 12px; border-radius:8px; margin-bottom:15px;">← Back</button>
         <h3 style="color:#fbbf24;">Order History</h3>
         <div id="history-list"></div>
     </div>
 
     <div id="order-section">
-        <button onclick="goHome()" style="background:none; color:white; border:1px solid #334155; padding:8px 15px; border-radius:8px; margin-bottom:15px; cursor: pointer;">← Back</button>
+        <button onclick="goHome()" style="background:none; color:white; border:1px solid #334155; padding:8px 15px; border-radius:8px; margin-bottom:15px;">← Back</button>
         <h3 id="selected-title" style="color:#fbbf24;"></h3>
         <div class="cat-tabs" id="tabs"></div>
         <div class="pkg-grid" id="pkg-list"></div>
-        
-        <div class="pay-card">
-            <div class="pay-methods">
-                <div style="text-align:center;"><img src="/static/kpay.jpg" width="45" style="border-radius:8px;"><br><small>KPay</small></div>
-                <div style="text-align:center;"><img src="/static/wave.jpg" width="45" style="border-radius:8px;"><br><small>Wave</small></div>
-                <div style="text-align:center;"><img src="/static/ayapay.jpg" width="45" style="border-radius:8px;"><br><small>Aya</small></div>
-            </div>
-            <div style="border-top: 1px solid #334155; padding-top: 10px; margin-top:10px;">
-                <b style="color:#fbbf24; font-size:18px;">{{pay.Number}}</b><br>
-                <small>Name: {{pay.Name}} | Note: {{pay.Note}}</small>
-            </div>
-        </div>
-
         <form id="order-form" action="/order" method="post" enctype="multipart/form-data">
             <input type="hidden" name="server_name" id="s_name">
             <input type="number" name="u" id="user_id" placeholder="Player ID" required>
-            <input type="number" name="z" id="zone_id" placeholder="Zone ID" required>
+            <input type="number" name="z" id="zone_id" placeholder="Zone ID (If any)">
             <input id="p_val" name="p" type="hidden"><input id="a_val" name="a" type="hidden">
-            <input type="file" name="photo" required accept="image/*">
-            <button type="submit" class="buy-btn">CONFIRM & BUY</button>
+            <input type="file" name="photo" id="photo-input" required accept="image/*" style="font-size:12px;">
+            <button type="button" class="buy-btn" onclick="showConfirm()">CONFIRM & BUY</button>
         </form>
+    </div>
+
+    <div id="confirm-modal">
+        <div class="modal-content">
+            <h3 style="color:#fbbf24; margin-top:0;">Confirm Order</h3>
+            <div id="modal-info" style="text-align:left; line-height:1.8; margin-bottom:20px;"></div>
+            <button class="buy-btn" onclick="submitOrder()">CONFIRM & SEND</button>
+            <button onclick="closeModal()" style="background:none; color:#94a3b8; border:none; margin-top:15px; cursor:pointer;">Cancel</button>
+        </div>
     </div>
 
     <div class="nav-bar">
         <div class="nav-btn" onclick="goHome()"><i class="fas fa-home"></i><br>Home</div>
         <div class="nav-btn" onclick="showHistory()"><i class="fas fa-history"></i><br>History</div>
-        <a href="{{cs}}" class="nav-btn" style="text-decoration:none;"><i class="fas fa-comment"></i><br>CS</a>
+        <a href="{{cs}}" class="nav-btn"><i class="fas fa-comment"></i><br>CS</a>
     </div>
 
     <script>
@@ -211,10 +184,9 @@ HTML_TEMPLATE = '''
         document.getElementById('selected-title').innerText = name;
         document.getElementById('s_name').value = name;
         const g = data.find(i => i.name === name);
-        const order = ["Normal Dia", "Indo Dia", "Mal & SGP Dia", "Philippines Dia", "Russia Dia", "Weekly Pass", "2X Dia", "Bundle Pack"];
-        const sortedKeys = Object.keys(g.cats).sort((a,b) => (order.indexOf(a) === -1 ? 99 : order.indexOf(a)) - (order.indexOf(b) === -1 ? 99 : order.indexOf(b)));
-        document.getElementById('tabs').innerHTML = sortedKeys.map((c, i) => `<div class="cat-tab ${i === 0 ? 'active' : ''}" onclick="renderPkgs('${name}','${c}',this)">${c}</div>`).join('');
-        renderPkgs(name, sortedKeys[0]);
+        const keys = Object.keys(g.cats);
+        document.getElementById('tabs').innerHTML = keys.map((c, i) => `<div class="cat-tab ${i === 0 ? 'active' : ''}" onclick="renderPkgs('${name}','${c}',this)">${c}</div>`).join('');
+        renderPkgs(name, keys[0]);
     }
 
     function renderPkgs(sName, cat, el) {
@@ -228,9 +200,27 @@ HTML_TEMPLATE = '''
     function sel(el, d, p) {
         document.querySelectorAll('.pkg-card').forEach(c => c.classList.remove('selected'));
         el.classList.add('selected');
-        document.getElementById('p_val').value = d;
-        document.getElementById('a_val').value = p;
+        document.getElementById('p_val').value = d; document.getElementById('a_val').value = p;
     }
+
+    function showConfirm() {
+        const u = document.getElementById('user_id').value;
+        const z = document.getElementById('zone_id').value || '-';
+        const p = document.getElementById('p_val').value;
+        const a = document.getElementById('a_val').value;
+        const file = document.getElementById('photo-input').files[0];
+        if(!u || !p || !file) return alert("Please fill all info and upload photo!");
+
+        document.getElementById('modal-info').innerHTML = `
+            ID: <b>${u} (${z})</b><br>
+            Diamond: <b>${p}</b><br>
+            Price: <b>${a} Ks</b>
+        `;
+        document.getElementById('confirm-modal').style.display = 'flex';
+    }
+
+    function closeModal() { document.getElementById('confirm-modal').style.display = 'none'; }
+    function submitOrder() { document.getElementById('order-form').submit(); }
 
     async function showHistory() {
         document.getElementById('home-section').style.display = 'none';
@@ -244,14 +234,12 @@ HTML_TEMPLATE = '''
             let color = status === 'Success' ? '#10b981' : (status === 'Cancel' ? '#ef4444' : '#fbbf24');
             html += `
                 <div style="background:#1e293b; padding:15px; border-radius:12px; margin-bottom:12px; border-left:5px solid ${color};">
-                    <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
-                        <b>#${h[i].id}</b> <span style="background:${color}; color:white; padding:2px 8px; border-radius:4px; font-size:11px;">${status}</span>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                        <b>#${h[i].id}</b> <span style="font-size:11px; color:${color};">${status}</span>
                     </div>
-                    <div style="font-size:13px; color:#cbd5e1; display:grid; grid-template-columns:1fr 1fr; gap:5px;">
-                        <span>🎮 Server: ${h[i].s}</span> <span>🆔 ID: ${h[i].u} (${h[i].z})</span>
-                        <span>💎 Dia: ${h[i].p}</span> <span>💰 Price: ${h[i].a} Ks</span>
+                    <div style="font-size:13px; color:#cbd5e1;">
+                        ${h[i].s} | ${h[i].p} 💎 | ${h[i].t}
                     </div>
-                    <div style="font-size:11px; color:#94a3b8; margin-top:8px;">🕒 ${h[i].t}</div>
                 </div>`;
         }
         document.getElementById('history-list').innerHTML = html;
@@ -261,6 +249,7 @@ HTML_TEMPLATE = '''
         document.getElementById('home-section').style.display = 'block';
         document.getElementById('order-section').style.display = 'none';
         document.getElementById('history-section').style.display = 'none';
+        closeModal();
     }
     init();
     </script>
@@ -271,13 +260,13 @@ ADMIN_TEMPLATE = '''
 <!DOCTYPE html><html><body style="background:#0f172a;color:white;font-family:sans-serif;padding:20px;">
     <h2>Admin Panel</h2>
     {% for o in orders %}
-    <div style="background:#1e293b;padding:15px;border-radius:10px;margin-bottom:15px; border-left: 4px solid #10b981;">
-        <b>Order ID: #{{o.id}}</b> [{{o.status}}]<br>
-        Server: {{o.server}} | Player: {{o.uid}} ({{o.zid}})<br>
-        Package: {{o.pkg}} 💎 | Price: {{o.amt}} Ks<br>
+    <div style="background:#1e293b;padding:15px;border-radius:10px;margin-bottom:15px;">
+        <b>#{{o.id}}</b> ({{o.status}})<br>
+        {{o.server}} | {{o.uid}} ({{o.zid}})<br>
+        {{o.pkg}} 💎 | {{o.amt}} Ks<br>
         <div style="margin-top:10px;">
-            <a href="/update/{{o.id}}/Success" style="background:#10b981; color:white; padding:5px 15px; text-decoration:none; border-radius:5px;">Success</a>
-            <a href="/update/{{o.id}}/Cancel" style="background:#ef4444; color:white; padding:5px 15px; text-decoration:none; border-radius:5px; margin-left:10px;">Cancel</a>
+            <a href="/update/{{o.id}}/Success" style="background:#10b981; color:white; padding:5px 10px; text-decoration:none; border-radius:5px;">Success</a>
+            <a href="/update/{{o.id}}/Cancel" style="background:#ef4444; color:white; padding:5px 10px; text-decoration:none; border-radius:5px; margin-left:10px;">Cancel</a>
         </div>
     </div>
     {% endfor %}
@@ -287,5 +276,4 @@ ADMIN_TEMPLATE = '''
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)
-
-
+    
