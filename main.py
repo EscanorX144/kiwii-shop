@@ -158,16 +158,28 @@ HTML_TEMPLATE = '''
         <div class="pkg-grid" id="pkg-list"></div>
         
         <div class="pay-card">
-            <div class="pay-methods">
-                <div class="pay-icon"><img src="https://image.winudf.com/v2/image1/Y29tLmtiemJhbmsubXltcy5rYnpwYXlfaWNvbl8xNjYxMzM0NjAyXzAyOQ/icon.png?w=184&fakeurl=1" alt="KPay"><span>KPay</span></div>
-                <div class="pay-icon"><img src="https://image.winudf.com/v2/image1/bW0uY29tLndhdmVtb25leS5jb25zdW1lcl9pY29uXzE2MTEwMzUyMjJfMDU4/icon.png?w=184&fakeurl=1" alt="Wave"><span>Wave</span></div>
-                <div class="pay-icon"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR0Nn9E_K4vM6F809w0K4Fv1E8tI3F7mK-Niw&s" alt="Aya"><span>AyaPay</span></div>
-            </div>
-            <div style="border-top: 1px solid #334155; padding-top: 15px;">
-                <small>Payment To</small><br><b style="color:#fbbf24; font-size: 18px;">{{pay.Number}}</b><br>
-                <small>Name: {{pay.Name}}</small><br><small style="color:#94a3b8;">Note: {{pay.Note}}</small>
-            </div>
+    <div class="pay-methods">
+        <div class="pay-icon">
+            <img src="https://img.icons8.com/color/144/kbz-pay.png" alt="KPay" style="width:45px; height:45px; border-radius:10px;">
+            <br><span>KPay</span>
         </div>
+        <div class="pay-icon">
+            <img src="https://image.winudf.com/v2/image1/bW0uY29tLndhdmVtb25leS5jb25zdW1lcl9pY29uXzE2MTEwMzUyMjJfMDU4/icon.png?w=184&fakeurl=1" alt="Wave" style="width:45px; height:45px; border-radius:10px;">
+            <br><span>Wave</span>
+        </div>
+        <div class="pay-icon">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR0Nn9E_K4vM6F809w0K4Fv1E8tI3F7mK-Niw&s" alt="Aya" style="width:45px; height:45px; border-radius:10px;">
+            <br><span>AyaPay</span>
+        </div>
+    </div>
+    <div style="border-top: 1px solid #334155; padding-top: 15px; margin-top:10px;">
+        <small>Payment To</small><br>
+        <b style="color:#fbbf24; font-size: 18px;">{{pay.Number}}</b><br>
+        <small>Name: {{pay.Name}}</small><br>
+        <small style="color:#94a3b8;">Note: {{pay.Note}}</small>
+    </div>
+</div>
+
 
         <form id="order-form" action="/order" method="post" enctype="multipart/form-data">
             <input type="hidden" name="server_name" id="s_name">
