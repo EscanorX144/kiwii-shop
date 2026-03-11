@@ -196,30 +196,72 @@ function sel(el, d, p) {
     document.querySelectorAll('.pkg-card').forEach(c=>c.classList.remove('selected'));
     el.classList.add('selected');
     document.getElementById('p_val').value = d; document.getElementById('a_val').value = p;
-}
-function showModal() {
-    const u = document.getElementById('user_id').value, p = document.getElementById('p_val').value, f = document.getElementById('photo-input').files[0];
+}function showModal() {
+    const u = document.getElementById('user_id').value;
+    const z = document.getElementById('zone_id').value;
+    const p = document.getElementById('p_val').value;
+    const a = document.getElementById('a_val').value;
+    const f = document.getElementById('photo-input').files[0];
+    const s = document.getElementById('s_name').value;
+
     if(!u || !p || !f) return alert("အချက်အလက်အားလုံးဖြည့်ပါ။");
-    document.getElementById('modal-info').innerHTML = `Server: ${document.getElementById('s_name').value}<br>ID: ${u}<br>Package: ${p}<br>Price: ${document.getElementById('a_val').value} Ks`;
+
+    // Game ID ကို Zone ID ပါရင် တွဲပြမယ်၊ မပါရင် ID တစ်ခုပဲပြမယ်
+    const displayID = z ? `${u} (${z})` : u;
+
+    document.getElementById('modal-info').innerHTML = `
+        <div style="font-size: 16px; border-bottom: 1px solid #475569; padding-bottom: 10px; margin-bottom: 10px;">
+            <b style="color: #fbbf24;">Game ID:</b> ${displayID}
+        </div>
+        <div style="line-height: 1.8;">
+            <b style="color: #fbbf24;">Server:</b> ${s}<br>
+            <b style="color: #fbbf24;">Diamond:</b> ${p}<br>
+            <b style="color: #fbbf24;">Price:</b> ${a} Ks
+        </div>
+    `;
     document.getElementById('confirm-modal').style.display = 'flex';
 }
 function closeModal() { document.getElementById('confirm-modal').style.display = 'none'; }
 function submitForm() { document.getElementById('order-form').submit(); }
 async function showHistory() {
-    document.querySelectorAll('.section').forEach(s=>s.style.display='none');
-    document.getElementById('hist-sec').style.display='block';
-    const h = JSON.parse(localStorage.getItem('kiwi_h') || '[]');
+    document.querySelectorAll('.section').forEach(s => s.style.display = 'none');
+    document.getElementById('hist-sec').style.display = 'block';
+    
+    // LocalStorage ကနေ Order List ကို ယူတယ်
+    let h = JSON.parse(localStorage.getItem('kiwi_h') || '[]');
     let html = h.length === 0 ? '<p style="text-align:center;color:#94a3b8;margin-top:50px;">No History</p>' : '';
-    for(let i=0; i<h.length; i++) {
-        const res = await fetch('/get_status/' + h[i].id);
-        const status = await res.text();
-        let color = status === 'Success' ? '#10b981' : (status === 'Cancel' ? '#ef4444' : '#fbbf24');
-        html += `<div style="background:#1e293b;padding:15px;border-radius:12px;margin-bottom:10px;border-left:5px solid ${color};">
-            <b>#${h[i].id}</b> <small style="float:right;color:${color}">${status}</small><br>
-            <small>${h[i].s} | ${h[i].p} | ${h[i].t}</small>
-        </div>`;
+    
+    document.getElementById('hist-list').innerHTML = '<p style="text-align:center;color:#fbbf24;">Loading...</p>';
+
+    let newHistoryList = [];
+
+    for (let i = 0; i < h.length; i++) {
+        try {
+            // Server ဆီကနေ နောက်ဆုံး Status ကို အမြဲသွားယူမယ်
+            const res = await fetch('/get_status/' + h[i].id);
+            const currentStatus = await res.text();
+            
+            // LocalStorage ထဲက data ကိုပါ Update လုပ်ပေးမယ် (Pending ပြန်မဖြစ်အောင်)
+            h[i].status = currentStatus;
+            newHistoryList.push(h[i]);
+
+            let color = currentStatus === 'Success' ? '#10b981' : (currentStatus === 'Cancel' ? '#ef4444' : '#fbbf24');
+            
+            html = (i === 0 ? '' : html) + `
+                <div style="background:#1e293b;padding:15px;border-radius:12px;margin-bottom:10px;border-left:5px solid ${color};">
+                    <b>#${h[i].id}</b> <small style="float:right;color:${color}">${currentStatus}</small><br>
+                    <small>${h[i].s} | ${h[i].p} | ${h[i].t}</small>
+                </div>`;
+        } catch (err) {
+            console.error("Error fetching status", err);
+        }
     }
+    
+    // နောက်ဆုံးရလာတဲ့ Status တွေနဲ့ LocalStorage ကို ပြန်သိမ်းတယ်
+    localStorage.setItem('kiwi_h', JSON.stringify(newHistoryList));
     document.getElementById('hist-list').innerHTML = html;
+}
+document.getElementById('hist-list').innerHTML = html;
 }
 function goHome() { document.querySelectorAll('.section').forEach(s=>s.style.display='none'); document.getElementById('home-sec').style.display='block'; }
 init();
