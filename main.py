@@ -10,9 +10,9 @@ db = TinyDB('db.json')
 # --- CONFIGURATION (သင့် ID များ ပြန်စစ်ပါ) ---
 PAY_NO = "09775394979"
 PAY_NAME = "THANSIN KYAW"
-BOT_TOKEN = "7880962383:AAGUu9y1x0Xn0P677mO6rEiv_0Xf3_r0Y_I"
-CHAT_ID = "6198647551"
-CS_LINK = "https://t.me/Kiwii_144"
+BOT_TOKEN = "8089066962:AAFOHBGeuDF7E3YgeJ3mUu000sQNJ4uJVok"
+CHAT_ID = "7089720301"
+CS_LINK = "https://t.me/Bby_kiwii7"
 ADMIN_PASS = "kiwii123" 
 
 # --- DIAMOND DATA ---
