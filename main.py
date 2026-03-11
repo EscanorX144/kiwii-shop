@@ -160,15 +160,15 @@ HTML_TEMPLATE = '''
         <div class="pay-card">
     <div class="pay-methods">
         <div class="pay-icon">
-            <img src="https://i.postimg.cc/mD8pWp3z/kbzpay.jpg" alt="KPay" style="width:50px; height:50px; border-radius:10px; display:block; margin:0 auto; object-fit: cover;">
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjD9M8vP0K6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6/s1600/kbzpay.png" alt="KPay" style="width:50px; height:50px; border-radius:10px; display:block; margin:0 auto; object-fit: cover;">
             <span style="font-size:12px;">KPay</span>
         </div>
         <div class="pay-icon">
-            <img src="https://i.postimg.cc/0jXmY8q6/wave.jpg" alt="Wave" style="width:50px; height:50px; border-radius:10px; display:block; margin:0 auto; object-fit: cover;">
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjD9M8vP0K6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6/s1600/wave.png" alt="Wave" style="width:50px; height:50px; border-radius:10px; display:block; margin:0 auto; object-fit: cover;">
             <span style="font-size:12px;">Wave</span>
         </div>
         <div class="pay-icon">
-            <img src="https://i.postimg.cc/85m9mN8t/ayapay.jpg" alt="Aya" style="width:50px; height:50px; border-radius:10px; display:block; margin:0 auto; object-fit: cover;">
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjD9M8vP0K6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6S9v0P9J6/s1600/ayapay.png" alt="Aya" style="width:50px; height:50px; border-radius:10px; display:block; margin:0 auto; object-fit: cover;">
             <span style="font-size:12px;">AyaPay</span>
         </div>
     </div>
