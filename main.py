@@ -164,11 +164,11 @@ HTML_TEMPLATE = '''
             <br><span>KPay</span>
         </div>
         <div class="pay-icon">
-            <img src="https://image.winudf.com/v2/image1/bW0uY29tLndhdmVtb25leS5jb25zdW1lcl9pY29uXzE2MTEwMzUyMjJfMDU4/icon.png?w=184&fakeurl=1" alt="Wave" style="width:45px; height:45px; border-radius:10px;">
+            <img src="https://img.icons8.com/color/144/wave-money.png" alt="Wave" style="width:45px; height:45px; border-radius:10px;">
             <br><span>Wave</span>
         </div>
         <div class="pay-icon">
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR0Nn9E_K4vM6F809w0K4Fv1E8tI3F7mK-Niw&s" alt="Aya" style="width:45px; height:45px; border-radius:10px;">
+            <img src="https://img.icons8.com/fluency/144/bank-card-back-side.png" alt="Aya" style="width:45px; height:45px; border-radius:10px;">
             <br><span>AyaPay</span>
         </div>
     </div>
