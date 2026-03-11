@@ -16,7 +16,7 @@ orders_col = db_mongo['orders']
 PAY_DATA = {"Number": "09775394979", "Name": "Thansin Kyaw", "Note": "Payment သာရေးပါ"}
 BOT_TOKEN = "8089066962:AAFOHB6euDF7E3Ygej3nAwOODSNj4ujVvk"
 CHAT_ID = "7089720301"
-CS_LINK = "https://t.me/Why_kiwii?"
+CS_LINK = "https://t.me/Bby_kiwii7"
 ADMIN_PASS = "kiwi1123"
 
 # --- 💎 DIAMOND LIST DATA ---
