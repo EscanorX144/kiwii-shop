@@ -8,7 +8,8 @@ app.secret_key = "KIWII_ULTIMATE_SECRET_STAY_SAFE"
 
 # --- 🛰️ MONGODB CONNECTION ---
 # username, password နှင့် cluster address ကို သေချာစစ်ဆေးထားပါသည်
-MONGO_URI = "mongodb+srv://EscanorX:Conti144@cluster0.m2tomm.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+# အရင်လိပ်စာအဟောင်းကို ဖြတ်ပြီး ဒါလေးနဲ့ အစားထိုးပါ
+MONGO_URI = "mongodb://EscanorX:Conti144@cluster0-shard-00-00.m2tomm.mongodb.net:27017,cluster0-shard-00-01.m2tomm.mongodb.net:27017,cluster0-shard-00-02.m2tomm.mongodb.net:27017/?ssl=true&replicaSet=atlas-m2tomm-shard-0&authSource=admin&retryWrites=true&w=majority"
 client = MongoClient(MONGO_URI)
 db_mongo = client['kiwii_game_shop']
 orders_col = db_mongo['orders']
