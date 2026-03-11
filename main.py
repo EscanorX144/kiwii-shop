@@ -157,24 +157,30 @@ HTML_TEMPLATE = '''
         <div class="cat-tabs" id="tabs"></div>
         <div class="pkg-grid" id="pkg-list"></div>
         
-        <div class="pay-card" style="background:#1e293b; padding:15px; border-radius:15px; border:1px solid #334155; margin:15px 0;">
-    <div class="pay-methods" style="display: flex; justify-content: space-around; align-items: center; margin-bottom: 15px;">
-        <div style="text-align: center;">
-            <svg width="45" height="45" viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="#0066b3"/><text x="50%" y="65%" text-anchor="middle" fill="white" font-weight="bold" font-size="25">KPay</text></svg>
-            <br><span style="font-size:12px;">KPay</span>
+        <div class="pay-card">
+    <div class="pay-methods">
+        <div class="pay-icon">
+            <img src="https://raw.githubusercontent.com/EscanorX144/kiwii-shop/main/static/kpay.png" 
+                 onerror="this.src='https://img.icons8.com/color/144/kbz-pay.png'" 
+                 alt="KPay" style="width:45px; height:45px; border-radius:10px;">
+            <br><span>KPay</span>
         </div>
-        <div style="text-align: center;">
-            <svg width="45" height="45" viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="#fbc02d"/><text x="50%" y="65%" text-anchor="middle" fill="black" font-weight="bold" font-size="25">Wave</text></svg>
-            <br><span style="font-size:12px;">Wave</span>
+        <div class="pay-icon">
+            <img src="https://raw.githubusercontent.com/EscanorX144/kiwii-shop/main/static/wave.png" 
+                 onerror="this.src='https://img.icons8.com/color/144/wave-money.png'" 
+                 alt="Wave" style="width:45px; height:45px; border-radius:10px;">
+            <br><span>Wave</span>
         </div>
-        <div style="text-align: center;">
-            <svg width="45" height="45" viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="#ed1c24"/><text x="50%" y="65%" text-anchor="middle" fill="white" font-weight="bold" font-size="25">Aya</text></svg>
-            <br><span style="font-size:12px;">AyaPay</span>
+        <div class="pay-icon">
+            <img src="https://raw.githubusercontent.com/EscanorX144/kiwii-shop/main/static/ayapay.png" 
+                 onerror="this.src='https://img.icons8.com/fluency/144/bank-card-back-side.png'" 
+                 alt="Aya" style="width:45px; height:45px; border-radius:10px;">
+            <br><span>AyaPay</span>
         </div>
     </div>
-    <div style="border-top: 1px solid #334155; padding-top: 15px; text-align:center;">
-        <small style="color:#94a3b8;">Payment To</small><br>
-        <b style="color:#fbbf24; font-size: 20px;">{{pay.Number}}</b><br>
+    <div style="border-top: 1px solid #334155; padding-top: 15px; margin-top:10px;">
+        <small>Payment To</small><br>
+        <b style="color:#fbbf24; font-size: 18px;">{{pay.Number}}</b><br>
         <small>Name: {{pay.Name}}</small><br>
         <small style="color:#94a3b8;">Note: {{pay.Note}}</small>
     </div>
