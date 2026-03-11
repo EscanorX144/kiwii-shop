@@ -7,7 +7,7 @@ app = Flask(__name__)
 app.secret_key = "KIWII_SUPER_SECRET"
 db = TinyDB('db.json')
 
-# --- CONFIGURATION (သင့် ID များ ပြန်စစ်ပါ) ---
+# --- CONFIGURATION (လူကြီးမင်းပေးထားသော ID အသစ်များ) ---
 PAY_NO = "09775394979"
 PAY_NAME = "THANSIN KYAW"
 BOT_TOKEN = "8089066962:AAFOHBGeuDF7E3YgeJ3mUu000sQNJ4uJVok"
@@ -81,11 +81,11 @@ def order():
     }
     db.insert(data)
     
-    # Send to Telegram
-    msg = f"🔔 *New Order!*\nID: #{order_id}\nServer: {data['server']}\nGameID: {data['uid']} ({data['zid']})\nPkg: {data['pkg']}\nAmt: {data['amt']} Ks\n\n[Check Admin Panel to Update Status]"
+    # Telegram သို့ ပို့ခြင်း
+    msg = f"🔔 *New Order!*\nID: #{order_id}\nServer: {data['server']}\nGameID: {data['uid']} ({data['zid']})\nPkg: {data['pkg']}\nAmt: {data['amt']} Ks\n\nCheck Admin: https://kiwiigameshop.onrender.com/admin"
     requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage", data={"chat_id": CHAT_ID, "text": msg, "parse_mode": "Markdown"})
     
-    return f"<h1>Success! ID: #{order_id}</h1><script>let h=JSON.parse(localStorage.getItem('kiwii_h')||'[]'); h.unshift({{id:'{order_id}', s:'{data['server']}', p:'{data['pkg']}', a:'{data['amt']}', t:'{data['time']}'}}); localStorage.setItem('kiwii_h', JSON.stringify(h)); setTimeout(()=>location.href='/', 1500);</script>"
+    return f"<h1>Order Success! ID: #{order_id}</h1><script>let h=JSON.parse(localStorage.getItem('kiwii_h')||'[]'); h.unshift({{id:'{order_id}', s:'{data['server']}', p:'{data['pkg']}', a:'{data['amt']}', t:'{data['time']}'}}); localStorage.setItem('kiwii_h', JSON.stringify(h)); setTimeout(()=>location.href='/', 1500);</script>"
 
 @app.route('/get_status/<oid>')
 def get_status(oid):
@@ -109,7 +109,7 @@ def update(oid, status):
     if session.get('logged_in'): db.update({'status': status}, Query().id == oid)
     return redirect('/admin')
 
-# --- UI TEMPLATES (HTML/CSS) ---
+# --- UI TEMPLATE (မပြောင်းလဲပါ) ---
 HTML_TEMPLATE = '''
 <!DOCTYPE html><html><head><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
@@ -125,9 +125,9 @@ HTML_TEMPLATE = '''
     .pkg-card { background:#1e293b; border:1px solid #334155; padding:15px; border-radius:12px; cursor:pointer; text-align:center; }
     .pkg-card.selected { border: 2px solid #fbbf24; background: #1e3a8a; }
     input { width:100%; padding:14px; margin:8px 0; border-radius:12px; border:1px solid #334155; background:#1e293b; color:white; box-sizing:border-box; }
-    .buy-btn { width:100%; padding:16px; background:#fbbf24; border:none; border-radius:12px; font-weight:bold; cursor:pointer; }
+    .buy-btn { width:100%; padding:16px; background:#fbbf24; border:none; border-radius:12px; font-weight:bold; cursor:pointer; color:black;}
     .back-btn { background: #334155; color: white; border: none; padding: 8px 15px; border-radius: 8px; margin-bottom: 15px; }
-    .nav-btn { flex: 1; padding: 12px; text-align: center; background:#1e293b; border-radius: 10px; text-decoration: none; color:white; font-size: 13px; }
+    .nav-btn { flex: 1; padding: 12px; text-align: center; background:#1e293b; border-radius: 10px; text-decoration: none; color:white; font-size: 13px; cursor:pointer; }
     .hist-item { background: #1e293b; padding: 12px; border-radius: 10px; margin-bottom: 10px; border-left: 4px solid #fbbf24; }
     .status-badge { font-size: 10px; padding: 2px 6px; border-radius: 4px; background: #334155; color: #fbbf24; }
     .modal { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:100; display:flex; align-items:center; justify-content:center; padding:20px; box-sizing:border-box; }
@@ -155,7 +155,6 @@ HTML_TEMPLATE = '''
         <div class="pkg-grid" id="pkg-list"></div>
         <div style="background:#1e3a8a; padding:15px; border-radius:15px; text-align:center; margin:15px 0; border: 1px dashed #fbbf24;">
             <b>{{pay_no}}</b><br><small>NAME: {{name}}</small>
-            <p style="color:#fbbf24; font-size:11px; margin-top:5px;">⚠️ Note - Payment ပဲရေးပါ</p>
         </div>
         <form id="order-form" action="/order" method="post" enctype="multipart/form-data">
             <input type="hidden" name="server_name" id="s_name">
@@ -263,7 +262,6 @@ ADMIN_TEMPLATE = '''
 '''
 
 if __name__ == '__main__':
-    import os
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)
 
