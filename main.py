@@ -7,7 +7,6 @@ app = Flask(__name__)
 app.secret_key = "KIWII_ULTIMATE_SECRET_STAY_SAFE"
 
 # --- 🛰️ MONGODB CONNECTION ---
-# သင့်ပုံထဲမှာ Username က "Escanor X" (Space ပါတယ်) ဖြစ်လို့ Escanor%20X လို့ သုံးထားပါတယ်
 MONGO_URI = "mongodb+srv://EscanorX:Conti144@cluster0.m2tomm.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 client = MongoClient(MONGO_URI)
 db_mongo = client['kiwii_game_shop']
