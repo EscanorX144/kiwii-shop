@@ -8,14 +8,18 @@ app.secret_key = "KIWII_SUPER_SECRET"
 db = TinyDB('db.json')
 
 # --- CONFIGURATION ---
-PAY_NO = "09775394979"
-PAY_NAME = "THANSIN KYAW"
+PAY_DATA = {
+    "Number": "09775394979",
+    "Name": "Thansin Kyaw",
+    "Note": "Payment"
+}
 BOT_TOKEN = "8089066962:AAFOHBGeuDF7E3YgeJ3mUu000sQNJ4uJVok"
 CHAT_ID = "7089720301"
 CS_LINK = "https://t.me/Bby_kiwii7"
 ADMIN_PASS = "kiwii123"
+ADMIN_URL = "https://kiwiigameshop.onrender.com/admin"
 
-# --- DIAMOND DATA (အစဉ်လိုက် ပြင်ဆင်ပြီး) ---
+# --- DIAMOND DATA ---
 GAMES_DATA = {
     "Normal Server": {
         "img": "https://img.icons8.com/color/144/mobile-legends.png",
@@ -26,15 +30,6 @@ GAMES_DATA = {
             "Bundle Pack": [{"d": "Weekly elite bundle", "p": "3050"}, {"d": "Monthly epic bundle", "p": "15350"}, {"d": "Twilight pass", "p": "31500"}]
         }
     },
-    "Malaysia & Singapore (🇲🇾🇸🇬)": {
-        "img": "https://img.icons8.com/color/144/malaysia.png",
-        "cats": {
-            "Mal & SGP Dia": [{"d": "14", "p": "1050"}, {"d": "42", "p": "3100"}, {"d": "56", "p": "4150"}, {"d": "70", "p": "5050"}, {"d": "140", "p": "10100"}, {"d": "210", "p": "15100"}, {"d": "284", "p": "20200"}, {"d": "355", "p": "25200"}, {"d": "429", "p": "30300"}, {"d": "583", "p": "41200"}, {"d": "716", "p": "50200"}, {"d": "870", "p": "61400"}, {"d": "1145", "p": "80500"}, {"d": "1446", "p": "100500"}, {"d": "2162", "p": "150500"}, {"d": "2976", "p": "201000"}, {"d": "3606", "p": "223000"}, {"d": "6012", "p": "371000"}, {"d": "7502", "p": "503500"}],
-            "Weekly Pass": [{"d": f"Weekly Pass {i}X", "p": str(8400 * i)} for i in range(1, 11)],
-            "Dia 2X": [{"d": "50+", "p": "4100"}, {"d": "150+", "p": "12000"}, {"d": "250+", "p": "19700"}, {"d": "500+", "p": "40000"}],
-            "Bundle Pack": [{"d": "Weekly Elite Bundle", "p": "4000"}, {"d": "Monthly Epic Bundle", "p": "19600"}, {"d": "Twilight Pass", "p": "46000"}]
-        }
-    },
     "Indonesia (🇮🇩)": {
         "img": "https://img.icons8.com/color/144/indonesia.png",
         "cats": {
@@ -43,28 +38,20 @@ GAMES_DATA = {
             "Bundle Pack": [{"d": "Twilight Pass", "p": "45000"}]
         }
     },
-    "Russia (🇷🇺)": {
-        "img": "https://img.icons8.com/color/144/russian-federation.png",
+    "Malaysia & Singapore (🇲🇾🇸🇬)": {
+        "img": "https://img.icons8.com/color/144/malaysia.png",
         "cats": {
-            "Russia Dia": [{"d": "35", "p": "2750"}, {"d": "55", "p": "4450"}, {"d": "165", "p": "13000"}, {"d": "275", "p": "22000"}, {"d": "565", "p": "44500"}, {"d": "1155", "p": "88000"}, {"d": "1765", "p": "182000"}, {"d": "2975", "p": "220000"}, {"d": "6000", "p": "435000"}],
-            "Weekly Pass": [{"d": f"Weekly Pass {i}X", "p": str(8600 * i)} for i in range(1, 11)]
-        }
-    },
-    "Philippines (🇵🇭)": {
-        "img": "https://img.icons8.com/color/144/philippines.png",
-        "cats": {
-            "Philippines Dia": [{"d": "11", "p": "750"}, {"d": "22", "p": "1500"}, {"d": "56", "p": "3500"}, {"d": "112", "p": "7000"}, {"d": "223", "p": "14000"}, {"d": "336", "p": "21300"}, {"d": "570", "p": "36000"}, {"d": "1163", "p": "70500"}, {"d": "2398", "p": "140000"}, {"d": "6042", "p": "350000"}],
-            "Weekly Pass": [{"d": f"Weekly Pass {i}X", "p": str(6500 * i)} for i in range(1, 11)],
-            "Dia 2X": [{"d": "50+", "p": "3600"}, {"d": "150+", "p": "10500"}, {"d": "250+", "p": "17200"}, {"d": "500+", "p": "34500"}],
-            "Bundle Pack": [{"d": "Twilight Pass", "p": "35500"}]
+            "Mal & SGP Dia": [{"d": "14", "p": "1050"}, {"d": "42", "p": "3100"}, {"d": "56", "p": "4150"}, {"d": "70", "p": "5050"}, {"d": "140", "p": "10100"}, {"d": "210", "p": "15100"}, {"d": "284", "p": "20200"}, {"d": "355", "p": "25200"}, {"d": "429", "p": "30300"}, {"d": "583", "p": "41200"}, {"d": "716", "p": "50200"}, {"d": "870", "p": "61400"}, {"d": "1145", "p": "80500"}, {"d": "1446", "p": "100500"}, {"d": "2162", "p": "150500"}, {"d": "2976", "p": "201000"}, {"d": "3606", "p": "223000"}, {"d": "6012", "p": "371000"}, {"d": "7502", "p": "503500"}],
+            "Weekly Pass": [{"d": f"Weekly Pass {i}X", "p": str(8400 * i)} for i in range(1, 11)],
+            "Dia 2X": [{"d": "50+", "p": "4100"}, {"d": "150+", "p": "12000"}, {"d": "250+", "p": "19700"}, {"d": "500+", "p": "40000"}],
+            "Bundle Pack": [{"d": "Weekly Elite Bundle", "p": "4000"}, {"d": "Monthly Epic Bundle", "p": "19600"}, {"d": "Twilight Pass", "p": "46000"}]
         }
     }
 }
 
-# --- ROUTES ---
 @app.route('/')
 def index():
-    return render_template_string(HTML_TEMPLATE, games=GAMES_DATA, pay_no=PAY_NO, name=PAY_NAME, cs=CS_LINK)
+    return render_template_string(HTML_TEMPLATE, games=GAMES_DATA, pay=PAY_DATA, cs=CS_LINK)
 
 @app.route('/order', methods=['POST'])
 def order():
@@ -76,13 +63,12 @@ def order():
     server = request.form.get('server_name')
     photo = request.files.get('photo')
 
-    msg = f"🔔 *New Order!*\nID: #{order_id}\nServer: {server}\nGameID: {u_id} ({z_id})\nPkg: {pkg}\nAmt: {amt} Ks"
+    msg = f"🔔 *New Order!*\nID: #{order_id}\nServer: {server}\nGameID: {u_id} ({z_id})\nPkg: {pkg}\nAmt: {amt} Ks\n\nCheck Admin: {ADMIN_URL}"
     if photo:
         files = {'photo': photo.read()}
         requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto", data={"chat_id": CHAT_ID, "caption": msg, "parse_mode": "Markdown"}, files=files)
     
     db.insert({'id': order_id, 'server': server, 'uid': u_id, 'zid': z_id, 'pkg': pkg, 'amt': amt, 'status': 'Pending', 'time': datetime.now().strftime("%d/%m %I:%M %p")})
-    
     return f"<html><body style='background:#0f172a;color:white;text-align:center;padding:50px;'><h2>Order Success! ✅</h2><script>let h=JSON.parse(localStorage.getItem('kiwii_h')||'[]'); h.unshift({{id:'{order_id}', s:'{server}', p:'{pkg}', a:'{amt}', t:'{datetime.now().strftime('%d/%m %I:%M %p')}'}}); localStorage.setItem('kiwii_h', JSON.stringify(h)); setTimeout(()=>location.href='/', 1500);</script></body></html>"
 
 @app.route('/get_status/<oid>')
@@ -126,8 +112,13 @@ HTML_TEMPLATE = '''
     .buy-btn { width:100%; padding:16px; background:#fbbf24; border:none; border-radius:12px; font-weight:bold; cursor:pointer; color:black; }
     .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #1e293b; display: flex; padding: 12px; gap: 10px; border-top: 1px solid #334155; max-width: 500px; margin: auto; }
     .nav-btn { flex: 1; text-align: center; font-size: 13px; color: white; text-decoration: none; cursor:pointer; }
-    .hist-item { background: #1e293b; padding: 12px; border-radius: 10px; margin-bottom: 10px; border-left: 4px solid #fbbf24; }
-    .status-badge { float: right; font-size: 10px; padding: 2px 6px; border-radius: 4px; background: #fbbf24; color: black; }
+    
+    /* Payment UI */
+    .pay-card { background:#1e293b; padding:15px; border-radius:15px; border: 1px solid #334155; margin:15px 0; }
+    .pay-logos { display:flex; justify-content:center; gap:15px; margin-bottom:10px; }
+    .pay-logos img { width:40px; height:40px; border-radius:8px; }
+    .pay-info { text-align:center; font-size:14px; border-top:1px solid #334155; padding-top:10px; }
+    .copy-text { color:#fbbf24; font-weight:bold; cursor:pointer; }
 </style></head>
 <body>
     <div id="home-section">
@@ -145,9 +136,21 @@ HTML_TEMPLATE = '''
         <h3 id="selected-title" style="color:#fbbf24;"></h3>
         <div class="cat-tabs" id="tabs"></div>
         <div class="pkg-grid" id="pkg-list"></div>
-        <div style="background:#1e3a8a; padding:15px; border-radius:15px; text-align:center; margin:15px 0; border: 1px dashed #fbbf24;">
-            <small>Payment To</small><br><b>{{pay_no}}</b><br><small>NAME: {{name}}</small>
+        
+        <div class="pay-card">
+            <div class="pay-logos">
+                <img src="https://play-lh.googleusercontent.com/9n0fU7V8v2G3l9nE-8l5V4I1A4C_8vS6vU6v0_8vS6vU6v0_8vS6vU6v0_8vS6vU6v0" alt="KPay">
+                <img src="https://play-lh.googleusercontent.com/9v6_8vS6vU6v0_8vS6vU6v0_8vS6vU6v0_8vS6vU6v0_8vS6vU6v0_8vS6vU6v0" alt="Wave">
+                <img src="https://play-lh.googleusercontent.com/8vS6vU6v0_8vS6vU6v0_8vS6vU6v0_8vS6vU6v0_8vS6vU6v0_8vS6vU6v0" alt="Aya">
+            </div>
+            <div class="pay-info">
+                <small>Payment To</small><br>
+                <b class="copy-text">{{pay.Number}}</b><br>
+                <small>Name: {{pay.Name}}</small><br>
+                <small style="color:#94a3b8;">Note: {{pay.Note}}</small>
+            </div>
         </div>
+
         <form id="order-form" action="/order" method="post" enctype="multipart/form-data">
             <input type="hidden" name="server_name" id="s_name">
             <input type="number" name="u" id="user_id" placeholder="Player ID" required>
@@ -174,7 +177,6 @@ HTML_TEMPLATE = '''
     }
     function selectServer(name) {
         document.getElementById('home-section').style.display = 'none';
-        document.getElementById('history-section').style.display = 'none';
         document.getElementById('order-section').style.display = 'block';
         document.getElementById('selected-title').innerText = name;
         document.getElementById('s_name').value = name;
@@ -199,24 +201,13 @@ HTML_TEMPLATE = '''
         if(!document.getElementById('p_val').value || !document.getElementById('user_id').value) return alert("Fill all info!");
         if(confirm("Confirm Purchase?")) document.getElementById('order-form').submit();
     }
-    async function showHistory() {
-        document.getElementById('home-section').style.display='none';
-        document.getElementById('order-section').style.display='none';
-        document.getElementById('history-section').style.display='block';
-        const h = JSON.parse(localStorage.getItem('kiwii_h') || '[]');
-        let html = h.length ? "" : "No history.";
-        for(let i=0; i<h.length; i++){
-            const status = await fetch('/get_status/'+h[i].id).then(r=>r.text());
-            html += `<div class="hist-item"><span class="status-badge">${status}</span><b>#${h[i].id}</b><br><small>${h[i].s} | ${h[i].p} | ${h[i].t}</small></div>`;
-        }
-        document.getElementById('history-list').innerHTML = html;
-    }
     function goHome() { location.reload(); }
     init();
     </script>
 </body></html>
 '''
 
+# (ADMIN_TEMPLATE remains the same as previous)
 ADMIN_TEMPLATE = '''
 <!DOCTYPE html><html><body style="background:#0f172a;color:white;font-family:sans-serif;padding:20px;">
     <h2>Admin Panel</h2>
@@ -235,5 +226,4 @@ ADMIN_TEMPLATE = '''
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)
-
 
