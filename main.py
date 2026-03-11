@@ -160,21 +160,21 @@ HTML_TEMPLATE = '''
         <div class="pay-card">
     <div class="pay-methods">
         <div class="pay-icon">
-            <img src="https://img.icons8.com/color/144/kbz-pay.png" alt="KPay" style="width:45px; height:45px; border-radius:10px;">
-            <br><span>KPay</span>
+            <img src="https://i.postimg.cc/mD8pWp3z/kbzpay.jpg" alt="KPay" style="width:50px; height:50px; border-radius:10px; display:block; margin:0 auto; object-fit: cover;">
+            <span style="font-size:12px;">KPay</span>
         </div>
         <div class="pay-icon">
-            <img src="https://img.icons8.com/color/144/wave-money.png" alt="Wave" style="width:45px; height:45px; border-radius:10px;">
-            <br><span>Wave</span>
+            <img src="https://i.postimg.cc/0jXmY8q6/wave.jpg" alt="Wave" style="width:50px; height:50px; border-radius:10px; display:block; margin:0 auto; object-fit: cover;">
+            <span style="font-size:12px;">Wave</span>
         </div>
         <div class="pay-icon">
-            <img src="https://img.icons8.com/fluency/144/bank-card-back-side.png" alt="Aya" style="width:45px; height:45px; border-radius:10px;">
-            <br><span>AyaPay</span>
+            <img src="https://i.postimg.cc/85m9mN8t/ayapay.jpg" alt="Aya" style="width:50px; height:50px; border-radius:10px; display:block; margin:0 auto; object-fit: cover;">
+            <span style="font-size:12px;">AyaPay</span>
         </div>
     </div>
-    <div style="border-top: 1px solid #334155; padding-top: 15px; margin-top:10px;">
-        <small>Payment To</small><br>
-        <b style="color:#fbbf24; font-size: 18px;">{{pay.Number}}</b><br>
+    <div style="border-top: 1px solid #334155; padding-top: 15px; margin-top:15px; text-align:center;">
+        <small style="color:#94a3b8;">Payment To</small><br>
+        <b style="color:#fbbf24; font-size: 20px; letter-spacing: 1px;">{{pay.Number}}</b><br>
         <small>Name: {{pay.Name}}</small><br>
         <small style="color:#94a3b8;">Note: {{pay.Note}}</small>
     </div>
