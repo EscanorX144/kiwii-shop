@@ -16,7 +16,7 @@ db_mongo = client['kiwii_game_shop']
 orders_col = db_mongo['orders']
 
 # --- ⚙️ CONFIGURATION ---
-BOT_TOKEN = "8089066962:AAFOHBGeuDF7E3Ygej3nAwOODSNj4ujVvk"
+BOT_TOKEN = "8089066962:AAFOHBGeuDF7E3YgeJ3mUu000sQNJ4uJVok"
 CHAT_ID = "7089720301"
 CS_LINK = "https://t.me/Bby_kiwii7"
 
