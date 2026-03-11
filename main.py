@@ -17,7 +17,7 @@ PAY_DATA = {"Number": "09775394979", "Name": "Thansin Kyaw", "Note": "Payment �
 BOT_TOKEN = "8089066962:AAFOHB6euDF7E3Ygej3nAwOODSNj4ujVvk"
 CHAT_ID = "7089720301"
 CS_LINK = "https://t.me/Why_kiwii?"
-ADMIN_PASS = "kiwii123"
+ADMIN_PASS = "kiwi1123"
 BASE_URL = "https://kiwiigameshop.onrender.com"
 
 # --- 💎 DIAMOND LIST DATA ---
@@ -78,7 +78,7 @@ GAMES_DATA = [
     }
 ]
 
-# --- HTML TEMPLATES ---
+# --- HTML TEMPLATE ---
 HTML_CODE = '''
 <!DOCTYPE html><html><head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -106,15 +106,18 @@ HTML_CODE = '''
     .modal-box { background:#1e293b; width:85%; max-width:350px; padding:25px; border-radius:20px; text-align:center; border:1px solid #475569; }
 </style>
 </head><body>
+
 <div id="home-sec" class="section" style="display:block;">
     <h2 style="text-align:center;color:#fbbf24;letter-spacing:1px;">KIWII GAME SHOP</h2>
     <div class="game-grid" id="game-list"></div>
 </div>
+
 <div id="order-sec" class="section">
     <button onclick="goHome()" style="background:none;color:white;border:1px solid #334155;padding:8px 15px;border-radius:8px;margin-bottom:15px;">← Back</button>
     <h3 id="game-title" style="color:#fbbf24;margin:10px 0;"></h3>
     <div class="cat-tabs-container" id="tabs"></div>
     <div class="pkg-grid" id="pkg-list"></div>
+
     <div class="pay-card">
         <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 5px;">
             <b id="pay-num" style="color:#fbbf24;font-size:20px;">{{pay.Number}}</b>
@@ -123,6 +126,7 @@ HTML_CODE = '''
         <span style="color:#cbd5e1;">{{pay.Name}}</span><br>
         <div class="glow-box">Note - {{pay.Note}}</div>
     </div>
+
     <form id="order-form" action="/order" method="post" enctype="multipart/form-data">
         <input type="hidden" name="server_name" id="s_name">
         <input type="text" name="u" id="user_id" placeholder="Player ID" required>
@@ -132,10 +136,12 @@ HTML_CODE = '''
         <button type="button" class="buy-btn" onclick="showModal()">CONFIRM & BUY</button>
     </form>
 </div>
+
 <div id="hist-sec" class="section">
     <h3 style="color:#fbbf24;text-align:center;">History</h3>
     <div id="hist-list"></div>
 </div>
+
 <div id="confirm-modal" class="modal">
     <div class="modal-box">
         <h3 style="color:#fbbf24;margin:0;">Confirm Order</h3>
@@ -144,11 +150,13 @@ HTML_CODE = '''
         <button onclick="closeModal()" style="background:none;border:none;color:#94a3b8;margin-top:15px;">Cancel</button>
     </div>
 </div>
+
 <div class="nav-bar">
     <div class="nav-btn" onclick="goHome()"><i class="fas fa-home"></i><br>Home</div>
     <div class="nav-btn" onclick="showHistory()"><i class="fas fa-history"></i><br>History</div>
     <a href="{{cs}}" class="nav-btn" target="_blank"><i class="fas fa-comment"></i><br>Contact</a>
 </div>
+
 <script>
 const data = {{ games | tojson }};
 function init() { document.getElementById('game-list').innerHTML = data.map(g => `<div class="game-card" onclick="selectGame('${g.name}')"><img src="${g.img}"><h4>${g.name}</h4></div>`).join(''); }
@@ -211,7 +219,7 @@ def order():
     u_id, z_id = request.form.get('u'), request.form.get('z') or "-"
     pkg, amt = request.form.get('p'), request.form.get('a')
     server, photo = request.form.get('server_name'), request.files.get('photo')
-    msg = f"🔔 *New Order!*\nID: #{order_id}\nServer: {server}\nGameID: {u_id} ({z_id})\nPkg: {pkg}\nAmt: {amt} Ks"
+    msg = f"🔔 *New Order!*\nID: `#{order_id}`\nServer: {server}\nGameID: {u_id} ({z_id})\nPkg: {pkg}\nAmt: {amt} Ks"
     if photo: requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto", data={"chat_id": CHAT_ID, "caption": msg, "parse_mode": "Markdown"}, files={'photo': photo.read()})
     orders_col.insert_one({'id': order_id, 'status': 'Pending', 'server': server, 'uid': u_id, 'pkg': pkg, 'amt': amt, 'time': time_now})
     return f"<html><body style='background:#0f172a;color:white;text-align:center;padding:50px;'><h2>Order Success! ✅</h2><script>let h=JSON.parse(localStorage.getItem('kiwi_h')||'[]'); h.unshift({{id:'{order_id}', s:'{server}', p:'{pkg}', t:'{time_now}', status:'Pending'}}); localStorage.setItem('kiwi_h', JSON.stringify(h)); setTimeout(()=>location.href='/', 1500);</script></body></html>"
@@ -235,9 +243,7 @@ def logout():
 def admin():
     if not session.get('logged_in'):
         return '<body style="background:#0f172a;color:white;padding:50px;text-align:center;"><form action="/login" method="post"><h3 style="color:#fbbf24;">Admin Login</h3><input name="pw" type="password" style="padding:10px;border-radius:8px;border:none;"><br><button style="margin-top:10px;padding:10px 20px;background:#fbbf24;border:none;border-radius:8px;font-weight:bold;">Login</button></form></body>'
-    
     orders = list(orders_col.find().sort("id", -1))
-    
     admin_html = '''
     <body style="background:#0f172a;color:white;padding:20px;font-family:sans-serif;">
         <div style="max-width:600px;margin:auto;">
@@ -258,7 +264,7 @@ def admin():
                 <div style="display:flex;gap:10px;">
                     <a href="/update/{{o.id}}/Success" style="flex:1;text-align:center;background:#10b981;color:white;text-decoration:none;padding:8px;border-radius:6px;font-size:14px;">Success</a>
                     <a href="/update/{{o.id}}/Cancel" style="flex:1;text-align:center;background:#ef4444;color:white;text-decoration:none;padding:8px;border-radius:6px;font-size:14px;">Cancel</a>
-                    <a href="/delete/{{o.id}}" style="padding:8px;color:#94a3b8;text-decoration:none;" onclick="return confirm('Delete order?')"><i class="fas fa-trash"></i></a>
+                    <a href="/delete/{{o.id}}" style="padding:8px;color:#94a3b8;text-decoration:none;" onclick="return confirm('Delete order?')">Delete</a>
                 </div>
             </div>
             {% endfor %}
