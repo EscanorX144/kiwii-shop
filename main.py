@@ -202,18 +202,16 @@ HTML_TEMPLATE = '''
         <a href="{{cs}}" class="nav-btn" style="text-decoration:none;"><i class="fas fa-comment"></i><br>CS</a>
     </div>
 
-    <script>
     const data = {{ games | tojson }};
     function init() {
-    document.getElementById('game-list').innerHTML = data.map(game => `
-        <div class="game-card" onclick="selectServer('${game.name}')" style="position: relative; overflow: hidden; z-index: 1;">
-            <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: url('/static/hero.webp'); background-size: cover; background-position: center; opacity: 0.2; z-index: -1;"></div>
-            
-            <img src="${game.img}" style="position: relative; z-index: 2;">
-            <h4 style="position: relative; z-index: 2;">${game.name}</h4>
-        </div>
-    `).join('');
-}
+        document.getElementById('game-list').innerHTML = data.map(game => `
+            <div class="game-card" onclick="selectServer('${game.name}')" style="position: relative; overflow: hidden; z-index: 1;">
+                <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: url('/static/hero.webp'); background-size: cover; background-position: center; opacity: 0.2; z-index: -1;"></div>
+                <img src="${game.img}" style="position: relative; z-index: 2;">
+                <h4 style="position: relative; z-index: 2;">${game.name}</h4>
+            </div>
+        `).join('');
+    }
 
     function selectServer(name) {
         document.getElementById('home-section').style.display = 'none';
@@ -223,71 +221,60 @@ HTML_TEMPLATE = '''
         document.getElementById('s_name').value = name;
         const game = data.find(g => g.name === name);
         const cats = game.cats;
-                const cats = game.cats;
-        // ခလုတ်တွေကို အစီအစဉ်တကျဖြစ်အောင် သတ်မှတ်ခြင်း
+
+        // ခလုတ်တွေကို အစဉ်လိုက်ဖြစ်အောင် စီခိုင်းခြင်း
         const order = ["Normal Dia", "Indo Dia", "Mal & SGP Dia", "Philippines Dia", "Russia Dia", "Weekly Pass", "2X Dia", "Bundle Pack"];
-        const sortedKeys = Object.keys(cats).sort((a, b) => order.indexOf(a) - order.indexOf(b));
+        const sortedKeys = Object.keys(cats).sort((a, b) => {
+            let indexA = order.indexOf(a);
+            let indexB = order.indexOf(b);
+            return (indexA === -1 ? 99 : indexA) - (indexB === -1 ? 99 : indexB);
+        });
 
         document.getElementById('tabs').innerHTML = sortedKeys.map((c, i) => `
             <div class="cat-tab ${i === 0 ? 'active' : ''}" onclick="renderPkgs('${name}','${c}',this)">${c}</div>
         `).join('');
         renderPkgs(name, sortedKeys[0]);
-
     }
+
     function renderPkgs(sName, cat, el) {
-        if(el) { document.querySelectorAll('.cat-tab').forEach(t=>t.classList.remove('active')); el.classList.add('active'); }
+        if(el) { 
+            document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active')); 
+            el.classList.add('active'); 
+        }
         const game = data.find(g => g.name === sName);
         document.getElementById('pkg-list').innerHTML = game.cats[cat].map(p => `
             <div class="pkg-card" onclick="sel(this,'${p.d}','${p.p}')">
                 <span>${p.d} 💎</span><br><b>${p.p} Ks</b>
-            </div>`).join('');
-    }
-    function sel(el, d, p) {
-        document.querySelectorAll('.pkg-card').forEach(c=>c.classList.remove('selected'));
-        el.classList.add('selected');
-        document.getElementById('p_val').value = d; document.getElementById('a_val').value = p;
-    }
-    function showCheck() {
-    const p_val = document.getElementById('p_val').value; // Diamond amount
-    const a_val = document.getElementById('a_val').value; // Price
-    const u_id = document.getElementById('user_id').value; // Player ID
-    const z_id = document.getElementById('zone_id').value; // Zone ID
-
-    if (!p_val || !u_id || !z_id) {
-        return alert("Please fill all information!");
-    }
-
-    // Modal Background ဖန်တီးခြင်း
-    const modal = document.createElement('div');
-    modal.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); display:flex; align-items:center; justify-content:center; z-index:9999; font-family:sans-serif;";
-    
-    // Modal Content
-    modal.innerHTML = `
-        <div style="background:#1e293b; width:90%; max-width:350px; padding:25px; border-radius:20px; color:white; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
-            <h3 style="color:#fbbf24; margin-top:0; font-size:20px;">Confirm Order</h3>
-            
-            <div style="margin:20px 0; line-height:1.8; font-size:16px;">
-                ID: ${u_id} (${z_id})<br>
-                Diamond: ${p_val}<br>
-                Price: ${a_val} Ks
             </div>
+        `).join('');
+    }
 
-            <button id="final-confirm" style="width:100%; padding:15px; background:#fbbf24; border:none; border-radius:12px; font-weight:bold; font-size:16px; cursor:pointer; margin-bottom:10px;">CONFIRM & SEND</button>
-            <button id="modal-close" style="width:100%; padding:12px; background:#334155; border:none; border-radius:12px; color:#94a3b8; font-weight:bold; cursor:pointer;">Cancel</button>
-        </div>
-    `;
+    function sel(el, d, p) {
+        document.querySelectorAll('.pkg-card').forEach(c => c.classList.remove('selected'));
+        el.classList.add('selected');
+        document.getElementById('p_val').value = d;
+        document.getElementById('a_val').value = p;
+    }
 
-    document.body.appendChild(modal);
+    function showCheck() {
+        const p_val = document.getElementById('p_val').value;
+        const a_val = document.getElementById('a_val').value;
+        const u_id = document.getElementById('user_id').value;
+        const z_id = document.getElementById('zone_id').value;
+        if (!p_val || !u_id || !z_id) return alert("Please fill all information!");
 
-    document.getElementById('final-confirm').onclick = () => {
-        document.getElementById('order-form').submit();
-    };
-
-    document.getElementById('modal-close').onclick = () => {
-        document.body.removeChild(modal);
-    };
-}
-
+        const modal = document.createElement('div');
+        modal.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); display:flex; align-items:center; justify-content:center; z-index:9999;";
+        modal.innerHTML = `
+            <div style="background:#1e293b; width:90%; max-width:350px; padding:25px; border-radius:20px; color:white; text-align:center;">
+                <h3 style="color:#fbbf24;">Confirm Order</h3>
+                <p>ID: ${u_id} (${z_id})<br>Diamond: ${p_val}<br>Price: ${a_val} Ks</p>
+                <button onclick="document.getElementById('order-form').submit()" style="width:100%; padding:12px; background:#fbbf24; border:none; border-radius:10px; font-weight:bold; cursor:pointer;">CONFIRM & SEND</button>
+                <button onclick="document.body.removeChild(this.parentElement.parentElement)" style="width:100%; padding:10px; background:#334155; border:none; border-radius:10px; color:#94a3b8; margin-top:10px; cursor:pointer;">Cancel</button>
+            </div>
+        `;
+        document.body.appendChild(modal);
+    }
     async function showHistory() {
         document.getElementById('home-section').style.display='none';
         document.getElementById('order-section').style.display='none';
