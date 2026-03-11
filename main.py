@@ -168,7 +168,7 @@ HTML_TEMPLATE = '''
             <br><span>Wave</span>
         </div>
        <div class="pay-icon">
-    <img src="{{ url_for('static', filename='ayapay.PNG') }}" alt="Aya" style="width:45px; height:45px; border-radius:10px;">
+    <img src="{{ url_for('static', filename='ayapay.jpg') }}" alt="Aya" style="width:45px; height:45px; border-radius:10px;">
     <br><span>AyaPay</span>
 </div>
 
