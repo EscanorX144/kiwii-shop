@@ -19,36 +19,19 @@ BASE_URL = "https://kiwiigameshop.onrender.com"
 GAMES_DATA = [
     {
         "name": "Normal Server (🇲🇲)",
-        "img": "https://img.icons8.com/color/144/myanmar.png", # မြန်မာအလံ Icon ပြင်ဆင်ထားသည်
+        "img": "https://img.icons8.com/color/144/myanmar.png",
         "cats": {
-            "Normal Dia": [
-                {"d": "11", "p": "700"}, {"d": "22", "p": "1400"}, {"d": "33", "p": "2100"}, {"d": "44", "p": "2800"}, 
-                {"d": "56", "p": "3500"}, {"d": "112", "p": "7000"}, {"d": "172", "p": "9450"}, {"d": "257", "p": "13800"}, 
-                {"d": "343", "p": "18600"}, {"d": "429", "p": "23350"}, {"d": "514", "p": "27650"}, {"d": "600", "p": "32650"}, 
-                {"d": "706", "p": "37450"}, {"d": "878", "p": "46850"}, {"d": "963", "p": "51200"}, {"d": "1049", "p": "56000"}, 
-                {"d": "1412", "p": "74900"}, {"d": "2195", "p": "114200"}, {"d": "3688", "p": "190500"}, {"d": "5532", "p": "287000"},
-                {"d": "9288", "p": "475000"}
-            ],
+            "Normal Dia": [{"d": "11", "p": "700"}, {"d": "22", "p": "1400"}, {"d": "33", "p": "2100"}, {"d": "44", "p": "2800"}, {"d": "56", "p": "3500"}, {"d": "112", "p": "7000"}, {"d": "172", "p": "9450"}, {"d": "257", "p": "13800"}, {"d": "343", "p": "18600"}, {"d": "429", "p": "23350"}, {"d": "514", "p": "27650"}, {"d": "600", "p": "32650"}, {"d": "706", "p": "37450"}, {"d": "878", "p": "46850"}, {"d": "963", "p": "51200"}, {"d": "1049", "p": "56000"}, {"d": "1412", "p": "74900"}, {"d": "2195", "p": "114200"}, {"d": "3688", "p": "190500"}, {"d": "5532", "p": "287000"}, {"d": "9288", "p": "475000"}],
             "Weekly Pass": [{"d": f"Weekly Pass {i}X", "p": str(5900 * i)} for i in range(1, 11)],
-            "2X Dia": [
-                {"d": "50+50 💎", "p": "3200"}, {"d": "250+250 💎", "p": "15500"}, 
-                {"d": "500+500 💎", "p": "31000"}, {"d": "1000+1000 💎", "p": "61000"}
-            ],
-            "Bundle Pack": [
-                {"d": "Weekly elite bundle", "p": "3050"}, {"d": "Monthly epic bundle", "p": "15350"}, {"d": "Twilight pass", "p": "31500"}
-            ]
+            "2X Dia": [{"d": "50+50 💎", "p": "3200"}, {"d": "250+250 💎", "p": "15500"}, {"d": "500+500 💎", "p": "31000"}, {"d": "1000+1000 💎", "p": "61000"}],
+            "Bundle Pack": [{"d": "Weekly elite bundle", "p": "3050"}, {"d": "Monthly epic bundle", "p": "15350"}, {"d": "Twilight pass", "p": "31500"}]
         }
     },
     {
         "name": "Indonesia (🇮🇩)",
         "img": "https://img.icons8.com/color/144/indonesia.png",
         "cats": {
-            "Normal Dia": [
-                {"d": "5", "p": "450"}, {"d": "12", "p": "950"}, {"d": "28", "p": "2200"}, {"d": "44", "p": "3300"}, 
-                {"d": "59", "p": "4300"}, {"d": "85", "p": "5850"}, {"d": "170", "p": "11700"}, {"d": "296", "p": "20500"}, 
-                {"d": "408", "p": "28000"}, {"d": "568", "p": "37500"}, {"d": "875", "p": "58500"}, {"d": "2010", "p": "123500"},
-                {"d": "4830", "p": "299000"}
-            ],
+            "Indo Dia": [{"d": "5", "p": "450"}, {"d": "12", "p": "950"}, {"d": "28", "p": "2200"}, {"d": "44", "p": "3300"}, {"d": "59", "p": "4300"}, {"d": "85", "p": "5850"}, {"d": "170", "p": "11700"}, {"d": "296", "p": "20500"}, {"d": "408", "p": "28000"}, {"d": "568", "p": "37500"}, {"d": "875", "p": "58500"}, {"d": "2010", "p": "123500"}, {"d": "4830", "p": "299000"}],
             "Weekly Pass": [{"d": f"Weekly Pass {i}X", "p": str(7500 * i)} for i in range(1, 11)],
             "2X Dia": [{"d": "10+10 💎", "p": "800"}, {"d": "50+50 💎", "p": "3800"}, {"d": "100+100 💎", "p": "7000"}],
             "Bundle Pack": [{"d": "Twilight Pass", "p": "32000"}]
@@ -58,51 +41,28 @@ GAMES_DATA = [
         "name": "Malaysia (🇲🇾)",
         "img": "https://img.icons8.com/color/144/malaysia.png",
         "cats": {
-            "Normal Dia": [
-                {"d": "14", "p": "1050"}, {"d": "42", "p": "3100"}, {"d": "70", "p": "5050"}, {"d": "140", "p": "10100"}, 
-                {"d": "210", "p": "15100"}, {"d": "284", "p": "20200"}, {"d": "355", "p": "25200"}, {"d": "429", "p": "30300"}, 
-                {"d": "716", "p": "50200"}, {"d": "1446", "p": "100500"}, {"d": "2976", "p": "201000"}, {"d": "7502", "p": "503500"}
-            ],
-            "Weekly Pass": [{"d": f"Weekly Pass {i}X", "p": str(8400 * i)} for i in range(1, 11)],
-            "2X Dia": [{"d": "20+20 💎", "p": "1500"}, {"d": "150+150 💎", "p": "10000"}],
-            "Bundle Pack": [{"d": "Weekly Elite", "p": "3500"}]
+            "Mal & SGP Dia": [{"d": "14", "p": "1050"}, {"d": "42", "p": "3100"}, {"d": "70", "p": "5050"}, {"d": "140", "p": "10100"}, {"d": "210", "p": "15100"}, {"d": "284", "p": "20200"}, {"d": "355", "p": "25200"}, {"d": "429", "p": "30300"}, {"d": "716", "p": "50200"}, {"d": "1446", "p": "100500"}, {"d": "2976", "p": "201000"}, {"d": "7502", "p": "503500"}],
+            "Weekly Pass": [{"d": f"Weekly Pass {i}X", "p": str(8400 * i)} for i in range(1, 11)]
         }
     },
     {
         "name": "Philippines (🇵🇭)",
         "img": "https://img.icons8.com/color/144/philippines.png",
         "cats": {
-            "Normal Dia": [
-                {"d": "11", "p": "750"}, {"d": "22", "p": "1500"}, {"d": "56", "p": "3500"}, {"d": "112", "p": "7000"}, 
-                {"d": "223", "p": "14000"}, {"d": "336", "p": "21300"}, {"d": "570", "p": "36000"}, {"d": "1163", "p": "70500"}, 
-                {"d": "2398", "p": "140000"}, {"d": "6042", "p": "350000"}
-            ],
-            "Weekly Pass": [{"d": f"Weekly Pass {i}X", "p": str(6500 * i)} for i in range(1, 11)],
-            "2X Dia": [{"d": "50+50 💎", "p": "3500"}, {"d": "250+250 💎", "p": "16000"}],
-            "Bundle Pack": [{"d": "Twilight Pass", "p": "33000"}]
+            "Philippines Dia": [{"d": "11", "p": "750"}, {"d": "22", "p": "1500"}, {"d": "56", "p": "3500"}, {"d": "112", "p": "7000"}, {"d": "223", "p": "14000"}, {"d": "336", "p": "21300"}, {"d": "570", "p": "36000"}, {"d": "1163", "p": "70500"}, {"d": "2398", "p": "140000"}, {"d": "6042", "p": "350000"}],
+            "Weekly Pass": [{"d": f"Weekly Pass {i}X", "p": str(6500 * i)} for i in range(1, 11)]
         }
     },
     {
         "name": "Russia (🇷🇺)",
         "img": "https://img.icons8.com/color/144/russian-federation.png",
         "cats": {
-            "Normal Dia": [
-                {"d": "35", "p": "2750"}, {"d": "55", "p": "4450"}, {"d": "165", "p": "13000"}, {"d": "275", "p": "22000"}, 
-                {"d": "565", "p": "44500"}, {"d": "1155", "p": "88000"}, {"d": "1765", "p": "132000"}, {"d": "2975", "p": "220000"},
-                {"d": "6000", "p": "435000"}
-            ],
-            "Weekly Pass": [{"d": f"Weekly Pass {i}X", "p": str(8600 * i)} for i in range(1, 11)],
-            "2X Dia": [{"d": "50+50 💎", "p": "4000"}],
-            "Bundle Pack": [{"d": "Twilight Pass", "p": "35000"}]
+            "Russia Dia": [{"d": "35", "p": "2750"}, {"d": "55", "p": "4450"}, {"d": "165", "p": "13000"}, {"d": "275", "p": "22000"}, {"d": "565", "p": "44500"}, {"d": "1155", "p": "88000"}, {"d": "1765", "p": "132000"}, {"d": "2975", "p": "220000"}, {"d": "6000", "p": "435000"}],
+            "Weekly Pass": [{"d": f"Weekly Pass {i}X", "p": str(8600 * i)} for i in range(1, 11)]
         }
     }
 ]
 
-# --- (HTML_CODE, Routes, Admin logic အားလုံး အရင်အတိုင်း ဖြစ်သည်) ---
-# ... (အောက်က Code အပိုင်းတွေကို ရှေ့ကပေးထားတဲ့အတိုင်း ဆက်သုံးနိုင်ပါတယ်)
-
-
-# --- HTML TEMPLATE (Optimized for Tabs) ---
 HTML_CODE = '''
 <!DOCTYPE html><html><head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -189,16 +149,31 @@ const data = {{ games | tojson }};
 function init() {
     document.getElementById('game-list').innerHTML = data.map(g => `<div class="game-card" onclick="selectGame('${g.name}')"><img src="${g.img}"><h4>${g.name}</h4></div>`).join('');
 }
+
 function selectGame(name) {
     document.querySelectorAll('.section').forEach(s=>s.style.display='none');
     document.getElementById('order-sec').style.display = 'block';
     document.getElementById('game-title').innerText = name;
     document.getElementById('s_name').value = name;
+    
     const g = data.find(i => i.name === name);
-    const keys = Object.keys(g.cats);
-    document.getElementById('tabs').innerHTML = keys.map((c, i) => `<div class="cat-tab ${i===0?'active':''}" onclick="renderPkgs('${name}','${c}',this)">${c}</div>`).join('');
-    renderPkgs(name, keys[0]);
+    const cats = g.cats;
+    
+    // --- 🚀 သင်ပေးထားတဲ့ Sorting Code နေရာ ---
+    const order = ["Normal Dia", "Indo Dia", "Mal & SGP Dia", "Philippines Dia", "Russia Dia", "Weekly Pass", "2X Dia", "Bundle Pack"];
+    const sortedKeys = Object.keys(cats).sort((a, b) => {
+        let indexA = order.indexOf(a);
+        let indexB = order.indexOf(b);
+        return (indexA === -1 ? 99 : indexA) - (indexB === -1 ? 99 : indexB);
+    });
+
+    document.getElementById('tabs').innerHTML = sortedKeys.map((c, i) => `
+        <div class="cat-tab ${i === 0 ? 'active' : ''}" onclick="renderPkgs('${name}','${c}',this)">${c}</div>
+    `).join('');
+    
+    renderPkgs(name, sortedKeys[0]);
 }
+
 function renderPkgs(sName, cat, el) {
     if(el) { document.querySelectorAll('.cat-tab').forEach(t=>t.classList.remove('active')); el.classList.add('active'); }
     const g = data.find(i => i.name === sName);
@@ -238,6 +213,7 @@ init();
 </script></body></html>
 '''
 
+# --- (ADMIN & ORDER ROUTES - SAME AS BEFORE) ---
 @app.route('/')
 def index(): return render_template_string(HTML_CODE, games=GAMES_DATA, pay=PAY_DATA, cs=CS_LINK)
 
@@ -295,4 +271,5 @@ def update(oid, status):
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
-    
+
+
