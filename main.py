@@ -15,11 +15,11 @@ CS_LINK = "https://t.me/Bby_kiwii7"
 ADMIN_PASS = "kiwii123"
 BASE_URL = "https://kiwiigameshop.onrender.com"
 
-# --- 💎 DIAMOND LIST DATA (All Servers updated from your photos) ---
+# --- 💎 DIAMOND LIST DATA ---
 GAMES_DATA = [
     {
-        "name": "Normal Server",
-        "img": "https://img.icons8.com/color/144/mobile-legends.png",
+        "name": "Normal Server (🇲🇲)",
+        "img": "https://img.icons8.com/color/144/myanmar.png", # မြန်မာအလံ Icon ပြင်ဆင်ထားသည်
         "cats": {
             "Normal Dia": [
                 {"d": "11", "p": "700"}, {"d": "22", "p": "1400"}, {"d": "33", "p": "2100"}, {"d": "44", "p": "2800"}, 
@@ -31,8 +31,8 @@ GAMES_DATA = [
             ],
             "Weekly Pass": [{"d": f"Weekly Pass {i}X", "p": str(5900 * i)} for i in range(1, 11)],
             "2X Dia": [
-                {"d": "50+50 💎", "p": "3200"}, {"d": "150+150 💎", "p": "9100"}, 
-                {"d": "250+250 💎", "p": "14650"}, {"d": "500+500 💎", "p": "29950"}
+                {"d": "50+50 💎", "p": "3200"}, {"d": "250+250 💎", "p": "15500"}, 
+                {"d": "500+500 💎", "p": "31000"}, {"d": "1000+1000 💎", "p": "61000"}
             ],
             "Bundle Pack": [
                 {"d": "Weekly elite bundle", "p": "3050"}, {"d": "Monthly epic bundle", "p": "15350"}, {"d": "Twilight pass", "p": "31500"}
@@ -97,6 +97,10 @@ GAMES_DATA = [
         }
     }
 ]
+
+# --- (HTML_CODE, Routes, Admin logic အားလုံး အရင်အတိုင်း ဖြစ်သည်) ---
+# ... (အောက်က Code အပိုင်းတွေကို ရှေ့ကပေးထားတဲ့အတိုင်း ဆက်သုံးနိုင်ပါတယ်)
+
 
 # --- HTML TEMPLATE (Optimized for Tabs) ---
 HTML_CODE = '''
