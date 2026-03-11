@@ -19,7 +19,7 @@ BASE_URL = "https://kiwiigameshop.onrender.com"
 GAMES_DATA = [
     {
         "name": "Normal Server (🇲🇲)",
-        "img": "https://img.icons8.com/color/144/myanmar.png",
+        "img": "https://flagcdn.com/w160/mm.png",
         "cats": {
             "Normal Dia": [{"d": "11", "p": "700"}, {"d": "22", "p": "1400"}, {"d": "33", "p": "2100"}, {"d": "44", "p": "2800"}, {"d": "56", "p": "3500"}, {"d": "112", "p": "7000"}, {"d": "172", "p": "9450"}, {"d": "257", "p": "13800"}, {"d": "343", "p": "18600"}, {"d": "429", "p": "23350"}, {"d": "514", "p": "27650"}, {"d": "600", "p": "32650"}, {"d": "706", "p": "37450"}, {"d": "878", "p": "46850"}, {"d": "963", "p": "51200"}, {"d": "1049", "p": "56000"}, {"d": "1412", "p": "74900"}, {"d": "2195", "p": "114200"}, {"d": "3688", "p": "190500"}, {"d": "5532", "p": "287000"}, {"d": "9288", "p": "475000"}],
             "Weekly Pass": [{"d": f"Weekly Pass {i}X", "p": str(5900 * i)} for i in range(1, 11)],
@@ -80,20 +80,7 @@ HTML_CODE = '''
     .cat-tabs-container { overflow-x: auto; white-space: nowrap; padding: 5px 0 15px 0; -webkit-overflow-scrolling: touch; }
     .cat-tab { padding:10px 18px; background:#1e293b; border-radius:10px; font-size:12px; border:1px solid #334155; display:inline-block; margin-right:5px; color:#94a3b8; }
     .cat-tab.active { background:#fbbf24; color:black; font-weight:bold; border-color:#fbbf24; }
-    
-    /* 🚀 Scrollable Box ပြင်ဆင်မှု */
-    .pkg-grid { 
-        display:grid; 
-        grid-template-columns:1fr 1fr; 
-        gap:10px; 
-        max-height: 350px; /* အမြင့်ကို 350px သတ်မှတ်ထားသည် */
-        overflow-y: auto;  /* အပေါ်အောက် ဆွဲကြည့်နိုင်ရန် */
-        padding: 5px;
-        background: rgba(30, 41, 59, 0.5);
-        border-radius: 12px;
-        border: 1px solid #334155;
-    }
-    
+    .pkg-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; max-height: 350px; overflow-y: auto; padding: 5px; background: rgba(30, 41, 59, 0.5); border-radius: 12px; border: 1px solid #334155; }
     .pkg-card { background:#1e293b; border:1px solid #334155; padding:12px; border-radius:10px; text-align:center; }
     .pkg-card.selected { border:2px solid #fbbf24; background:#1e3a8a; }
     .pay-card { background:#1e293b; border-radius:15px; padding:15px; margin:20px 0; text-align:center; border:1px solid #334155; }
@@ -117,7 +104,6 @@ HTML_CODE = '''
     <button onclick="goHome()" style="background:none;color:white;border:1px solid #334155;padding:8px 15px;border-radius:8px;margin-bottom:15px;">← Back</button>
     <h3 id="game-title" style="color:#fbbf24;margin:10px 0;"></h3>
     <div class="cat-tabs-container" id="tabs"></div>
-    
     <div class="pkg-grid" id="pkg-list"></div>
 
     <div class="pay-card">
@@ -172,7 +158,6 @@ function selectGame(name) {
     
     const g = data.find(i => i.name === name);
     const cats = g.cats;
-    
     const order = ["Normal Dia", "Indo Dia", "Mal & SGP Dia", "Philippines Dia", "Russia Dia", "Weekly Pass", "2X Dia", "Bundle Pack"];
     const sortedKeys = Object.keys(cats).sort((a, b) => {
         let indexA = order.indexOf(a);
@@ -183,7 +168,6 @@ function selectGame(name) {
     document.getElementById('tabs').innerHTML = sortedKeys.map((c, i) => `
         <div class="cat-tab ${i === 0 ? 'active' : ''}" onclick="renderPkgs('${name}','${c}',this)">${c}</div>
     `).join('');
-    
     renderPkgs(name, sortedKeys[0]);
 }
 
@@ -192,23 +176,22 @@ function renderPkgs(sName, cat, el) {
     const g = data.find(i => i.name === sName);
     document.getElementById('pkg-list').innerHTML = g.cats[cat].map(p => `<div class="pkg-card" onclick="sel(this,'${p.d}','${p.p}')"><span>${p.d}</span><br><b>${p.p} Ks</b></div>`).join('');
 }
+
 function sel(el, d, p) {
     document.querySelectorAll('.pkg-card').forEach(c=>c.classList.remove('selected'));
     el.classList.add('selected');
     document.getElementById('p_val').value = d; document.getElementById('a_val').value = p;
-}function showModal() {
+}
+
+function showModal() {
     const u = document.getElementById('user_id').value;
     const z = document.getElementById('zone_id').value;
     const p = document.getElementById('p_val').value;
     const a = document.getElementById('a_val').value;
     const f = document.getElementById('photo-input').files[0];
     const s = document.getElementById('s_name').value;
-
     if(!u || !p || !f) return alert("အချက်အလက်အားလုံးဖြည့်ပါ။");
-
-    // Game ID ကို Zone ID ပါရင် တွဲပြမယ်၊ မပါရင် ID တစ်ခုပဲပြမယ်
     const displayID = z ? `${u} (${z})` : u;
-
     document.getElementById('modal-info').innerHTML = `
         <div style="font-size: 16px; border-bottom: 1px solid #475569; padding-bottom: 10px; margin-bottom: 10px;">
             <b style="color: #fbbf24;">Game ID:</b> ${displayID}
@@ -217,53 +200,42 @@ function sel(el, d, p) {
             <b style="color: #fbbf24;">Server:</b> ${s}<br>
             <b style="color: #fbbf24;">Diamond:</b> ${p}<br>
             <b style="color: #fbbf24;">Price:</b> ${a} Ks
-        </div>
-    `;
+        </div>`;
     document.getElementById('confirm-modal').style.display = 'flex';
 }
+
 function closeModal() { document.getElementById('confirm-modal').style.display = 'none'; }
 function submitForm() { document.getElementById('order-form').submit(); }
+
 async function showHistory() {
     document.querySelectorAll('.section').forEach(s => s.style.display = 'none');
     document.getElementById('hist-sec').style.display = 'block';
-    
-    // LocalStorage ကနေ Order List ကို ယူတယ်
     let h = JSON.parse(localStorage.getItem('kiwi_h') || '[]');
     let html = h.length === 0 ? '<p style="text-align:center;color:#94a3b8;margin-top:50px;">No History</p>' : '';
-    
     document.getElementById('hist-list').innerHTML = '<p style="text-align:center;color:#fbbf24;">Loading...</p>';
-
     let newHistoryList = [];
-
     for (let i = 0; i < h.length; i++) {
         try {
-            // Server ဆီကနေ နောက်ဆုံး Status ကို အမြဲသွားယူမယ်
             const res = await fetch('/get_status/' + h[i].id);
             const currentStatus = await res.text();
-            
-            // LocalStorage ထဲက data ကိုပါ Update လုပ်ပေးမယ် (Pending ပြန်မဖြစ်အောင်)
             h[i].status = currentStatus;
             newHistoryList.push(h[i]);
-
             let color = currentStatus === 'Success' ? '#10b981' : (currentStatus === 'Cancel' ? '#ef4444' : '#fbbf24');
-            
             html = (i === 0 ? '' : html) + `
                 <div style="background:#1e293b;padding:15px;border-radius:12px;margin-bottom:10px;border-left:5px solid ${color};">
                     <b>#${h[i].id}</b> <small style="float:right;color:${color}">${currentStatus}</small><br>
                     <small>${h[i].s} | ${h[i].p} | ${h[i].t}</small>
                 </div>`;
-        } catch (err) {
-            console.error("Error fetching status", err);
-        }
+        } catch (err) { console.error(err); }
     }
-    
-    // နောက်ဆုံးရလာတဲ့ Status တွေနဲ့ LocalStorage ကို ပြန်သိမ်းတယ်
     localStorage.setItem('kiwi_h', JSON.stringify(newHistoryList));
     document.getElementById('hist-list').innerHTML = html;
 }
-document.getElementById('hist-list').innerHTML = html;
+
+function goHome() { 
+    document.querySelectorAll('.section').forEach(s=>s.style.display='none'); 
+    document.getElementById('home-sec').style.display='block'; 
 }
-function goHome() { document.querySelectorAll('.section').forEach(s=>s.style.display='none'); document.getElementById('home-sec').style.display='block'; }
 init();
 </script></body></html>
 '''
@@ -282,7 +254,7 @@ def order():
     msg = f"🔔 *New Order!*\nID: #{order_id}\nServer: {server}\nGameID: {u_id} ({z_id})\nPkg: {pkg}\nAmt: {amt} Ks\n\n🔗 [Open Admin]({BASE_URL}/admin)"
     if photo: requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto", data={"chat_id": CHAT_ID, "caption": msg, "parse_mode": "Markdown"}, files={'photo': photo.read()})
     db.insert({'id': order_id, 'status': 'Pending', 'server': server, 'uid': u_id, 'pkg': pkg, 'amt': amt, 'time': time_now})
-    return f"<html><body style='background:#0f172a;color:white;text-align:center;padding:50px;'><h2>Order Success! ✅</h2><script>let h=JSON.parse(localStorage.getItem('kiwi_h')||'[]'); h.unshift({{id:'{order_id}', s:'{server}', p:'{pkg}', t:'{time_now}'}}); localStorage.setItem('kiwi_h', JSON.stringify(h)); setTimeout(()=>location.href='/', 1500);</script></body></html>"
+    return f"<html><body style='background:#0f172a;color:white;text-align:center;padding:50px;'><h2>Order Success! ✅</h2><script>let h=JSON.parse(localStorage.getItem('kiwi_h')||'[]'); h.unshift({{id:'{order_id}', s:'{server}', p:'{pkg}', t:'{time_now}', status:'Pending'}}); localStorage.setItem('kiwi_h', JSON.stringify(h)); setTimeout(()=>location.href='/', 1500);</script></body></html>"
 
 @app.route('/get_status/<id>')
 def get_status(id):
