@@ -6,7 +6,7 @@ from bson.objectid import ObjectId
 
 app = Flask(__name__)
 
-# --- ⚙️ CONFIGURATION (မူလအတိုင်း မပြောင်းလဲပါ) ---
+# --- ⚙️ CONFIGURATION ---
 MONGO_URI = "mongodb+srv://EscanorX:Conti144@cluster0.m2mtomm.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 client = MongoClient(MONGO_URI)
 db = client['kiwii_game_shop']
@@ -27,6 +27,7 @@ GAMES_DATA = [
     {"id": 5, "name": "Russia (🇷🇺)", "img": "https://flagcdn.com/w160/ru.png", "cat_order": ["Dia", "Pass"], "cats": {"Dia": [{"d": "35 💎", "p": "2750"}, {"d": "55 💎", "p": "4450"}, {"d": "165 💎", "p": "13000"}, {"d": "275 💎", "p": "22000"}, {"d": "565 💎", "p": "44500"}, {"d": "1155 💎", "p": "88000"}, {"d": "1765 💎", "p": "182000"}, {"d": "2975 💎", "p": "22000"}, {"d": "6000 💎", "p": "435000"}], "Pass": [{"d": "WP", "p": "8600"}]}},
     {"id": 6, "name": "Philippines (🇵🇭)", "img": "https://flagcdn.com/w160/ph.png", "cat_order": ["Dia", "2X Dia", "Pass"], "cats": {"Dia": [{"d": "11 💎", "p": "750"}, {"d": "22 💎", "p": "1500"}, {"d": "56 💎", "p": "3500"}, {"d": "112 💎", "p": "7000"}, {"d": "223 💎", "p": "14000"}, {"d": "336 💎", "p": "21300"}, {"d": "570 💎", "p": "36000"}, {"d": "1163 💎", "p": "70500"}, {"d": "2398 💎", "p": "140000"}, {"d": "6042 💎", "p": "350000"}], "2X Dia": [{"d": "50+50 💎", "p": "3600"}, {"d": "150+150 💎", "p": "10500"}, {"d": "250+250 💎", "p": "17200"}, {"d": "500+500 💎", "p": "34500"}], "Pass": [{"d": "WP", "p": "6500"}, {"d": "Twilight Pass", "p": "35500"}]}}
 ]
+
 HTML_CODE = '''
 <!DOCTYPE html><html><head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -36,7 +37,7 @@ HTML_CODE = '''
     #main-container { max-width:500px; margin:auto; }
     .header-logo { text-align:center; padding:25px 0; color:#fbbf24; font-size:26px; font-weight:bold; }
     
-        .game-grid {
+    .game-grid {
         display:grid; grid-template-columns:1fr 1fr; gap:15px; padding:20px;
         background: url('/static/hero.webp') no-repeat center center; background-size: cover;
         border-radius: 15px; margin: 10px;
@@ -112,9 +113,7 @@ HTML_CODE = '''
 <script>
 let sel_srv='', sel_pkg='', sel_prc='';
 const games = {{ games | tojson }};
-
-// Login ဝင်ထားသော User ၏ Username (System မှ အလိုအလျောက် ရယူသည်ဟု ယူဆပါသည်)
-const CURRENT_LOGIN_USER = "@Bby_kiwii7"; // ဤနေရာတွင် Website ၏ Login variable ကို ပြောင်းလဲထည့်သွင်းပါ
+const CURRENT_LOGIN_USER = "@Bby_kiwii7"; 
 
 function init() {
     document.getElementById('g-list').innerHTML = games.map(g => `
@@ -153,7 +152,7 @@ async function handleOrder(e) {
     if(!sel_pkg) return alert("Package ရွေးပေးပါ။");
     
     const fd = new FormData();
-    fd.append('tg_user', CURRENT_LOGIN_USER); // Login Username ကို အော်တိုထည့်သည်
+    fd.append('tg_user', CURRENT_LOGIN_USER);
     fd.append('uid', document.getElementById('uid').value);
     fd.append('zid', document.getElementById('zid').value);
     fd.append('server', sel_srv); fd.append('pkg', sel_pkg);
@@ -161,6 +160,7 @@ async function handleOrder(e) {
 
     const r = await fetch('/order', { method: 'POST', body: fd });
     if(await r.text() === "Success") { alert("Order Successful!"); location.reload(); }
+    else { alert("Order Failed. Please try again."); }
 }
 
 async function showTop() {
@@ -168,7 +168,6 @@ async function showTop() {
     document.getElementById('hist-sec').style.display='none'; document.getElementById('top-sec').style.display='block';
     updateNav('nav-top');
     
-    // 1. Get Personal Rank
     const myRankRes = await fetch(`/api/my_rank?user=${CURRENT_LOGIN_USER}`);
     const myRankData = await myRankRes.json();
     const banner = document.getElementById('my-rank-banner');
@@ -177,7 +176,6 @@ async function showTop() {
         banner.innerHTML = `👤 Your Rank: #${myRankData.rank}<br><small>Total Spent: ${myRankData.total.toLocaleString()} Ks</small>`;
     } else { banner.style.display = 'none'; }
 
-    // 2. Get Global Top 10
     const r = await fetch('/api/top10');
     const data = await r.json();
     document.getElementById('top-list').innerHTML = data.map((u, i) => `
@@ -220,21 +218,20 @@ def order():
         tg_user = request.form.get('tg_user')
         uid = request.form.get('uid')
         zid = request.form.get('zid')
-        price_str = request.form.get('price').replace(' Ks', '').replace(',', '')
+        price_str = request.form.get('price', '0').replace(' Ks', '').replace(',', '')
         price = int(price_str)
         photo = request.files.get('photo')
+        pkg = request.form.get('pkg')
         
         oid = orders_col.insert_one({
             "tg_user": tg_user, "uid": uid, "zone": zid, 
-            "price": price, "status": "Pending", 
+            "pkg": pkg, "price": price, "status": "Pending", 
             "date": datetime.now(timezone(timedelta(hours=6, minutes=30))).strftime("%d/%m/%Y %I:%M %p")
         }).inserted_id
         
-        # Admin Alert Telegram
         keyboard = {"inline_keyboard": [[{"text": "Done ✅", "callback_data": f"done_{oid}"}, {"text": "Reject ❌", "callback_data": f"reject_{oid}"}]]}
         
-        # msg စာသားကို quote (") သေချာပိတ်ပါ
-        msg = f"⚠️ *New Order!*\nUser: {tg_user}\nID: `{uid}` ({zid})\nPackage: {request.form.get('pkg')}\nPrice: {price} Ks"
+        msg = f"⚠️ *New Order!*\nUser: {tg_user}\nID: `{uid}` ({zid})\nPackage: {pkg}\nPrice: {price} Ks"
         
         requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto", 
                       data={"chat_id": CHAT_ID, "caption": msg, "parse_mode": "Markdown", "reply_markup": json.dumps(keyboard)}, 
@@ -243,14 +240,14 @@ def order():
         return "Success"
         
     except Exception as e:
-        print(f"Error: {e}")
+        print(f"Error in order function: {e}")
         return "Error"
 
 @app.route('/api/top10')
 def get_top10():
     pipeline = [
-        {"$match": {"tg_user": {"$nin": ["@Escanor_XX", "@Escanor_X", "@Bby_kiwii7"]}}}, # Admin များ ဖယ်ထုတ်ခြင်း
-        {"$group": {"_id": "$tg_user", "totalSpent": {"$sum": "$price"}}}, # ငွေပမာဏဖြင့် ပေါင်းခြင်း
+        {"$match": {"tg_user": {"$nin": ADMIN_USERNAMES}}},
+        {"$group": {"_id": "$tg_user", "totalSpent": {"$sum": "$price"}}},
         {"$sort": {"totalSpent": -1}},
         {"$limit": 10}
     ]
@@ -278,5 +275,4 @@ def get_history():
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)
-
-
+    
