@@ -54,63 +54,39 @@ GAMES_DATA = [
 HTML_CODE = '''
 <!DOCTYPE html><html><head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <style>
     body { background:#0f172a; color:white; font-family:sans-serif; margin:0; padding:0; padding-bottom:80px; }
     .game-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; padding: 15px; }
-    .game-card { 
-        position: relative;
-        background-image: linear-gradient(rgba(30, 41, 59, 0.8), rgba(30, 41, 59, 0.8)), url('/static/hero.webp'); 
-        background-size: cover; background-position: center;
-        border-radius:15px; padding:25px 10px; text-align:center; border:1px solid rgba(251, 191, 36, 0.3); 
-        overflow: hidden;
-    }
-    .game-card img { width:60px; border-radius:8px; margin-bottom:10px; position: relative; z-index: 2; }
-    .game-card b { position: relative; z-index: 2; }
-    .cat-tab { padding:10px 18px; background:#1e293b; border-radius:10px; font-size:12px; cursor:pointer; border:1px solid #334155; white-space:nowrap; color:#94a3b8; }
-    .cat-tab.active { background:#fbbf24; color:black; font-weight:bold; border-color:#fbbf24; }
+    .game-card { background:#1e293b; border-radius:15px; padding:20px; text-align:center; border:1px solid #334155; }
+    .game-card img { width:55px; border-radius:8px; margin-bottom:10px;}
+    .cat-tab { padding:10px 18px; background:#1e293b; border-radius:10px; font-size:12px; cursor:pointer; white-space:nowrap; border:1px solid #334155; }
+    .cat-tab.active { background:#fbbf24; color:black; font-weight:bold; }
     .pkg-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px; }
     .pkg-card { background:#1e293b; border:1px solid #334155; padding:15px; border-radius:12px; text-align:center; }
     .pkg-card.selected { border:2px solid #fbbf24; background:#1e3a8a; }
-    .pay-icon { width:55px; height:55px; border-radius:12px; cursor:pointer; border:2px solid transparent; margin:0 5px; }
-    .pay-icon.active { border-color:#fbbf24; }
-    .note-box { background:#1e293b; border:2px solid #fbbf24; padding:15px; border-radius:12px; margin-bottom:20px; text-align:center; animation:glow 1.5s infinite alternate; }
-    @keyframes glow { from { box-shadow:0 0 5px rgba(251, 191, 36, 0.3); } to { box-shadow:0 0 20px rgba(251, 191, 36, 0.7); } }
-    
-    /* Copy Button Style */
-    .copy-btn { color:#fbbf24; cursor:pointer; margin-left:10px; font-size:18px; vertical-align: middle; transition: 0.3s; }
-    .copy-btn:active { transform: scale(1.3); color: white; }
-    
     input { width:100%; padding:14px; margin:8px 0; border-radius:10px; border:1px solid #334155; background:#1e293b; color:white; box-sizing:border-box; }
-    .buy-btn { width:100%; padding:16px; background:#fbbf24; border:none; border-radius:12px; font-weight:bold; cursor:pointer; margin-top:15px; color:black; }
-    .modal { display:none; position:fixed; z-index:99; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.8); align-items:center; justify-content:center; }
-    .modal-content { background:#1e293b; padding:25px; border-radius:20px; width:85%; max-width:400px; border:1px solid #334155; }
-    .modal-item { margin:12px 0; border-bottom:1px solid #334155; padding-bottom:5px; display: flex; justify-content: space-between; }
-    .modal-label { color:#94a3b8; }
-    .modal-val { font-weight:bold; color:#fbbf24; }
-    .nav-bar { position:fixed; bottom:0; left:0; right:0; background:#1e293b; display:flex; padding:12px; border-top:1px solid #334155; z-index: 10; }
-    .nav-btn { flex:1; text-align:center; color:#94a3b8; font-size:11px; text-decoration:none; cursor:pointer; }
+    .buy-btn { width:100%; padding:16px; background:#fbbf24; border:none; border-radius:12px; font-weight:bold; cursor:pointer; color:black; margin-top:10px; }
+    .nav-bar { position:fixed; bottom:0; left:0; right:0; background:#1e293b; display:flex; padding:12px; border-top:1px solid #334155; }
 </style>
 </head><body>
 <div id="h-sec">
     <h1 style="text-align:center;color:#fbbf24; margin-top: 20px;">KIWII GAME STORE</h1>
+    <div id="user-display" style="text-align:center; font-size:13px; color:#94a3b8; margin-bottom:10px;"></div>
     <div class="game-grid" id="g-list"></div>
 </div>
+
 <div id="o-sec" style="display:none; padding: 15px;">
     <button onclick="goH()" style="background:none;color:white;border:1px solid #334155;padding:8px;border-radius:8px; margin-bottom:10px;">← Back</button>
     <h2 id="g-title" style="color:#fbbf24;"></h2>
     <div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:10px;" id="tabs"></div>
     <div class="pkg-grid" id="p-list"></div>
-    <div style="display:flex;justify-content:center;margin:20px 0;" id="pay-icons"></div>
-    <div class="note-box">
-        <div style="display: flex; align-items: center; justify-content: center;">
-            <b id="p-num" style="color:#fbbf24;font-size:22px;"></b>
-            <i class="fa-regular fa-copy copy-btn" onclick="copyNum()"></i>
-        </div>
-        <span id="p-name"></span><br>
-        <small style="color:#ffffff;display:block;margin-top:8px;font-weight:bold;">⚠️ {{ pay.Note }}</small>
+    <div class="note-box" style="background:#1e293b; border:2px solid #fbbf24; padding:15px; border-radius:12px; margin:20px 0; text-align:center;">
+        <b id="p-num" style="color:#fbbf24;font-size:22px;"></b> <i class="fa-regular fa-copy" onclick="copyNum()" style="cursor:pointer;margin-left:10px;"></i><br>
+        <span id="p-name"></span>
     </div>
-    <form id="orderForm" onsubmit="event.preventDefault(); showModal();">
+    <form id="orderForm" onsubmit="event.preventDefault(); submitOrder();">
         <input type="tel" id="uid" placeholder="Game ID" required>
         <input type="tel" id="zid" placeholder="Zone ID" required>
         <div style="color:#94a3b8;font-size:13px;margin:10px 0;">Payment Screenshot:</div>
@@ -118,33 +94,25 @@ HTML_CODE = '''
         <button type="submit" class="buy-btn">PLACE ORDER</button>
     </form>
 </div>
-<div id="orderModal" class="modal">
-    <div class="modal-content">
-        <h3 style="text-align:center; color:#fbbf24;">Confirm Order</h3>
-        <div class="modal-item"><span class="modal-label">Game ID:</span> <span id="m-uid" class="modal-val"></span></div>
-        <div class="modal-item"><span class="modal-label">Server:</span> <span id="m-srv" class="modal-val"></span></div>
-        <div class="modal-item"><span class="modal-label">Diamond:</span> <span id="m-pkg" class="modal-val"></span></div>
-        <div class="modal-item"><span class="modal-label">Price:</span> <span id="m-prc" class="modal-val"></span></div>
-        <button style="width:100%; padding:15px; background:#fbbf24; border:none; border-radius:12px; font-weight:bold; margin-top:20px;" onclick="submitOrder()">CONFIRM & SEND</button>
-        <button style="width:100%; background:none; border:none; color:#94a3b8; margin-top:10px;" onclick="closeModal()">Cancel</button>
-    </div>
-</div>
-<div id="hist-sec" style="display:none; padding:15px;"><h3 style="color:#fbbf24;">History</h3><div id="hist-list"></div></div>
+
 <div class="nav-bar">
-    <div class="nav-btn" onclick="goH()"><i class="fas fa-home"></i><br>Home</div>
-    <div class="nav-btn" onclick="showH()"><i class="fas fa-history"></i><br>History</div>
-    <a href="{{cs}}" style="text-decoration:none;" class="nav-btn"><i class="fas fa-headset"></i><br>CS</a>
+    <div onclick="goH()" style="flex:1; text-align:center; cursor:pointer;"><i class="fas fa-home"></i><br>Home</div>
+    <a href="{{cs}}" style="flex:1; text-align:center; color:white; text-decoration:none;"><i class="fas fa-headset"></i><br>CS</a>
 </div>
+
 <script>
 let sel_srv='', sel_pkg='', sel_prc='';
 const games = {{ games | tojson }}; const pay = {{ pay | tojson }};
 
-// Copy Function
+// --- Telegram WebApp User Data ---
+const tg = window.Telegram.WebApp;
+tg.expand();
+const user = tg.initDataUnsafe.user;
+const tg_user_info = user ? (user.username ? '@' + user.username : user.first_name) : "Guest User";
+document.getElementById('user-display').innerText = "Logged as: " + tg_user_info;
+
 function copyNum() {
-    const num = document.getElementById('p-num').innerText;
-    navigator.clipboard.writeText(num).then(() => {
-        alert("Number Copied: " + num);
-    });
+    navigator.clipboard.writeText(document.getElementById('p-num').innerText).then(() => alert("Copied!"));
 }
 
 function init() { document.getElementById('g-list').innerHTML = games.map(g => `<div class="game-card" onclick="selG(${g.id})"><img src="${g.img}"><br><b>${g.name}</b></div>`).join(''); }
@@ -153,40 +121,27 @@ function selG(id) {
     document.getElementById('h-sec').style.display='none'; document.getElementById('o-sec').style.display='block';
     document.getElementById('g-title').innerText = g.name;
     document.getElementById('tabs').innerHTML = g.cat_order.map((c, i) => `<div class="cat-tab ${i===0?'active':''}" onclick="renderP(${id}, '${c}', this)">${c}</div>`).join('');
-    document.getElementById('pay-icons').innerHTML = Object.keys(pay).filter(k=>k!='Note').map(k=>`<img src="${pay[k].img}" class="pay-icon" onclick="setPay('${k}', this)">`).join('');
     renderP(id, g.cat_order[0]); setPay('KPay');
 }
-function setPay(k, el) { 
-    if(el){document.querySelectorAll('.pay-icon').forEach(i=>i.classList.remove('active')); el.classList.add('active');}
-    document.getElementById('p-num').innerText = pay[k].Number; document.getElementById('p-name').innerText = pay[k].Name; 
-}
+function setPay(k) { document.getElementById('p-num').innerText = pay[k].Number; document.getElementById('p-name').innerText = pay[k].Name; }
 function renderP(id, cat, el) {
     if(el){document.querySelectorAll('.cat-tab').forEach(t=>t.classList.remove('active')); el.classList.add('active');}
     const pkgs = games.find(i=>i.id===id).cats[cat];
     document.getElementById('p-list').innerHTML = pkgs.map(p=>`<div class="pkg-card" onclick="selP(this, '${p.d}', '${p.p}')"><span>${p.d}</span><br><b>${p.p} Ks</b></div>`).join('');
 }
 function selP(el, d, p) { document.querySelectorAll('.pkg-card').forEach(c=>c.classList.remove('selected')); el.classList.add('selected'); sel_pkg=d; sel_prc=p; }
-function showModal() {
-    if(!sel_pkg) return alert("Please select a package!");
-    document.getElementById('m-uid').innerText = document.getElementById('uid').value + ' (' + document.getElementById('zid').value + ')';
-    document.getElementById('m-srv').innerText = sel_srv; document.getElementById('m-pkg').innerText = sel_pkg; document.getElementById('m-prc').innerText = sel_prc + ' Ks';
-    document.getElementById('orderModal').style.display = 'flex';
-}
-function closeModal() { document.getElementById('orderModal').style.display = 'none'; }
+
 function submitOrder() {
+    if(!sel_pkg) return alert("Select Package!");
     const formData = new FormData();
+    formData.append('username', tg_user_info); // Auto Telegram User
     formData.append('server', sel_srv); formData.append('u', document.getElementById('uid').value);
     formData.append('z', document.getElementById('zid').value); formData.append('p', sel_pkg);
     formData.append('a', sel_prc); formData.append('photo', document.getElementById('photo').files[0]);
+    
     fetch('/order', { method: 'POST', body: formData }).then(r => r.text()).then(res => { alert(res); location.reload(); });
 }
-function goH() { document.getElementById('o-sec').style.display='none'; document.getElementById('hist-sec').style.display='none'; document.getElementById('h-sec').style.display='block'; }
-function showH() {
-    document.getElementById('h-sec').style.display='none'; document.getElementById('o-sec').style.display='none'; document.getElementById('hist-sec').style.display='block';
-    fetch('/api/history').then(r=>r.json()).then(data=>{
-        document.getElementById('hist-list').innerHTML = data.map(o=>`<div style="background:#1e293b;padding:15px;border-radius:10px;margin-bottom:10px;border-left:4px solid #fbbf24;"><span style="float:right;padding:2px 8px;border-radius:4px;font-size:11px;background:${o.status==='Completed'?'#10b981':(o.status==='Rejected'?'#ef4444':'#f59e0b')}">${o.status}</span><small>${o.date}</small><br><b>${o.pkg}</b><br><small>ID: ${o.uid}</small></div>`).join('') || "No history.";
-    });
-}
+function goH() { document.getElementById('o-sec').style.display='none'; document.getElementById('h-sec').style.display='block'; }
 init();
 </script></body></html>
 '''
@@ -198,41 +153,32 @@ def index():
 @app.route('/order', methods=['POST'])
 def order():
     try:
+        user_name = request.form.get('username')
         server, uid, zone, pkg, amt = request.form.get('server'), request.form.get('u'), request.form.get('z'), request.form.get('p'), request.form.get('a')
         photo = request.files.get('photo')
-        if not all([uid, pkg, photo]): return "Missing Data"
         
         res = orders_col.insert_one({
-            "uid": uid, "zone": zone, "pkg": pkg, "price": amt, "status": "Pending",
+            "customer": user_name, "uid": uid, "zone": zone, "pkg": pkg, "price": amt, "status": "Pending",
             "date": datetime.now(timezone(timedelta(hours=6, minutes=30))).strftime("%Y-%m-%d %H:%M")
         })
         oid = str(res.inserted_id)
-        msg = (f"🔔 *New Order!*\n📍 Server: {server}\n🆔 ID: `{uid}` ({zone})\n💎 Pkg: {pkg}\n💰 Amt: {amt} Ks\n\n"
+        
+        msg = (f"🔔 *New Order!*\n👤 Buyer: `{user_name}`\n📍 Server: {server}\n🆔 ID: `{uid}` ({zone})\n💎 Pkg: {pkg}\n💰 Amt: {amt} Ks\n\n"
                f"✅ [DONE]({request.host_url}admin/update/{oid}/Completed)\n❌ [REJECT]({request.host_url}admin/update/{oid}/Rejected)")
+        
         if photo:
             photo.seek(0)
-            requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto", data={"chat_id": CHAT_ID, "caption": msg, "parse_mode": "Markdown"}, files={'photo': (photo.filename, photo.read(), photo.content_type)})
+            requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto", 
+                          data={"chat_id": CHAT_ID, "caption": msg, "parse_mode": "Markdown"}, 
+                          files={'photo': (photo.filename, photo.read(), photo.content_type)})
         return "Order Success! ✅"
     except Exception as e:
         return f"Error: {str(e)}"
 
 @app.route('/admin/update/<oid>/<status>')
 def update_status(oid, status):
-    try:
-        orders_col.update_one({"_id": ObjectId(oid)}, {"$set": {"status": status}})
-        return f"Order {status} Success!"
-    except Exception as e:
-        return str(e)
-
-@app.route('/api/history')
-def get_history():
-    try:
-        hist = list(orders_col.find().sort("_id", -1).limit(10))
-        for h in hist: h["_id"] = str(h["_id"])
-        return jsonify(hist)
-    except:
-        return jsonify([])
+    orders_col.update_one({"_id": ObjectId(oid)}, {"$set": {"status": status}})
+    return f"Order {status} Success!"
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
-    
