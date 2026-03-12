@@ -38,9 +38,9 @@ HTML_CODE = '''
     #main-container { max-width:500px; margin:auto; }
     .header-logo { text-align:center; padding:25px 0; color:#fbbf24; font-size:26px; font-weight:bold; }
     
-    .game-grid { 
-        display:grid; grid-template-columns:1fr 1fr; gap:15px; padding:20px; 
-        background: url('/static/hero.webp') no-repeat center center; background-size: cover; 
+        .game-grid {
+        display:grid; grid-template-columns:1fr 1fr; gap:15px; padding:20px;
+        background: url('/static/hero.webp') no-repeat center center; background-size: cover;
         border-radius: 15px; margin: 10px;
     }
     .game-card { background:rgba(30, 41, 59, 0.85); border-radius:15px; padding:25px 15px; text-align:center; border:1px solid #334155; cursor:pointer; }
@@ -67,7 +67,7 @@ HTML_CODE = '''
 </head><body>
 <div id="main-container">
     <div id="h-sec">
-        <div class="header-logo">KIWII SHOP</div>
+        <div class="header-logo">KIWII GAME STORE</div>
         <div class="game-grid" id="g-list"></div>
     </div>
 
@@ -242,10 +242,9 @@ def order():
 
 @app.route('/api/top10')
 def get_top10():
-    # Admin များကို ဖယ်ထုတ်ပြီး ငွေပမာဏဖြင့် ပေါင်းကာ စုစုပေါင်းဖြင့် စီခြင်း
     pipeline = [
-        {"$match": {"tg_user": {"$nin": ADMIN_USERNAMES}}},
-        {"$group": {"_id": "$tg_user", "totalSpent": {"$sum": "$price"}}},
+        {"$match": {"tg_user": {"$nin": ["@Escanor_XX", "@Escanor_X", "@Bby_kiwii7"]}}}, # Admin များ ဖယ်ထုတ်ခြင်း
+        {"$group": {"_id": "$tg_user", "totalSpent": {"$sum": "$price"}}}, # ငွေပမာဏဖြင့် ပေါင်းခြင်း
         {"$sort": {"totalSpent": -1}},
         {"$limit": 10}
     ]
