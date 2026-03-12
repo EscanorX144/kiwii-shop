@@ -123,7 +123,7 @@ HTML_CODE = '''
 </head><body>
 <div style="max-width:500px; margin:auto;">
     <div id="h-sec">
-        <h1 style="text-align:center;color:#fbbf24;margin-top:20px;">KIWII GAME SHOP</h1>
+        <h1 style="text-align:center;color:#fbbf24;margin-top:20px;">KIWII GAME STORE</h1>
         <div class="game-grid" id="g-list"></div>
     </div>
 
