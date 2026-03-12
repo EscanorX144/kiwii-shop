@@ -253,6 +253,42 @@ def order():
 
         return "Success"
 
+        except Exception as e:
+        print(f"Telegram Error Detail: {str(e)}")
+        return "Error"
+
+@app.route('/webhook', methods=['POST'])
+def webhook():
+    try:
+        data = request.json
+        if "callback_query" in data:
+            callback = data["callback_query"]
+            action_data = callback["data"]
+            chat_id = callback["message"]["chat"]["id"]
+            message_id = callback["message"]["message_id"]
+            
+            action, oid = action_data.split("_")
+            new_status = "Completed" if action == "done" else "Rejected"
+            
+            from bson.objectid import ObjectId
+            orders_col.update_one({"_id": ObjectId(oid)}, {"$set": {"status": new_status}})
+            
+            current_caption = callback["message"].get("caption", "")
+            updated_text = f"{current_caption}\n\n📢 Status: <b>{new_status}</b>"
+            
+            requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/editMessageCaption", 
+                          data={"chat_id": chat_id, "message_id": message_id, "caption": updated_text, "parse_mode": "HTML"})
+            
+            requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/answerCallbackQuery", 
+                          data={"callback_query_id": callback["id"], "text": f"Order {new_status}!"})
+        return "OK", 200
+    except Exception as e:
+        print(f"Webhook Error: {str(e)}")
+        return "Error", 500
+
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=5000)
+
     except Exception as e:
         print(f"Telegram Error Detail: {str(e)}")
         return "Error"
