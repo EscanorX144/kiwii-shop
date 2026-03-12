@@ -234,43 +234,44 @@ function showTop() {
 }
 
 async function loadTopBuyers() {
-    const r = await fetch(`/api/top-buyers?user=${encodeURIComponent(currentUser)}`);
-    const data = await r.json();
-    const container = document.getElementById('top-list-container');
-    
-    let html = "";
-    // ၁။ Top 10 စာရင်း
-    html += data.top_10.map((user, index) => `
-        <div class="top-buyer-card">
-            <div class="rank-icon">
-                <img src="https://cdn-icons-png.flaticon.com/512/2583/2583344.png" width="35">
-            </div>
-            <div class="buyer-info">
-                <span class="buyer-name">${user._id}</span>
-                <span class="buyer-amount">${user.total_spent.toLocaleString()} ကျပ်</span>
-            </div>
-            <div class="rank-circle">${index + 1}</div>
-        </div>
-    `).join('');
+    try {
+        const user = typeof currentUser !== 'undefined' ? currentUser : "";
+        const r = await fetch(`/api/top-buyers?user=${encodeURIComponent(user)}`);
+        const data = await r.json();
+        const container = document.getElementById('top-list-container');
+        
+        let html = "";
+        if (data.top_10 && data.top_10.length > 0) {
+            html += data.top_10.map((u, i) => `
+                <div class="top-buyer-card">
+                    <div class="rank-circle">${i + 1}</div>
+                    <div class="buyer-info">
+                        <span class="buyer-name">${u._id}</span>
+                        <span class="buyer-amount">${u.total_spent.toLocaleString()} ကျပ်</span>
+                    </div>
+                </div>
+            `).join('');
+        } else {
+            html = "<p style='text-align:center; color:white; padding:20px;'>ယခုလအတွက် ဝယ်ယူထားသူ မရှိသေးပါ။</p>";
+        }
 
-    // ၂။ ကိုယ့်ရဲ့ Rank ကို အောက်ဆုံးမှာ ပြခြင်း
-    if (data.user_rank) {
-        html += `
-            <div style="margin: 20px 0 10px 0; text-align: center; color: #94a3b8; font-size: 12px;">— YOUR RANKING —</div>
-            <div class="my-rank-card">
-                <div>
-                    <span class="my-rank-text">Your Current Status</span>
-                    <div class="buyer-name" style="color:white;">${currentUser}</div>
-                    <div class="buyer-amount" style="color:#fbbf24;">${data.user_rank.total_spent.toLocaleString()} ကျပ်</div>
-                </div>
-                <div style="text-align:center;">
-                    <div style="font-size:12px;">Rank</div>
-                    <div style="font-size:24px; font-weight:bold; color:#fbbf24;">#${data.user_rank.rank}</div>
-                </div>
-            </div>
-        `;
-    }
-    container.innerHTML = html || "<p style='text-align:center;'>ဒေတာမရှိသေးပါ။</p>";
+        if (data.user_rank) {
+            html += `
+                <div style="margin: 20px 0 10px 0; text-align: center; color: #94a3b8; font-size: 12px;">— YOUR RANKING —</div>
+                <div class="my-rank-card">
+                    <div>
+                        <span class="my-rank-text">Your Current Status</span>
+                        <div class="buyer-name" style="color:white;">${user}</div>
+                        <div class="buyer-amount" style="color:#fbbf24;">${data.user_rank.total_spent.toLocaleString()} ကျပ်</div>
+                    </div>
+                    <div style="text-align:center;">
+                        <div style="font-size:12px;">Rank</div>
+                        <div style="font-size:24px; font-weight:bold; color:#fbbf24;">#${data.user_rank.rank}</div>
+                    </div>
+                </div>`;
+        }
+        container.innerHTML = html;
+    } catch (e) { console.error(e); }
 }
 
 async function handleLogin() {
