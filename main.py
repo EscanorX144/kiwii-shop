@@ -15,14 +15,14 @@ orders_col = db['orders']
 BOT_TOKEN = "8089066962:AAFOHBGeuDF7E3YgeJ3mUu000sQNJ4uJVok"
 CHAT_ID = "7089720301"
 
-# --- 💎 FULL DIAMOND LIST (လုံးဝမဖျက်ထားပါ) ---
+# --- 💎 DIAMOND LISTS (လုံးဝမဖျက်ဘဲ အပြည့်အစုံ ပြန်ထည့်ထားသည်) ---
 GAMES_DATA = [
     {
         "id": 1, "name": "Normal Server (🇲🇲)", "img": "https://flagcdn.com/w160/mm.png", 
         "cat_order": ["Normal Dia", "Weekly Pass", "2X Dia", "Bundle Pack"], 
         "cats": {
             "Normal Dia": [{"d": "11 💎", "p": "700"}, {"d": "22 💎", "p": "1400"}, {"d": "33 💎", "p": "2100"}, {"d": "44 💎", "p": "2800"}, {"d": "56 💎", "p": "3500"}, {"d": "86 💎", "p": "4750"}, {"d": "112 💎", "p": "7000"}, {"d": "172 💎", "p": "9450"}, {"d": "257 💎", "p": "13800"}, {"d": "343 💎", "p": "18600"}, {"d": "429 💎", "p": "23350"}, {"d": "514 💎", "p": "27650"}, {"d": "600 💎", "p": "32650"}, {"d": "706 💎", "p": "37450"}, {"d": "1412 💎", "p": "74900"}, {"d": "2195 💎", "p": "114200"}, {"d": "9288 💎", "p": "475200"}],
-            "Weekly Pass": [{"d": f"WP {i}X", "p": str(5900 * i)} for i in range(1, 11)],
+            "Weekly Pass": [{"d": "WP 1X", "p": "5900"}, {"d": "WP 2X", "p": "11800"}, {"d": "WP 3X", "p": "17700"}, {"d": "WP 4X", "p": "23600"}, {"d": "WP 5X", "p": "29500"}, {"d": "WP 6X", "p": "35400"}, {"d": "WP 7X", "p": "41300"}, {"d": "WP 8X", "p": "47200"}, {"d": "WP 9X", "p": "53100"}, {"d": "WP 10X", "p": "59000"}],
             "2X Dia": [{"d": "50+50 💎", "p": "3050"}, {"d": "150+150 💎", "p": "9100"}, {"d": "250+250 💎", "p": "14650"}, {"d": "500+500 💎", "p": "29950"}],
             "Bundle Pack": [{"d": "Weekly Elite", "p": "3050"}, {"d": "Monthly Bundle", "p": "15350"}, {"d": "Twilight Pass", "p": "31500"}]
         }
@@ -32,7 +32,7 @@ GAMES_DATA = [
         "cat_order": ["Direct Dia", "Weekly Pass", "2X Dia", "Bundle Pack"], 
         "cats": {
             "Direct Dia": [{"d": "14 💎", "p": "1100"}, {"d": "56 💎", "p": "4350"}, {"d": "140 💎", "p": "10200"}, {"d": "284 💎", "p": "20200"}, {"d": "583 💎", "p": "41200"}, {"d": "1145 💎", "p": "80500"}, {"d": "2976 💎", "p": "201000"}, {"d": "7502 💎", "p": "503500"}],
-            "Weekly Pass": [{"d": f"WP {i}X", "p": str(8700 * i)} for i in range(1, 11)],
+            "Weekly Pass": [{"d": "WP 1X", "p": "8700"}, {"d": "WP 2X", "p": "17400"}, {"d": "WP 3X", "p": "26100"}, {"d": "WP 4X", "p": "34800"}, {"d": "WP 5X", "p": "43500"}, {"d": "WP 6X", "p": "52200"}, {"d": "WP 7X", "p": "60900"}, {"d": "WP 8X", "p": "69600"}, {"d": "WP 9X", "p": "78300"}, {"d": "WP 10X", "p": "87000"}],
             "2X Dia": [{"d": "50+ 💎", "p": "4250"}, {"d": "150+ 💎", "p": "12200"}, {"d": "500+ 💎", "p": "40600"}],
             "Bundle Pack": [{"d": "Weekly Elite Bundle", "p": "4250"}, {"d": "Monthly Epic Bundle", "p": "20000"}]
         }
@@ -42,7 +42,7 @@ GAMES_DATA = [
         "cat_order": ["Direct Dia", "Weekly Pass", "2X Dia"], 
         "cats": {
             "Direct Dia": [{"d": "14 💎", "p": "1100"}, {"d": "56 💎", "p": "4350"}, {"d": "140 💎", "p": "10200"}, {"d": "284 💎", "p": "20200"}, {"d": "583 💎", "p": "41200"}, {"d": "1145 💎", "p": "80500"}],
-            "Weekly Pass": [{"d": f"WP {i}X", "p": str(8700 * i)} for i in range(1, 11)],
+            "Weekly Pass": [{"d": "WP 1X", "p": "8700"}, {"d": "WP 2X", "p": "17400"}, {"d": "WP 3X", "p": "26100"}, {"d": "WP 4X", "p": "34800"}, {"d": "WP 5X", "p": "43500"}, {"d": "WP 6X", "p": "52200"}, {"d": "WP 7X", "p": "60900"}, {"d": "WP 8X", "p": "69600"}, {"d": "WP 9X", "p": "78300"}, {"d": "WP 10X", "p": "87000"}],
             "2X Dia": [{"d": "50+ 💎", "p": "4250"}, {"d": "250+ 💎", "p": "20200"}]
         }
     },
@@ -78,9 +78,37 @@ HTML_CODE = '''
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <style>
     body { background:#0f172a; color:white; font-family:sans-serif; margin:0; padding-bottom:80px; }
-    .hero-img { width:100%; border-radius:15px; margin-bottom:10px; }
     .game-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; padding: 15px; }
-    .game-card { background:#1e293b; border-radius:15px; padding:20px; text-align:center; border:1px solid #334155; cursor:pointer; }
+    
+    /* ✅ SERVER CARD WITH BACKGROUND OVERLAY */
+    .game-card { 
+        position: relative;
+        background:#1e293b; 
+        border-radius:15px; 
+        padding:35px 20px; 
+        text-align:center; 
+        border:1px solid #334155; 
+        cursor:pointer; 
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .game-card::after {
+        content: "";
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background-image: url('/static/hero.webp');
+        background-size: cover;
+        background-position: center;
+        opacity: 0.15; /* Subtly visible background */
+        z-index: 1;
+    }
+    
+    .game-card img, .game-card b { position: relative; z-index: 2; }
+
     .cat-tab { padding:10px 18px; background:#1e293b; border-radius:10px; font-size:12px; cursor:pointer; border:1px solid #334155; white-space:nowrap; }
     .cat-tab.active { background:#fbbf24; color:black; font-weight:bold; }
     .pkg-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:15px 0; }
@@ -95,8 +123,7 @@ HTML_CODE = '''
 </head><body>
 <div style="max-width:500px; margin:auto;">
     <div id="h-sec">
-        <h1 style="text-align:center;color:#fbbf24;margin-top:20px;">KIWII GAME STORE</h1>
-        <div style="padding: 15px;"><img src="/static/hero.webp" class="hero-img"></div>
+        <h1 style="text-align:center;color:#fbbf24;margin-top:20px;">KIWII GAME SHOP</h1>
         <div class="game-grid" id="g-list"></div>
     </div>
 
@@ -171,7 +198,7 @@ async function submitOrder() {
     fd.append('server', sel_srv); fd.append('p', sel_pkg); fd.append('a', sel_prc);
     const r = await fetch('/order', { method: 'POST', body: fd });
     if(await r.text()==="Success") { alert("Order Success! ✅"); location.reload(); }
-    else { alert("Error!"); btn.disabled = false; btn.innerText = "PLACE ORDER"; }
+    else { alert("Error!"); btn.disabled = false; }
 }
 
 function goH() { document.getElementById('o-sec').style.display='none'; document.getElementById('hist-sec').style.display='none'; document.getElementById('h-sec').style.display='block'; }
@@ -192,14 +219,9 @@ def index(): return render_template_string(HTML_CODE, games=GAMES_DATA)
 @app.route('/order', methods=['POST'])
 def order():
     try:
-        user = request.form.get('tg_u')
-        server = request.form.get('server')
-        uid = request.form.get('uid')
-        zone = request.form.get('zid')
-        pkg = request.form.get('p')
-        amt = request.form.get('a')
+        user, server, uid, zone, pkg, amt = request.form.get('tg_u'), request.form.get('server'), request.form.get('uid'), request.form.get('zid'), request.form.get('p'), request.form.get('a')
         photo = request.files.get('photo')
-
+        
         oid = str(orders_col.insert_one({
             "customer": user, "uid": uid, "zone": zone, 
             "pkg": pkg, "price": amt, "status": "Pending", 
@@ -208,6 +230,7 @@ def order():
 
         msg = f"🔔 *New Order!*\n👤 User: `{user}`\n🆔 ID: `{uid}` ({zone})\n🌍 Server: {server}\n💎 Pkg: {pkg}\n💰 Amt: {amt} Ks\n\n✅ [DONE]({request.host_url}admin/update/{oid}/Completed) | ❌ [REJECT]({request.host_url}admin/update/{oid}/Rejected)"
         
+        # ✅ Telegram Bot ဆီ စာကျအောင် Indentation ညှိထားပါသည်
         requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto", 
                       data={"chat_id": CHAT_ID, "caption": msg, "parse_mode": "Markdown"}, 
                       files={'photo': photo})
@@ -218,11 +241,8 @@ def order():
 
 @app.route('/admin/update/<oid>/<status>')
 def update_status(oid, status):
-    try:
-        orders_col.update_one({"_id": ObjectId(oid)}, {"$set": {"status": status}})
-        return f"Order {oid} has been updated to {status}. You can close this tab."
-    except Exception as e:
-        return f"Error: {str(e)}"
+    orders_col.update_one({"_id": ObjectId(oid)}, {"$set": {"status": status}})
+    return f"Order {oid} has been updated to {status}."
 
 @app.route('/api/history')
 def get_history():
@@ -233,4 +253,4 @@ def get_history():
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
-
+    
