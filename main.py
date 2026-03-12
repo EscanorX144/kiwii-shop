@@ -222,40 +222,40 @@ def order():
         photo = request.files.get('photo')
         pkg = request.form.get('pkg')
         
-        # Database ထဲသိမ်းဆည်းခြင်း
         oid = orders_col.insert_one({
             "tg_user": tg_user, "uid": uid, "zone": zid, 
             "pkg": pkg, "price": price, "status": "Pending", 
             "date": datetime.now(timezone(timedelta(hours=6, minutes=30))).strftime("%d/%m/%Y %I:%M %p")
         }).inserted_id
         
-        # Telegram Message ပြင်ဆင်ခြင်း
         keyboard = {"inline_keyboard": [[{"text": "Done ✅", "callback_data": f"done_{oid}"}, {"text": "Reject ❌", "callback_data": f"reject_{oid}"}]]}
-        msg = f"⚠️ *New Order!*\n\n👤 *User:* {tg_user}\n🆔 *ID:* `{uid}` ({zid})\n📦 *Package:* {pkg}\n💰 *Price:* {price} Ks"
         
-        # Telegram ဆီသို့ ပို့ဆောင်ခြင်း
+        # HTML Format ကို ပြောင်းလိုက်ပါမယ် (ပိုစိတ်ချရပါတယ်)
+        msg = f"<b>⚠️ New Order!</b>\n\n<b>👤 User:</b> {tg_user}\n<b>🆔 ID:</b> <code>{uid}</code> ({zid})\n<b>📦 Package:</b> {pkg}\n<b>💰 Price:</b> {price} Ks"
+        
         url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto"
+        # Chat ID ကို ကိန်းဂဏန်း (Integer) အဖြစ် ပြောင်းပေးလိုက်ပါ
         payload = {
-            "chat_id": CHAT_ID,
+            "chat_id": int(CHAT_ID), 
             "caption": msg,
-            "parse_mode": "Markdown",
+            "parse_mode": "HTML",
             "reply_markup": json.dumps(keyboard)
         }
         
-        # ပုံပါမှ ပို့ဆောင်မည်
         if photo:
             files = {"photo": photo}
-            requests.post(url, data=payload, files=files)
+            r = requests.post(url, data=payload, files=files)
+            r.raise_for_status() # Error တက်ရင် သိရအောင်
         else:
-            # ပုံမပါလျှင် စာသားသီးသန့်ပို့မည်
-            requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage", data={"chat_id": CHAT_ID, "text": msg, "parse_mode": "Markdown", "reply_markup": json.dumps(keyboard)})
-        
+            send_msg_url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
+            r = requests.post(send_msg_url, data={"chat_id": int(CHAT_ID), "text": msg, "parse_mode": "HTML", "reply_markup": json.dumps(keyboard)})
+            r.raise_for_status()
+
         return "Success"
 
     except Exception as e:
-        print(f"Telegram Error: {str(e)}")
+        print(f"Telegram Error Detail: {str(e)}")
         return "Error"
-
 
 @app.route('/api/top10')
 def get_top10():
