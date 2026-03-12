@@ -1,11 +1,13 @@
-import os, requests
+import os, requests, json
 from flask import Flask, render_template_string, request, jsonify
 from datetime import datetime, timedelta, timezone
 from pymongo import MongoClient
+from bson.objectid import ObjectId
 
-app = Flask(__name__)
+app = Flask(name)
 app.secret_key = "KIWII_ULTIMATE_SECRET"
 
+# --- DATABASE SETUP ---
 MONGO_URI = "mongodb+srv://EscanorX:Conti144@cluster0.m2mtomm.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=30000)
 db = client['kiwii_game_shop']
@@ -15,6 +17,7 @@ orders_col = db['orders']
 BOT_TOKEN = "8089066962:AAFOHBGeuDF7E3YgeJ3mUu000sQNJ4uJVok"
 CHAT_ID = "7089720301"
 CS_LINK = "https://t.me/Bby_kiwii7"
+ADMIN_PASS = "kiwii123"
 
 PAY_DATA = {
     "KPay": {"Number": "09775394979", "Name": "Thansin Kyaw", "img": "/static/kpay.jpg"},
@@ -190,49 +193,139 @@ def index():
 @app.route('/order', methods=['POST'])
 def order():
     try:
-        server = request.form.get('server')
-        uid = request.form.get('u')
-        zone = request.form.get('z')
-        pkg = request.form.get('p')
-        amt = request.form.get('a')
+HTML_CODE = '''
+<!DOCTYPE html><html><head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<style>
+    body { background:#0f172a; color:white; font-family:sans-serif; margin:0; padding:15px; padding-bottom:80px; }
+    .game-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .game-card { background: #1e293b; border-radius: 12px; padding: 25px 10px; text-align: center; border: 1px solid #334155; }
+    .game-card img { width:55px; border-radius:8px; margin-bottom:10px; }
+    .cat-tabs-container { display:flex; gap:8px; overflow-x:auto; padding-bottom:12px; margin-top:10px; scrollbar-width: none; }
+    .cat-tab { padding:10px 18px; background:#1e293b; border-radius:10px; font-size:12px; cursor:pointer; border:1px solid #334155; white-space:nowrap; color:#94a3b8; }
+    .cat-tab.active { background:#fbbf24; color:black; font-weight:bold; border-color:#fbbf24; }
+    .pkg-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px; }
+    .pkg-card { background:#1e293b; border:1px solid #334155; padding:15px; border-radius:12px; text-align:center; }
+    .pkg-card.selected { border:2px solid #fbbf24; background:#1e3a8a; }
+    input { width:100%; padding:14px; margin:8px 0; border-radius:10px; border:1px solid #334155; background:#1e293b; color:white; box-sizing:border-box; }
+    .buy-btn { width:100%; padding:16px; background:#fbbf24; border:none; border-radius:12px; font-weight:bold; cursor:pointer; margin-top:15px; color:black; }
+    .nav-bar { position:fixed; bottom:0; left:0; right:0; background:#1e293b; display:flex; padding:12px; border-top:1px solid #334155; }
+    .nav-btn { flex:1; text-align:center; color:#94a3b8; font-size:11px; text-decoration:none; }
+    .status-badge { padding:2px 8px; border-radius:4px; font-size:11px; float:right; }
+</style>
+</head><body>
+<div id="h-sec">
+    <h1 style="text-align:center;color:#fbbf24;font-size:24px;">KIWII GAME SHOP</h1>
+    <div class="game-grid" id="g-list"></div>
+</div>
+
+<div id="o-sec" style="display:none;">
+    <button onclick="goH()" style="background:none;color:white;border:1px solid #334155;padding:8px;border-radius:8px;">← Back</button>
+    <h2 id="g-title" style="color:#fbbf24;"></h2>
+    <div class="cat-tabs-container" id="tabs"></div>
+    <div class="pkg-grid" id="p-list"></div>
+    <form action="/order" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="server" id="s_in"><input type="hidden" name="p" id="p_in"><input type="hidden" name="a" id="a_in">
+        <input type="tel" name="u" placeholder="Game ID" required oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+        <input type="tel" name="z" placeholder="Zone ID" required oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+        <input type="file" name="photo" required accept="image/*">
+        <button type="submit" class="buy-btn">PLACE ORDER</button>
+    </form>
+</div>
+
+<div id="hist-sec" style="display:none; padding:15px;">
+    <h3 style="color:#fbbf24;">History</h3>
+    <div id="hist-list"></div>
+</div>
+
+<div class="nav-bar">
+    <div class="nav-btn" onclick="goH()"><i class="fas fa-home"></i><br>Home</div>
+    <div class="nav-btn" onclick="showH()"><i class="fas fa-history"></i><br>History</div>
+</div>
+
+<script>
+const games = {{ games | tojson }};
+function init() { document.getElementById('g-list').innerHTML = games.map(g => `<div class="game-card" onclick="selG(${g.id})"><img src="${g.img}"><br><b>${g.name}</b></div>`).join(''); }
+function selG(id) {
+    const g = games.find(i => i.id === id);
+    document.getElementById('h-sec').style.display='none'; document.getElementById('o-sec').style.display='block';
+    document.getElementById('g-title').innerText = g.name; document.getElementById('s_in').value = g.name;
+    document.getElementById('tabs').innerHTML = g.cat_order.map((c, i) => `<div class="cat-tab ${i===0?'active':''}" onclick="renderP(${id}, '${c}', this)">${c}</div>`).join('');
+    renderP(id, g.cat_order[0]);
+}
+function renderP(id, cat, el) {
+    if(el){document.querySelectorAll('.cat-tab').forEach(t=>t.classList.remove('active')); el.classList.add('active');}
+    const pkgs = games.find(i=>i.id===id).cats[cat];
+    document.getElementById('p-list').innerHTML = pkgs.map(p=>`<div class="pkg-card" onclick="selP(this, '${p.d}', '${p.p}')"><span>${p.d}</span><br><b>${p.p} Ks</b></div>`).join('');
+}
+function selP(el, d, p) { document.querySelectorAll('.pkg-card').forEach(c=>c.classList.remove('selected')); el.classList.add('selected'); document.getElementById('p_in').value=d; document.getElementById('a_in').value=p; }
+function showH() {
+    document.getElementById('h-sec').style.display='none'; document.getElementById('o-sec').style.display='none'; document.getElementById('hist-sec').style.display='block';
+    fetch('/api/history').then(r=>r.json()).then(data=>{
+        document.getElementById('hist-list').innerHTML = data.map(o=>`
+            <div style="background:#1e293b;padding:15px;border-radius:10px;margin-bottom:10px;border-left:4px solid #fbbf24;">
+                <span class="status-badge" style="background:${o.status==='Completed'?'#10b981':(o.status==='Rejected'?'#ef4444':'#f59e0b')}">${o.status}</span>
+                <small>${o.date}</small><br><b>${o.pkg}</b><br>ID: ${o.uid}
+            </div>`).join('') || "No orders.";
+    });
+}
+function goH() { document.getElementById('o-sec').style.display='none'; document.getElementById('hist-sec').style.display='none'; document.getElementById('h-sec').style.display='block'; }
+init();
+</script></body></html>
+'''
+
+# --- ROUTES ---
+@app.route('/')
+def index():
+    return render_template_string(HTML_CODE, games=GAMES_DATA, pay=PAY_DATA, cs=CS_LINK)
+
+@app.route('/order', methods=['POST'])
+def order():
+    try:
+        server, uid, zone, pkg, amt = request.form.get('server'), request.form.get('u'), request.form.get('z'), request.form.get('p'), request.form.get('a')
         photo = request.files.get('photo')
+        if not all([uid, zone, pkg, photo]): return "Error: Missing data"
 
-        if not all([uid, zone, pkg, photo]):
-            return "<html><body style='background:#0f172a;color:#ef4444;text-align:center;padding-top:100px;'><h2>⚠️ အချက်အလက်မပြည့်စုံပါ</h2><p>ID၊ Zone၊ Package နှင့် ပြေစာ အားလုံးလိုအပ်ပါသည်။</p><button onclick='history.back()'>Back</button></body></html>"
-
-        orders_col.insert_one({
-            "uid": uid, "zone": zone, "pkg": pkg, "price": amt,
+        # MongoDB မှာ Pending အနေနဲ့ သိမ်းမယ်
+        res = orders_col.insert_one({
+            "uid": uid, "zone": zone, "pkg": pkg, "price": amt, "status": "Pending",
             "date": datetime.now(timezone(timedelta(hours=6, minutes=30))).strftime("%Y-%m-%d %H:%M")
         })
+        order_id = str(res.inserted_id)
 
-        admin_user = CS_LINK.split('/')[-1]
-        msg = (f"🔔 *New Order!*\n"
-               f"📍 Server: {server}\n"
-               f"🆔 ID: `{uid}`\n"
-               f"🌐 Zone: `{zone}`\n"
-               f"💎 Pkg: {pkg}\n"
-               f"💰 Amt: {amt} Ks\n\n"
-               f"👤 [Admin (Done/Reject ပြုလုပ်ရန်)](https://t.me/{admin_user})")
+        # Telegram ပို့မယ့် Message မှာ Done/Cancel Link ၂ ခုထည့်မယ်
+        base_url = request.host_url.rstrip('/')
+        done_url = f"{base_url}/admin/update/{order_id}/Completed"
+        cancel_url = f"{base_url}/admin/update/{order_id}/Rejected"
+
+        msg = (f"🔔 *New Order!*\n🆔 ID: `{uid}` ({zone})\n💎 Pkg: {pkg}\n💰 Amt: {amt} Ks\n\n"
+               f"✅ [DONE အောင်မြင်]({done_url})\n"
+               f"❌ [REJECT ငြင်းရန်]({cancel_url})")
 
         if photo:
             photo.seek(0)
             requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto", 
                           data={"chat_id": CHAT_ID, "caption": msg, "parse_mode": "Markdown"}, 
                           files={'photo': (photo.filename, photo.read(), photo.content_type)})
+        return "Order Success! ✅ <script>setTimeout(()=>location.href='/', 2000);</script>"
+    except Exception as e: return str(e)
 
-        return "<html><body style='background:#0f172a;color:white;text-align:center;padding-top:100px;'><h2>Order Success! ✅</h2><p>Wait for 5-10 mins.</p><script>setTimeout(()=>location.href='/', 3000);</script></body></html>"
-    except Exception as e:
-        return f"Error: {e}"
+@app.route('/admin/update/<oid>/<status>')
+def update_status(oid, status):
+    # အလွယ်ဆုံး Password စစ်ဆေးခြင်း
+    pwd = request.args.get('p')
+    if pwd != ADMIN_PASS:
+        return f"<h3>Admin Password လိုအပ်ပါသည်</h3><form><input name='p' placeholder='Password'><button>Confirm {status}</button></form>"
+    
+    orders_col.update_one({"_id": ObjectId(oid)}, {"$set": {"status": status}})
+    return f"<h3>Order {status} အောင်မြင်ပါပြီ!</h3><p>Bot ထဲပြန်သွားနိုင်ပါပြီ။</p>"
 
 @app.route('/api/history')
 def get_history():
-    try:
-        hist = list(orders_col.find().sort("_id", -1).limit(10))
-        for h in hist: h["_id"] = str(h["_id"])
-        return jsonify(hist)
-    except:
-        return jsonify([])
+    hist = list(orders_col.find().sort("_id", -1).limit(10))
+    for h in hist: h["_id"] = str(h["_id"])
+    return jsonify(hist)
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
-    
