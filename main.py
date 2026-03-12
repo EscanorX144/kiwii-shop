@@ -23,12 +23,9 @@ PAY_DATA = {
     "Note": "Note - Payment သာရေးပါ"
 }
 
-# --- Normal Diamond List အသစ်ကို ဤနေရာတွင် ပြင်ဆင်ထားသည် ---
 GAMES_DATA = [
     {
-        "id": 1, 
-        "name": "Normal Server (🇲🇲)", 
-        "img": "https://flagcdn.com/w160/mm.png", 
+        "id": 1, "name": "Normal Server (🇲🇲)", "img": "https://flagcdn.com/w160/mm.png", 
         "cat_order": ["Normal Dia", "Weekly Pass", "2X Dia", "Bundle Pack"], 
         "cats": {
             "Normal Dia": [
@@ -79,6 +76,11 @@ HTML_CODE = '''
     .pay-icon.active { border-color:#fbbf24; }
     .note-box { background:#1e293b; border:2px solid #fbbf24; padding:15px; border-radius:12px; margin-bottom:20px; text-align:center; animation:glow 1.5s infinite alternate; }
     @keyframes glow { from { box-shadow:0 0 5px rgba(251, 191, 36, 0.3); } to { box-shadow:0 0 20px rgba(251, 191, 36, 0.7); } }
+    
+    /* Copy Button Style */
+    .copy-btn { color:#fbbf24; cursor:pointer; margin-left:10px; font-size:18px; vertical-align: middle; transition: 0.3s; }
+    .copy-btn:active { transform: scale(1.3); color: white; }
+    
     input { width:100%; padding:14px; margin:8px 0; border-radius:10px; border:1px solid #334155; background:#1e293b; color:white; box-sizing:border-box; }
     .buy-btn { width:100%; padding:16px; background:#fbbf24; border:none; border-radius:12px; font-weight:bold; cursor:pointer; margin-top:15px; color:black; }
     .modal { display:none; position:fixed; z-index:99; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.8); align-items:center; justify-content:center; }
@@ -101,7 +103,11 @@ HTML_CODE = '''
     <div class="pkg-grid" id="p-list"></div>
     <div style="display:flex;justify-content:center;margin:20px 0;" id="pay-icons"></div>
     <div class="note-box">
-        <b id="p-num" style="color:#fbbf24;font-size:22px;"></b><br><span id="p-name"></span><br>
+        <div style="display: flex; align-items: center; justify-content: center;">
+            <b id="p-num" style="color:#fbbf24;font-size:22px;"></b>
+            <i class="fa-regular fa-copy copy-btn" onclick="copyNum()"></i>
+        </div>
+        <span id="p-name"></span><br>
         <small style="color:#ffffff;display:block;margin-top:8px;font-weight:bold;">⚠️ {{ pay.Note }}</small>
     </div>
     <form id="orderForm" onsubmit="event.preventDefault(); showModal();">
@@ -132,6 +138,15 @@ HTML_CODE = '''
 <script>
 let sel_srv='', sel_pkg='', sel_prc='';
 const games = {{ games | tojson }}; const pay = {{ pay | tojson }};
+
+// Copy Function
+function copyNum() {
+    const num = document.getElementById('p-num').innerText;
+    navigator.clipboard.writeText(num).then(() => {
+        alert("Number Copied: " + num);
+    });
+}
+
 function init() { document.getElementById('g-list').innerHTML = games.map(g => `<div class="game-card" onclick="selG(${g.id})"><img src="${g.img}"><br><b>${g.name}</b></div>`).join(''); }
 function selG(id) {
     const g = games.find(i => i.id === id); sel_srv = g.name;
