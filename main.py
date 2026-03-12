@@ -104,6 +104,28 @@ HTML_CODE = '''
     .pay-icons img { height:40px; margin:0 5px; border-radius:5px; }
     .warning-box { background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; color: #fca5a5; padding: 12px; border-radius: 10px; text-align: center; margin-bottom: 15px; font-weight: bold; }
     .logout-btn { background: #ef4444; color: white; padding: 10px; border: none; border-radius: 8px; margin-top: 20px; width: 100%; font-weight: bold; cursor: pointer; }
+.my-rank-card {
+    background: linear-gradient(135deg, #1e3a8a 0%, #1e293b 100%);
+    color: white; border: 2px solid #fbbf24;
+    border-radius: 12px; padding: 15px; margin-bottom: 20px;
+    display: flex; align-items: center; justify-content: space-between;
+}
+.my-rank-text { color: #fbbf24; font-weight: bold; font-size: 14px; }
+    .top-buyer-card {
+        background: white; color: #1e293b; border-radius: 12px;
+        padding: 12px 15px; margin-bottom: 10px;
+        display: flex; align-items: center; justify-content: space-between;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .rank-circle {
+        background: #f1f5f9; width: 30px; height: 30px;
+        border-radius: 50%; display: flex; align-items: center;
+        justify-content: center; font-weight: bold; font-size: 14px;
+    }
+    .buyer-info { flex: 1; margin-left: 15px; }
+    .buyer-name { font-weight: bold; font-size: 16px; display: block; }
+    .buyer-amount { color: #059669; font-weight: bold; font-size: 14px; }
+    .rank-icon { width: 40px; }
 </style>
 </head><body>
 <div style="max-width:500px; margin:auto;">
@@ -165,6 +187,9 @@ HTML_CODE = '''
 <div class="nav-bar">
     <div onclick="goH()" style="flex:1; text-align:center; cursor:pointer;"><i class="fas fa-home"></i><br><small>Home</small></div>
     <div onclick="showH()" style="flex:1; text-align:center; cursor:pointer;"><i class="fas fa-history"></i><br><small>History</small></div>
+    <div onclick="showTop()" style="flex:1; text-align:center; cursor:pointer;">
+    <i class="fas fa-trophy"></i><br><small>Top 10</small>
+</div>
     <div onclick="window.open('https://t.me/thansinkyaw144')" style="flex:1; text-align:center; cursor:pointer; color:#fbbf24;"><i class="fas fa-headset"></i><br><small>CS</small></div>
 </div>
 
@@ -197,6 +222,55 @@ async function handleRegister() {
     });
     const res = await r.json();
     if(res.status === "success") { alert("Register အောင်မြင်ပါသည်!"); showLogin(); } else alert(res.msg);
+}
+
+// စာကြောင်း ၂၃၅ အောက်မှာ ထည့်ရန်
+function showTop() {
+    document.getElementById('h-sec').style.display='none';
+    document.getElementById('o-sec').style.display='none';
+    document.getElementById('hist-sec').style.display='none';
+    document.getElementById('top-sec').style.display='block';
+    loadTopBuyers();
+}
+
+async function loadTopBuyers() {
+    const r = await fetch(`/api/top-buyers?user=${encodeURIComponent(currentUser)}`);
+    const data = await r.json();
+    const container = document.getElementById('top-list-container');
+    
+    let html = "";
+    // ၁။ Top 10 စာရင်း
+    html += data.top_10.map((user, index) => `
+        <div class="top-buyer-card">
+            <div class="rank-icon">
+                <img src="https://cdn-icons-png.flaticon.com/512/2583/2583344.png" width="35">
+            </div>
+            <div class="buyer-info">
+                <span class="buyer-name">${user._id}</span>
+                <span class="buyer-amount">${user.total_spent.toLocaleString()} ကျပ်</span>
+            </div>
+            <div class="rank-circle">${index + 1}</div>
+        </div>
+    `).join('');
+
+    // ၂။ ကိုယ့်ရဲ့ Rank ကို အောက်ဆုံးမှာ ပြခြင်း
+    if (data.user_rank) {
+        html += `
+            <div style="margin: 20px 0 10px 0; text-align: center; color: #94a3b8; font-size: 12px;">— YOUR RANKING —</div>
+            <div class="my-rank-card">
+                <div>
+                    <span class="my-rank-text">Your Current Status</span>
+                    <div class="buyer-name" style="color:white;">${currentUser}</div>
+                    <div class="buyer-amount" style="color:#fbbf24;">${data.user_rank.total_spent.toLocaleString()} ကျပ်</div>
+                </div>
+                <div style="text-align:center;">
+                    <div style="font-size:12px;">Rank</div>
+                    <div style="font-size:24px; font-weight:bold; color:#fbbf24;">#${data.user_rank.rank}</div>
+                </div>
+            </div>
+        `;
+    }
+    container.innerHTML = html || "<p style='text-align:center;'>ဒေတာမရှိသေးပါ။</p>";
 }
 
 async function handleLogin() {
@@ -312,12 +386,29 @@ def update_status(oid, status):
     orders_col.update_one({"_id": ObjectId(oid)}, {"$set": {"status": status}})
     return f"Order updated to {status}."
 
-@app.route('/api/history')
-def get_history():
-    u = request.args.get('user')
-    hist = list(orders_col.find({"customer": u}).sort("_id", -1))
-    for h in hist: h["_id"] = str(h["_id"])
-    return jsonify(hist)
+@app.route('/api/top-buyers')
+def get_top_buyers():
+    target_user = request.args.get('user')
+    pipeline = [
+        {"$match": {"status": "Completed"}},
+        {"$group": {
+            "_id": "$customer", 
+            "total_spent": {"$sum": {"$toDouble": "$price"}}
+        }},
+        {"$sort": {"total_spent": -1}}
+    ]
+    all_ranks = list(orders_col.aggregate(pipeline))
+    
+    user_rank_data = None
+    for index, u in enumerate(all_ranks):
+        if u['_id'] == target_user:
+            user_rank_data = {"rank": index + 1, "total_spent": u['total_spent']}
+            break
+            
+    return jsonify({
+        "top_10": all_ranks[:10],
+        "user_rank": user_rank_data
+    })
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
