@@ -220,7 +220,8 @@ def index():
 def order():
     try:
         tg_user = request.form.get('tg_user')
-        uid, zid = request.form.get('uid'), request.form.get('zid')
+        uid = request.form.get('uid')
+        zid = request.form.get('zid')
         price_str = request.form.get('price').replace(' Ks', '').replace(',', '')
         price = int(price_str)
         photo = request.files.get('photo')
@@ -231,7 +232,7 @@ def order():
             "date": datetime.now(timezone(timedelta(hours=6, minutes=30))).strftime("%d/%m/%Y %I:%M %p")
         }).inserted_id
         
-                # Admin Alert Telegram
+        # Admin Alert Telegram
         keyboard = {"inline_keyboard": [[{"text": "Done ✅", "callback_data": f"done_{oid}"}, {"text": "Reject ❌", "callback_data": f"reject_{oid}"}]]}
         
         # msg စာသားကို quote (") သေချာပိတ်ပါ
