@@ -24,93 +24,12 @@ PAY_DATA = {
 }
 
 GAMES_DATA = [
-    {
-        "id": 1, "name": "Normal Server (🇲🇲)", "img": "https://flagcdn.com/w160/mm.png",
-        "cat_order": ["Normal Dia", "Weekly Pass", "2X Dia", "Bundle Pack"],
-        "cats": {
-            "Normal Dia": [
-                {"d": "11 💎", "p": "700"}, {"d": "56 💎", "p": "3500"}, {"d": "112 💎", "p": "7000"}, 
-                {"d": "223 💎", "p": "13800"}, {"d": "336 💎", "p": "19500"}, {"d": "514 💎", "p": "27650"}, 
-                {"d": "706 💎", "p": "37500"}, {"d": "1049 💎", "p": "56000"}, {"d": "2195 💎", "p": "112000"},
-                {"d": "3688 💎", "p": "185000"}, {"d": "5532 💎", "p": "278000"}, {"d": "9288 💎", "p": "465000"}
-            ],
-            "Weekly Pass": [{"d": f"Weekly Pass {i}X", "p": str(5900 * i)} for i in range(1, 11)],
-            "2X Dia": [{"d": "50+50 💎", "p": "3050"}, {"d": "150+150 💎", "p": "9100"}, {"d": "250+250 💎", "p": "14650"}, {"d": "500+500 💎", "p": "29950"}],
-            "Bundle Pack": [{"d": "Weekly Elite", "p": "3050"}, {"d": "Monthly Bundle", "p": "15350"}, {"d": "Twilight Pass", "p": "31500"}]
-        }
-    },
-    {
-        "id": 2, "name": "Malaysia (🇲🇾)", "img": "https://flagcdn.com/w160/my.png",
-        "cat_order": ["Malaysia Dia", "Weekly Pass", "2X Dia", "Bundle Pack"],
-        "cats": {
-            "Malaysia Dia": [
-                {"d": "14 💎", "p": "1100"}, {"d": "42 💎", "p": "3200"}, {"d": "56 💎", "p": "4350"}, {"d": "70 💎", "p": "5100"},
-                {"d": "140 💎", "p": "10200"}, {"d": "210 💎", "p": "15100"}, {"d": "284 💎", "p": "20200"}, {"d": "355 💎", "p": "25200"},
-                {"d": "429 💎", "p": "30300"}, {"d": "583 💎", "p": "41200"}, {"d": "716 💎", "p": "50200"}, {"d": "870 💎", "p": "61400"},
-                {"d": "1145 💎", "p": "80500"}, {"d": "1446 💎", "p": "100500"}, {"d": "2162 💎", "p": "150500"}, {"d": "2976 💎", "p": "201000"},
-                {"d": "3606 💎", "p": "223000"}, {"d": "6012 💎", "p": "371000"}, {"d": "7502 💎", "p": "503500"}
-            ],
-            "Weekly Pass": [{"d": f"Weekly Pass {i}X", "p": str(8700 * i)} for i in range(1, 11)],
-            "2X Dia": [{"d": "50+ 💎", "p": "4250"}, {"d": "150+ 💎", "p": "12200"}, {"d": "250+ 💎", "p": "20200"}, {"d": "500+ 💎", "p": "40600"}],
-            "Bundle Pack": [{"d": "Weekly Elite Bundle", "p": "4250"}, {"d": "Monthly Epic Bundle", "p": "20000"}]
-        }
-    },
-    {
-        "id": 3, "name": "Singapore (🇸🇬)", "img": "https://flagcdn.com/w160/sg.png",
-        "cat_order": ["Singapore Dia", "Weekly Pass", "2X Dia", "Bundle Pack"],
-        "cats": {
-            "Singapore Dia": [
-                {"d": "14 💎", "p": "1100"}, {"d": "42 💎", "p": "3200"}, {"d": "56 💎", "p": "4350"}, {"d": "70 💎", "p": "5100"},
-                {"d": "140 💎", "p": "10200"}, {"d": "210 💎", "p": "15100"}, {"d": "284 💎", "p": "20200"}, {"d": "355 💎", "p": "25200"},
-                {"d": "429 💎", "p": "30300"}, {"d": "583 💎", "p": "41200"}, {"d": "716 💎", "p": "50200"}, {"d": "870 💎", "p": "61400"},
-                {"d": "1145 💎", "p": "80500"}, {"d": "1446 💎", "p": "100500"}, {"d": "2162 💎", "p": "150500"}, {"d": "2976 💎", "p": "201000"},
-                {"d": "3606 💎", "p": "223000"}, {"d": "6012 💎", "p": "371000"}, {"d": "7502 💎", "p": "503500"}
-            ],
-            "Weekly Pass": [{"d": f"Weekly Pass {i}X", "p": str(8700 * i)} for i in range(1, 11)],
-            "2X Dia": [{"d": "50+ 💎", "p": "4250"}, {"d": "150+ 💎", "p": "12200"}, {"d": "250+ 💎", "p": "20200"}, {"d": "500+ 💎", "p": "40600"}],
-            "Bundle Pack": [{"d": "Weekly Elite Bundle", "p": "4250"}, {"d": "Monthly Epic Bundle", "p": "20000"}]
-        }
-    },
-    {
-        "id": 4, "name": "Philippines (🇵🇭)", "img": "https://flagcdn.com/w160/ph.png",
-        "cat_order": ["Philippines Dia", "Weekly Pass", "2X Dia", "Bundle Pack"],
-        "cats": {
-            "Philippines Dia": [
-                {"d": "11 💎", "p": "750"}, {"d": "22 💎", "p": "1500"}, {"d": "56 💎", "p": "3500"}, {"d": "112 💎", "p": "7000"},
-                {"d": "223 💎", "p": "14000"}, {"d": "336 💎", "p": "21300"}, {"d": "570 💎", "p": "36000"}, {"d": "1163 💎", "p": "70500"},
-                {"d": "2398 💎", "p": "140000"}, {"d": "6042 💎", "p": "350000"}
-            ],
-            "Weekly Pass": [{"d": f"Weekly Pass {i}X", "p": str(6500 * i)} for i in range(1, 11)],
-            "2X Dia": [{"d": "50+50 💎", "p": "3600"}, {"d": "150+150 💎", "p": "10500"}, {"d": "250+250 💎", "p": "17200"}, {"d": "500+500 💎", "p": "34500"}],
-            "Bundle Pack": [{"d": "Twilight Pass", "p": "35500"}]
-        }
-    },
-    {
-        "id": 5, "name": "Indonesia (🇮🇩)", "img": "https://flagcdn.com/w160/id.png",
-        "cat_order": ["Indonesia Dia", "Weekly Pass", "Bundle Pack"],
-        "cats": {
-            "Indonesia Dia": [
-                {"d": "5 💎", "p": "450"}, {"d": "12 💎", "p": "950"}, {"d": "19 💎", "p": "1500"}, {"d": "28 💎", "p": "2200"},
-                {"d": "44 💎", "p": "3300"}, {"d": "59 💎", "p": "4300"}, {"d": "85 💎", "p": "5850"}, {"d": "170 💎", "p": "11700"},
-                {"d": "240 💎", "p": "16600"}, {"d": "296 💎", "p": "20500"}, {"d": "408 💎", "p": "28000"}, {"d": "568 💎", "p": "37500"},
-                {"d": "875 💎", "p": "58500"}, {"d": "2010 💎", "p": "123500"}, {"d": "4830 💎", "p": "299000"}
-            ],
-            "Weekly Pass": [{"d": f"Weekly Pass {i}X", "p": str(7500 * i)} for i in range(1, 11)],
-            "Bundle Pack": [{"d": "Twilight Pass", "p": "45000"}]
-        }
-    },
-    {
-        "id": 6, "name": "Russia (🇷🇺)", "img": "https://flagcdn.com/w160/ru.png",
-        "cat_order": ["Russia Dia", "Weekly Pass"],
-        "cats": {
-            "Russia Dia": [
-                {"d": "35 💎", "p": "2750"}, {"d": "55 💎", "p": "4450"}, {"d": "165 💎", "p": "13000"}, {"d": "275 💎", "p": "22000"},
-                {"d": "565 💎", "p": "44500"}, {"d": "1155 💎", "p": "88000"}, {"d": "1765 💎", "p": "182000"}, {"d": "2975 💎", "p": "220000"},
-                {"d": "6000 💎", "p": "435000"}
-            ],
-            "Weekly Pass": [{"d": f"Weekly Pass {i}X", "p": str(8600 * i)} for i in range(1, 11)]
-        }
-    }
+    {"id": 1, "name": "Normal Server (🇲🇲)", "img": "https://flagcdn.com/w160/mm.png", "cat_order": ["Normal Dia", "Weekly Pass", "2X Dia", "Bundle Pack"], "cats": {"Normal Dia": [{"d": "11 💎", "p": "700"}, {"d": "56 💎", "p": "3500"}, {"d": "112 💎", "p": "7000"}, {"d": "223 💎", "p": "13800"}, {"d": "336 💎", "p": "19500"}, {"d": "514 💎", "p": "27650"}, {"d": "706 💎", "p": "37500"}, {"d": "1049 💎", "p": "56000"}, {"d": "2195 💎", "p": "112000"}, {"d": "3688 💎", "p": "185000"}, {"d": "5532 💎", "p": "278000"}, {"d": "9288 💎", "p": "465000"}], "Weekly Pass": [{"d": f"Weekly Pass {i}X", "p": str(5900 * i)} for i in range(1, 11)], "2X Dia": [{"d": "50+50 💎", "p": "3050"}, {"d": "150+150 💎", "p": "9100"}, {"d": "250+250 💎", "p": "14650"}, {"d": "500+500 💎", "p": "29950"}], "Bundle Pack": [{"d": "Weekly Elite", "p": "3050"}, {"d": "Monthly Bundle", "p": "15350"}, {"d": "Twilight Pass", "p": "31500"}]}},
+    {"id": 2, "name": "Malaysia (🇲🇾)", "img": "https://flagcdn.com/w160/my.png", "cat_order": ["Malaysia Dia", "Weekly Pass", "2X Dia", "Bundle Pack"], "cats": {"Malaysia Dia": [{"d": "14 💎", "p": "1100"}, {"d": "42 💎", "p": "3200"}, {"d": "56 💎", "p": "4350"}, {"d": "70 💎", "p": "5100"}, {"d": "140 💎", "p": "10200"}, {"d": "210 💎", "p": "15100"}, {"d": "284 💎", "p": "20200"}, {"d": "355 💎", "p": "25200"}, {"d": "429 💎", "p": "30300"}, {"d": "583 💎", "p": "41200"}, {"d": "716 💎", "p": "50200"}, {"d": "870 💎", "p": "61400"}, {"d": "1145 💎", "p": "80500"}, {"d": "1446 💎", "p": "100500"}, {"d": "2162 💎", "p": "150500"}, {"d": "2976 💎", "p": "201000"}, {"d": "3606 💎", "p": "223000"}, {"d": "6012 💎", "p": "371000"}, {"d": "7502 💎", "p": "503500"}], "Weekly Pass": [{"d": f"Weekly Pass {i}X", "p": str(8700 * i)} for i in range(1, 11)], "2X Dia": [{"d": "50+ 💎", "p": "4250"}, {"d": "150+ 💎", "p": "12200"}, {"d": "250+ 💎", "p": "20200"}, {"d": "500+ 💎", "p": "40600"}], "Bundle Pack": [{"d": "Weekly Elite Bundle", "p": "4250"}, {"d": "Monthly Epic Bundle", "p": "20000"}]}},
+    {"id": 3, "name": "Singapore (🇸🇬)", "img": "https://flagcdn.com/w160/sg.png", "cat_order": ["Singapore Dia", "Weekly Pass", "2X Dia", "Bundle Pack"], "cats": {"Singapore Dia": [{"d": "14 💎", "p": "1100"}, {"d": "42 💎", "p": "3200"}, {"d": "56 💎", "p": "4350"}, {"d": "70 💎", "p": "5100"}, {"d": "140 💎", "p": "10200"}, {"d": "210 💎", "p": "15100"}, {"d": "284 💎", "p": "20200"}, {"d": "355 💎", "p": "25200"}, {"d": "429 💎", "p": "30300"}, {"d": "583 💎", "p": "41200"}, {"d": "716 💎", "p": "50200"}, {"d": "870 💎", "p": "61400"}, {"d": "1145 💎", "p": "80500"}, {"d": "1446 💎", "p": "100500"}, {"d": "2162 💎", "p": "150500"}, {"d": "2976 💎", "p": "201000"}, {"d": "3606 💎", "p": "223000"}, {"d": "6012 💎", "p": "371000"}, {"d": "7502 💎", "p": "503500"}], "Weekly Pass": [{"d": f"Weekly Pass {i}X", "p": str(8700 * i)} for i in range(1, 11)], "2X Dia": [{"d": "50+ 💎", "p": "4250"}, {"d": "150+ 💎", "p": "12200"}, {"d": "250+ 💎", "p": "20200"}, {"d": "500+ 💎", "p": "40600"}], "Bundle Pack": [{"d": "Weekly Elite Bundle", "p": "4250"}, {"d": "Monthly Epic Bundle", "p": "20000"}]}},
+    {"id": 4, "name": "Philippines (🇵🇭)", "img": "https://flagcdn.com/w160/ph.png", "cat_order": ["Philippines Dia", "Weekly Pass", "2X Dia", "Bundle Pack"], "cats": {"Philippines Dia": [{"d": "11 💎", "p": "750"}, {"d": "22 💎", "p": "1500"}, {"d": "56 💎", "p": "3500"}, {"d": "112 💎", "p": "7000"}, {"d": "223 💎", "p": "14000"}, {"d": "336 💎", "p": "21300"}, {"d": "570 💎", "p": "36000"}, {"d": "1163 💎", "p": "70500"}, {"d": "2398 💎", "p": "140000"}, {"d": "6042 💎", "p": "350000"}], "Weekly Pass": [{"d": f"Weekly Pass {i}X", "p": str(6500 * i)} for i in range(1, 11)], "2X Dia": [{"d": "50+50 💎", "p": "3600"}, {"d": "150+150 💎", "p": "10500"}, {"d": "250+250 💎", "p": "17200"}, {"d": "500+500 💎", "p": "34500"}], "Bundle Pack": [{"d": "Twilight Pass", "p": "35500"}]}},
+    {"id": 5, "name": "Indonesia (🇮🇩)", "img": "https://flagcdn.com/w160/id.png", "cat_order": ["Indonesia Dia", "Weekly Pass", "Bundle Pack"], "cats": {"Indonesia Dia": [{"d": "5 💎", "p": "450"}, {"d": "12 💎", "p": "950"}, {"d": "19 💎", "p": "1500"}, {"d": "28 💎", "p": "2200"}, {"d": "44 💎", "p": "3300"}, {"d": "59 💎", "p": "4300"}, {"d": "85 💎", "p": "5850"}, {"d": "170 💎", "p": "11700"}, {"d": "240 💎", "p": "16600"}, {"d": "296 💎", "p": "20500"}, {"d": "408 💎", "p": "28000"}, {"d": "568 💎", "p": "37500"}, {"d": "875 💎", "p": "58500"}, {"d": "2010 💎", "p": "123500"}, {"d": "4830 💎", "p": "299000"}], "Weekly Pass": [{"d": f"Weekly Pass {i}X", "p": str(7500 * i)} for i in range(1, 11)], "Bundle Pack": [{"d": "Twilight Pass", "p": "45000"}]}},
+    {"id": 6, "name": "Russia (🇷🇺)", "img": "https://flagcdn.com/w160/ru.png", "cat_order": ["Russia Dia", "Weekly Pass"], "cats": {"Russia Dia": [{"d": "35 💎", "p": "2750"}, {"d": "55 💎", "p": "4450"}, {"d": "165 💎", "p": "13000"}, {"d": "275 💎", "p": "22000"}, {"d": "565 💎", "p": "44500"}, {"d": "1155 💎", "p": "88000"}, {"d": "1765 💎", "p": "182000"}, {"d": "2975 💎", "p": "220000"}, {"d": "6000 💎", "p": "435000"}], "Weekly Pass": [{"d": f"Weekly Pass {i}X", "p": str(8600 * i)} for i in range(1, 11)]}}
 ]
 
 HTML_CODE = '''
@@ -163,20 +82,13 @@ HTML_CODE = '''
     </div>
 
     <form action="/order" method="post" enctype="multipart/form-data">
-    <input type="hidden" name="server" id="s_in">
-    <input type="hidden" name="p" id="p_in">
-    <input type="hidden" name="a" id="a_in">
-    
-    <input type="tel" name="u" placeholder="Game ID (နံပါတ်သာ)" required 
-           oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-
-    <input type="tel" name="z" placeholder="Zone ID (နံပါတ်သာ)" required 
-           oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-
-    <div style="margin:10px 0; font-size:13px; color:#94a3b8;">Payment Screenshot:</div>
-    <input type="file" name="photo" required accept="image/*" style="border:none; padding:5px 0;">
-    <button type="submit" class="buy-btn">PLACE ORDER</button>
-</form>
+        <input type="hidden" name="server" id="s_in"><input type="hidden" name="p" id="p_in"><input type="hidden" name="a" id="a_in">
+        <input type="tel" name="u" placeholder="Game ID (နံပါတ်သာ)" required oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+        <input type="tel" name="z" placeholder="Zone ID (နံပါတ်သာ)" required oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+        <div style="margin:10px 0; font-size:13px; color:#94a3b8;">Payment Screenshot:</div>
+        <input type="file" name="photo" required accept="image/*" style="border:none; padding:5px 0;">
+        <button type="submit" class="buy-btn">PLACE ORDER</button>
+    </form>
 </div>
 
 <div id="hist-sec" style="display:none; padding:15px;">
@@ -270,6 +182,11 @@ init();
 </body></html>
 '''
 
+# --- Flask Routes ---
+@app.route('/')
+def index():
+    return render_template_string(HTML_CODE, games=GAMES_DATA, pay=PAY_DATA, cs=CS_LINK)
+
 @app.route('/order', methods=['POST'])
 def order():
     try:
@@ -280,17 +197,14 @@ def order():
         amt = request.form.get('a')
         photo = request.files.get('photo')
 
-        # အချက်အလက်မစုံရင် တားမြစ်ခြင်း
         if not all([uid, zone, pkg, photo]):
             return "<html><body style='background:#0f172a;color:#ef4444;text-align:center;padding-top:100px;'><h2>⚠️ အချက်အလက်မပြည့်စုံပါ</h2><p>ID၊ Zone၊ Package နှင့် ပြေစာ အားလုံးလိုအပ်ပါသည်။</p><button onclick='history.back()'>Back</button></body></html>"
 
-        # MongoDB သိမ်းဆည်းခြင်း
         orders_col.insert_one({
             "uid": uid, "zone": zone, "pkg": pkg, "price": amt,
             "date": datetime.now(timezone(timedelta(hours=6, minutes=30))).strftime("%Y-%m-%d %H:%M")
         })
 
-        # Telegram ပို့ခြင်း (Admin Link ပါဝင်သည်)
         admin_user = CS_LINK.split('/')[-1]
         msg = (f"🔔 *New Order!*\n"
                f"📍 Server: {server}\n"
@@ -321,5 +235,4 @@ def get_history():
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
-
-
+    
