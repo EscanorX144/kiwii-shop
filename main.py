@@ -230,23 +230,21 @@ def order():
             "date": datetime.now(timezone(timedelta(hours=6, minutes=30))).strftime("%d/%m/%Y %I:%M %p")
         }).inserted_id
         
-        # Telegram Button
-                # Admin Alert Telegram
+        # Telegram အတွက်ပြင်ဆင်ခြင်း
         keyboard = {"inline_keyboard": [[{"text": "Done ✅", "callback_data": f"done_{oid}"}, {"text": "Reject ❌", "callback_data": f"reject_{oid}"}]]}
+        msg = f"⚠️ *New Order!*\nUser: {tg_user}\nID: `{uid}` ({zid})\nPackage: {pkg}\nPrice: {price} Ks"
         
-        # Message format ကို ပြန်စစ်ပါ (f-string သုံးထားတာ မှန်ရပါမယ်)
-        msg = f"⚠️ *New Order!*\n\n👤 *User:* {tg_user}\n🆔 *ID:* `{uid}` ({zid})\n📦 *Package:* {request.form.get('pkg')}\n💰 *Price:* {price} Ks"
-        
-        # ဒီစာကြောင်းမှာ "caption": msg ဆိုတာကို သေချာ ပြန်စစ်ပါ
+        # Telegram ဆီ ပုံနဲ့တကွ ပို့ခြင်း (ဒီအဆင့်ပြီးမှ return ပြန်ရပါမယ်)
         requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto", 
                       data={"chat_id": CHAT_ID, "caption": msg, "parse_mode": "Markdown", "reply_markup": json.dumps(keyboard)}, 
                       files={'photo': photo})
         
-        return "Success"
-        
+        # အောင်မြင်ကြောင်း Browser ကို အကြောင်းကြားခြင်း
+        return "Success" 
+
     except Exception as e:
         print(f"Error: {e}")
-        return "Error" # Error ဖြစ်ရင် ဒါကို ပြန်ပို့ပေးမယ်
+        return "Error"
 
 @app.route('/api/top10')
 def get_top10():
