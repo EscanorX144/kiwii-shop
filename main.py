@@ -139,6 +139,7 @@ HTML_CODE = '''
             </div>
             <b style="color:#fbbf24;font-size:22px;">09775394979</b><br>
             <b style="color:white;">Name: Thansin Kyaw</b>
+            <b style="color:red;">Note: Payment သာရေးပါ</b>
         </div>
 
         <form id="orderForm" onsubmit="confirmOrder(event)">
