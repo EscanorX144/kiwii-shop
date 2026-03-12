@@ -231,18 +231,19 @@ def order():
         }).inserted_id
         
         # Telegram Button
+                # Admin Alert Telegram
         keyboard = {"inline_keyboard": [[{"text": "Done ✅", "callback_data": f"done_{oid}"}, {"text": "Reject ❌", "callback_data": f"reject_{oid}"}]]}
         
-        # Telegram Message
-        msg = f"⚠️ *New Order!*\nUser: {tg_user}\nID: `{uid}` ({zid})\nPackage: {pkg}\nPrice: {price} Ks"
+        # Message format ကို ပြန်စစ်ပါ (f-string သုံးထားတာ မှန်ရပါမယ်)
+        msg = f"⚠️ *New Order!*\n\n👤 *User:* {tg_user}\n🆔 *ID:* `{uid}` ({zid})\n📦 *Package:* {request.form.get('pkg')}\n💰 *Price:* {price} Ks"
         
-        # Telegram ဆီ ပို့ခြင်း
+        # ဒီစာကြောင်းမှာ "caption": msg ဆိုတာကို သေချာ ပြန်စစ်ပါ
         requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto", 
                       data={"chat_id": CHAT_ID, "caption": msg, "parse_mode": "Markdown", "reply_markup": json.dumps(keyboard)}, 
                       files={'photo': photo})
         
-        return "Success" # ပုံမှန်ဆိုရင် ဒီနေရာမှာ Success ပြန်ရမယ်
-
+        return "Success"
+        
     except Exception as e:
         print(f"Error: {e}")
         return "Error" # Error ဖြစ်ရင် ဒါကို ပြန်ပို့ပေးမယ်
