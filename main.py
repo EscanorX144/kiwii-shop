@@ -207,6 +207,10 @@ function updateNav(id) {
 '''
 
 # --- 🚀 BACKEND ---
+@app.route('/')
+def index():
+    return render_template_string(HTML_CODE, games=GAMES_DATA, cs_link=CS_TELEGRAM)
+    
 @app.route('/order', methods=['POST'])
 def order():
     try:
