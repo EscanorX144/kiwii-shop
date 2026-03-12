@@ -11,6 +11,7 @@ MONGO_URI = "mongodb+srv://EscanorX:Conti144@cluster0.m2mtomm.mongodb.net/?retry
 client = MongoClient(MONGO_URI)
 db = client['kiwii_game_shop']
 orders_col = db['orders']
+users_col = db['users'] # User Data သိမ်းရန်
 
 BOT_TOKEN = "8089066962:AAFOHBGeuDF7E3YgeJ3mUu000sQNJ4uJVok"
 CHAT_ID = "7089720301"
@@ -29,7 +30,7 @@ GAMES_DATA = [
     },
     {
         "id": 2, "name": "Malaysia (🇲🇾)", "img": "https://flagcdn.com/w160/my.png", 
-        "cat_order": ["Direct Dia", "Weekly Pass", "2X Dia", "Bundle Pack"], 
+        "cat_order": ["Malaysia Dia", "Weekly Pass", "2X Dia", "Bundle Pack"], 
         "cats": {
             "Malaysia Dia": [{"d": "14 💎", "p": "1100"}, {"d": "56 💎", "p": "4350"}, {"d": "140 💎", "p": "10200"}, {"d": "284 💎", "p": "20200"}, {"d": "583 💎", "p": "41200"}, {"d": "1145 💎", "p": "80500"}, {"d": "2976 💎", "p": "201000"}, {"d": "7502 💎", "p": "503500"}],
             "Weekly Pass": [{"d": "WP 1X", "p": "8700"}, {"d": "WP 2X", "p": "17400"}, {"d": "WP 3X", "p": "26100"}, {"d": "WP 4X", "p": "34800"}, {"d": "WP 5X", "p": "43500"}, {"d": "WP 6X", "p": "52200"}, {"d": "WP 7X", "p": "60900"}, {"d": "WP 8X", "p": "69600"}, {"d": "WP 9X", "p": "78300"}, {"d": "WP 10X", "p": "87000"}],
@@ -39,7 +40,7 @@ GAMES_DATA = [
     },
     {
         "id": 6, "name": "Singapore (🇸🇬)", "img": "https://flagcdn.com/w160/sg.png", 
-        "cat_order": ["Direct Dia", "Weekly Pass", "2X Dia"], 
+        "cat_order": ["Singapore Dia", "Weekly Pass", "2X Dia"], 
         "cats": {
             "Singapore Dia": [{"d": "14 💎", "p": "1100"}, {"d": "56 💎", "p": "4350"}, {"d": "140 💎", "p": "10200"}, {"d": "284 💎", "p": "20200"}, {"d": "583 💎", "p": "41200"}, {"d": "1145 💎", "p": "80500"}],
             "Weekly Pass": [{"d": "WP 1X", "p": "8700"}, {"d": "WP 2X", "p": "17400"}, {"d": "WP 3X", "p": "26100"}, {"d": "WP 4X", "p": "34800"}, {"d": "WP 5X", "p": "43500"}, {"d": "WP 6X", "p": "52200"}, {"d": "WP 7X", "p": "60900"}, {"d": "WP 8X", "p": "69600"}, {"d": "WP 9X", "p": "78300"}, {"d": "WP 10X", "p": "87000"}],
@@ -72,6 +73,7 @@ GAMES_DATA = [
     }
 ]
 
+# --- 🌐 HTML INTERFACE ---
 HTML_CODE = '''
 <!DOCTYPE html><html><head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -79,36 +81,16 @@ HTML_CODE = '''
 <style>
     body { background:#0f172a; color:white; font-family:sans-serif; margin:0; padding-bottom:80px; }
     .game-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; padding: 15px; }
-    
-    /* ✅ SERVER CARD WITH BACKGROUND OVERLAY */
     .game-card { 
-        position: relative;
-        background:#1e293b; 
-        border-radius:15px; 
-        padding:35px 20px; 
-        text-align:center; 
-        border:1px solid #334155; 
-        cursor:pointer; 
-        overflow: hidden;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
+        position: relative; background:#1e293b; border-radius:15px; padding:35px 20px; 
+        text-align:center; border:1px solid #334155; cursor:pointer; overflow: hidden;
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
     }
-    
     .game-card::after {
-        content: "";
-        position: absolute;
-        top: 0; left: 0; width: 100%; height: 100%;
-        background-image: url('/static/hero.webp');
-        background-size: cover;
-        background-position: center;
-        opacity: 0.15; /* Subtly visible background */
-        z-index: 1;
+        content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        background-image: url('/static/hero.webp'); background-size: cover; opacity: 0.15; z-index: 1;
     }
-    
     .game-card img, .game-card b { position: relative; z-index: 2; }
-
     .cat-tab { padding:10px 18px; background:#1e293b; border-radius:10px; font-size:12px; cursor:pointer; border:1px solid #334155; white-space:nowrap; }
     .cat-tab.active { background:#fbbf24; color:black; font-weight:bold; }
     .pkg-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:15px 0; }
@@ -119,57 +101,63 @@ HTML_CODE = '''
     .nav-bar { position:fixed; bottom:0; left:0; right:0; background:#1e293b; display:flex; padding:12px; border-top:1px solid #334155; z-index:100; }
     .pay-box { background:#1e293b; border:2px solid #fbbf24; padding:15px; border-radius:12px; text-align:center; margin-bottom:15px; }
     .pay-icons img { height:40px; margin:0 5px; border-radius:5px; }
-        .warning-box {
-        background: rgba(239, 68, 68, 0.1); 
-        border: 1px solid #ef4444; 
-        color: #fca5a5;
-        padding: 12px; 
-        border-radius: 10px; 
-        text-align: center; 
-        margin-bottom: 15px;
-        box-shadow: 0 0 10px rgba(239, 68, 68, 0.3); 
-        font-weight: bold;
-    }
-    
+    .warning-box { background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; color: #fca5a5; padding: 12px; border-radius: 10px; text-align: center; margin-bottom: 15px; font-weight: bold; }
+    .logout-btn { background: #ef4444; color: white; padding: 10px; border: none; border-radius: 8px; margin-top: 20px; width: 100%; font-weight: bold; cursor: pointer; }
 </style>
 </head><body>
 <div style="max-width:500px; margin:auto;">
-    <div id="h-sec">
-        <h1 style="text-align:center;color:#fbbf24;margin-top:20px;">KIWII GAME STORE</h1>
-        <div class="game-grid" id="g-list"></div>
+    <div id="login-sec" style="padding:40px 20px; text-align:center;">
+        <h1 style="color:#fbbf24;">KIWII GAME STORE</h1>
+        <input type="text" id="l_user" placeholder="Telegram Username">
+        <input type="password" id="l_pw" placeholder="Password">
+        <button onclick="handleLogin()" class="buy-btn">LOGIN</button>
+        <p onclick="showReg()" style="margin-top:20px; color:#fbbf24; cursor:pointer;">အကောင့်မရှိသေးပါက Register နှိပ်ပါ</p>
     </div>
 
-    <div id="o-sec" style="display:none; padding:15px;">
-        <button onclick="goH()" style="background:none;color:white;border:1px solid #334155;padding:8px;border-radius:8px;">← Back</button>
-        <h2 id="g-title" style="color:#fbbf24; margin-top:10px;"></h2>
-        <div style="display:flex;gap:8px;overflow-x:auto;" id="tabs"></div>
-        <div class="pkg-grid" id="p-list"></div>
-        
-        <div class="pay-box">
-            <div class="pay-icons">
-                <img src="/static/kpay.jpg"> <img src="/static/wave.jpg"> <img src="/static/ayapay.jpg">
+    <div id="reg-sec" style="padding:40px 20px; text-align:center; display:none;">
+        <h1 style="color:#fbbf24;">REGISTER</h1>
+        <input type="text" id="r_name" placeholder="Full Name">
+        <input type="text" id="r_user" placeholder="Telegram Username">
+        <input type="password" id="r_pw" placeholder="Password">
+        <input type="password" id="r_rpw" placeholder="Retype Password">
+        <button onclick="handleRegister()" class="buy-btn">SIGN UP</button>
+        <p onclick="showLogin()" style="margin-top:20px; color:#fbbf24; cursor:pointer;">အကောင့်ရှိလျှင် Login ဝင်ရန်</p>
+    </div>
+
+    <div id="main-shop" style="display:none;">
+        <div id="h-sec">
+            <h1 style="text-align:center;color:#fbbf24;margin-top:20px;">KIWII GAME STORE</h1>
+            <div class="game-grid" id="g-list"></div>
+        </div>
+
+        <div id="o-sec" style="display:none; padding:15px;">
+            <button onclick="goH()" style="background:none;color:white;border:1px solid #334155;padding:8px;border-radius:8px;cursor:pointer;">← Back</button>
+            <h2 id="g-title" style="color:#fbbf24; margin-top:10px;"></h2>
+            <div id="tabs" style="display:flex; gap:8px; overflow-x:auto; padding-bottom:10px;"></div>
+            <div id="p-list" class="pkg-grid"></div>
+
+            <div class="pay-box">
+                <div class="pay-icons">
+                    <img src="/static/kpay.jpg"> <img src="/static/wave.jpg"> <img src="/static/ayapay.jpg">
+                </div>
+                <b style="color:#fbbf24; font-size:22px;">09775394979</b><br>
+                <b style="color:white;">Name: Thansin Kyaw</b>
             </div>
-            <b style="color:#fbbf24;font-size:22px;">09775394979</b><br>
-            <b style="color:white;">Name: Thansin Kyaw</b>
-        </div>
-                <div class="warning-box">
-            ⚠️ Note - Payment သာရေးပါ
-        </div>
-        
-        <form id="orderForm" onsubmit="confirmOrder(event)">
-            <input type="text" id="tg_u" name="tg_u" placeholder="Telegram Username" required>
-            <input type="tel" id="uid" name="uid" placeholder="Game ID" required>
-            <input type="tel" id="zid" name="zid" placeholder="Zone ID" required>
-            <input type="file" id="photo" name="photo" required accept="image/*">
-            <button type="submit" id="submitBtn" class="buy-btn">PLACE ORDER</button>
-        </form>
-    </div>
+            <div class="warning-box">⚠️ Note - Payment သာချေပါ</div>
 
-    <div id="hist-sec" style="display:none; padding:15px;">
-        <h3 style="color:#fbbf24;">History</h3>
-        <input type="text" id="h_search" placeholder="Enter Username first.">
-        <button onclick="loadH()" class="buy-btn" style="padding:10px; margin-top:5px;">Search</button>
-        <div id="hist-list" style="margin-top:20px;"></div>
+            <form id="orderForm" onsubmit="confirmOrder(event)">
+                <input type="tel" id="uid" name="uid" placeholder="Game ID" required>
+                <input type="tel" id="zid" name="zid" placeholder="Zone ID" required>
+                <input type="file" id="photo" name="photo" required accept="image/*">
+                <button type="submit" id="submitBtn" class="buy-btn">PLACE ORDER</button>
+            </form>
+        </div>
+
+        <div id="hist-sec" style="display:none; padding:15px;">
+            <h3 style="color:#fbbf24;">My History</h3>
+            <div id="hist-list"></div>
+            <button onclick="logout()" class="logout-btn">LOGOUT</button>
+        </div>
     </div>
 </div>
 
@@ -181,7 +169,47 @@ HTML_CODE = '''
 
 <script>
 let sel_srv='', sel_pkg='', sel_prc='';
+let currentUser = localStorage.getItem('logged_user') || "";
 const games = {{ games | tojson }};
+
+window.onload = function() {
+    if(currentUser) {
+        document.getElementById('login-sec').style.display = 'none';
+        document.getElementById('main-shop').style.display = 'block';
+        init();
+    }
+};
+
+function showReg() { document.getElementById('login-sec').style.display='none'; document.getElementById('reg-sec').style.display='block'; }
+function showLogin() { document.getElementById('reg-sec').style.display='none'; document.getElementById('login-sec').style.display='block'; }
+
+async function handleRegister() {
+    const name = document.getElementById('r_name').value;
+    const tg_u = document.getElementById('r_user').value;
+    const pw = document.getElementById('r_pw').value;
+    const rpw = document.getElementById('r_rpw').value;
+    if(!name || !tg_u || !pw) return alert("အချက်အလက်များ ဖြည့်ပါ");
+    if(pw !== rpw) return alert("Password မတူပါ");
+    const r = await fetch('/api/register', {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ name, tg_u, pw })
+    });
+    const res = await r.json();
+    if(res.status === "success") { alert("Register အောင်မြင်ပါသည်!"); showLogin(); } else alert(res.msg);
+}
+
+async function handleLogin() {
+    const tg_u = document.getElementById('l_user').value;
+    const pw = document.getElementById('l_pw').value;
+    const r = await fetch('/api/login', {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ tg_u, pw })
+    });
+    const res = await r.json();
+    if(res.status === "success") { localStorage.setItem('logged_user', res.user); location.reload(); } else alert(res.msg);
+}
+
+function logout() { localStorage.removeItem('logged_user'); location.reload(); }
 
 function init() { document.getElementById('g-list').innerHTML = games.map(g => `<div class="game-card" onclick="selG(${g.id})"><img src="${g.img}" width="40"><br><b>${g.name}</b></div>`).join(''); }
 
@@ -204,12 +232,13 @@ function selP(el, d, p) { document.querySelectorAll('.pkg-card').forEach(c=>c.cl
 function confirmOrder(e) {
     e.preventDefault();
     if(!sel_pkg) return alert("Package အရင်ရွေးပါ!");
-    if(confirm(`📢 အတည်ပြုပါ\\nServer: ${sel_srv}\\nID: ${document.getElementById('uid').value}\\nPackage: ${sel_pkg}\\nဈေးနှုန်း: ${sel_prc} Ks`)) submitOrder();
+    if(confirm(`📢 အတည်ပြုပါ\\nServer: ${sel_srv}\\nPackage: ${sel_pkg}\\nဈေးနှုန်း: ${sel_prc} Ks`)) submitOrder();
 }
 
 async function submitOrder() {
     const btn = document.getElementById('submitBtn'); btn.disabled = true; btn.innerText = "Processing...";
     const fd = new FormData(document.getElementById('orderForm'));
+    fd.append('tg_u', currentUser);
     fd.append('server', sel_srv); fd.append('p', sel_pkg); fd.append('a', sel_prc);
     const r = await fetch('/order', { method: 'POST', body: fd });
     if(await r.text()==="Success") { alert("Order Success! ✅"); location.reload(); }
@@ -217,47 +246,59 @@ async function submitOrder() {
 }
 
 function goH() { document.getElementById('o-sec').style.display='none'; document.getElementById('hist-sec').style.display='none'; document.getElementById('h-sec').style.display='block'; }
-function showH() { document.getElementById('h-sec').style.display='none'; document.getElementById('o-sec').style.display='none'; document.getElementById('hist-sec').style.display='block'; }
+function showH() { 
+    document.getElementById('h-sec').style.display='none'; 
+    document.getElementById('o-sec').style.display='none'; 
+    document.getElementById('hist-sec').style.display='block'; 
+    loadH();
+}
+
 async function loadH() {
-    const u = document.getElementById('h_search').value;
-    const r = await fetch('/api/history?user=' + encodeURIComponent(u));
+    const r = await fetch('/api/history?user=' + encodeURIComponent(currentUser));
     const data = await r.json();
     document.getElementById('hist-list').innerHTML = data.map(o => `<div style="background:#1e293b;padding:12px;margin-bottom:10px;border-radius:10px;border-left:4px solid #fbbf24;"><b>${o.pkg}</b><br><small>${o.date}</small> | <b>${o.status}</b></div>`).join('') || "No history.";
 }
-init();
 </script></body></html>
 '''
 
+# --- 🚀 SERVER ROUTES ---
 @app.route('/')
-def index(): return render_template_string(HTML_CODE, games=GAMES_DATA)
+def index():
+    return render_template_string(HTML_CODE, games=GAMES_DATA)
+
+@app.route('/api/register', methods=['POST'])
+def api_register():
+    data = request.json
+    if users_col.find_one({"tg_u": data['tg_u']}):
+        return jsonify({"status": "error", "msg": "ဤ Username မှာ အသုံးပြုပြီးသားဖြစ်သည်"})
+    users_col.insert_one({"name": data['name'], "tg_u": data['tg_u'], "pw": data['pw']})
+    return jsonify({"status": "success"})
+
+@app.route('/api/login', methods=['POST'])
+def api_login():
+    data = request.json
+    user = users_col.find_one({"tg_u": data['tg_u'], "pw": data['pw']})
+    if user: return jsonify({"status": "success", "user": user['tg_u']})
+    return jsonify({"status": "error", "msg": "Username သို့မဟုတ် Password မှားယွင်းနေသည်"})
 
 @app.route('/order', methods=['POST'])
 def order():
     try:
         user, server, uid, zone, pkg, amt = request.form.get('tg_u'), request.form.get('server'), request.form.get('uid'), request.form.get('zid'), request.form.get('p'), request.form.get('a')
         photo = request.files.get('photo')
-        
         oid = str(orders_col.insert_one({
-            "customer": user, "uid": uid, "zone": zone, 
-            "pkg": pkg, "price": amt, "status": "Pending", 
+            "customer": user, "uid": uid, "zone": zone, "pkg": pkg, "price": amt, "status": "Pending", 
             "date": datetime.now(timezone(timedelta(hours=6, minutes=30))).strftime("%Y-%m-%d %H:%M")
         }).inserted_id)
-
         msg = f"🔔 *New Order!*\n👤 User: `{user}`\n🆔 ID: `{uid}` ({zone})\n🌍 Server: {server}\n💎 Pkg: {pkg}\n💰 Amt: {amt} Ks\n\n✅ [DONE]({request.host_url}admin/update/{oid}/Completed) | ❌ [REJECT]({request.host_url}admin/update/{oid}/Rejected)"
-        
-        # ✅ Telegram Bot ဆီ စာကျအောင် Indentation ညှိထားပါသည်
-        requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto", 
-                      data={"chat_id": CHAT_ID, "caption": msg, "parse_mode": "Markdown"}, 
-                      files={'photo': photo})
+        requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto", data={"chat_id": CHAT_ID, "caption": msg, "parse_mode": "Markdown"}, files={'photo': photo})
         return "Success"
-    except Exception as e: 
-        print(f"Error: {e}")
-        return "Error"
+    except: return "Error"
 
 @app.route('/admin/update/<oid>/<status>')
 def update_status(oid, status):
     orders_col.update_one({"_id": ObjectId(oid)}, {"$set": {"status": status}})
-    return f"Order {oid} has been updated to {status}."
+    return f"Order updated to {status}."
 
 @app.route('/api/history')
 def get_history():
@@ -268,4 +309,4 @@ def get_history():
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
-    
+
