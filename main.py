@@ -348,19 +348,184 @@ function confirmOrder(e) {
 }
 
 async function submitOrder() {
-    const btn = document.getElementById('submitBtn'); btn.disabled = true; btn.innerText = "Processing...";
-    const fd = new FormData(document.getElementById('orderForm'));
-    fd.append('tg_u', currentUser);
-    fd.append('server', sel_srv); fd.append('p', sel_pkg); fd.append('a', sel_prc);
-    const r = await fetch('/order', { method: 'POST', body: fd });
-    if(await r.text()==="Success") { alert("Order Success! ✅"); location.reload(); }
-    else { alert("Error!"); btn.disabled = false; }
+# --- 🌐 HTML INTERFACE ---
+HTML_CODE = '''
+<!DOCTYPE html><html><head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<style>
+    body { background:#0f172a; color:white; font-family:sans-serif; margin:0; padding-bottom:80px; }
+    .game-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; padding: 15px; }
+    .game-card { 
+        position: relative; background:#1e293b; border-radius:15px; padding:35px 20px; 
+        text-align:center; border:1px solid #334155; cursor:pointer; overflow: hidden;
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+    }
+    .game-card::after {
+        content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        background-image: url('/static/hero.webp'); background-size: cover; opacity: 0.15; z-index: 1;
+    }
+    .game-card img, .game-card b { position: relative; z-index: 2; }
+    .cat-tab { padding:10px 18px; background:#1e293b; border-radius:10px; font-size:12px; cursor:pointer; border:1px solid #334155; white-space:nowrap; }
+    .cat-tab.active { background:#fbbf24; color:black; font-weight:bold; }
+    .pkg-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:15px 0; }
+    .pkg-card { background:#1e293b; border:1px solid #334155; padding:15px; border-radius:12px; text-align:center; cursor:pointer; }
+    .pkg-card.selected { border:2px solid #fbbf24; background:#1e3a8a; }
+    input { width:100%; padding:14px; margin:8px 0; border-radius:10px; border:1px solid #334155; background:#1e293b; color:white; box-sizing:border-box; }
+    .buy-btn { width:100%; padding:16px; background:#fbbf24; border:none; border-radius:12px; font-weight:bold; color:black; cursor:pointer; }
+    .nav-bar { position:fixed; bottom:0; left:0; right:0; background:#1e293b; display:flex; padding:12px; border-top:1px solid #334155; z-index:100; }
+    .pay-box { background:#1e293b; border:2px solid #fbbf24; padding:15px; border-radius:12px; text-align:center; margin-bottom:15px; }
+    .pay-icons img { height:40px; margin:0 5px; border-radius:5px; }
+    .warning-box { background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; color: #fca5a5; padding: 12px; border-radius: 10px; text-align: center; margin-bottom: 15px; font-weight: bold; }
+    .logout-btn { background: #ef4444; color: white; padding: 10px; border: none; border-radius: 8px; margin-top: 20px; width: 100%; font-weight: bold; cursor: pointer; }
+    .my-rank-card { background: linear-gradient(135deg, #1e3a8a 0%, #1e293b 100%); color: white; border: 2px solid #fbbf24; border-radius: 12px; padding: 15px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; }
+    .my-rank-text { color: #fbbf24; font-weight: bold; font-size: 14px; }
+    .top-buyer-card { background: white; color: #1e293b; border-radius: 12px; padding: 12px 15px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    .rank-circle { background: #f1f5f9; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; }
+    .buyer-info { flex: 1; margin-left: 15px; }
+    .buyer-name { font-weight: bold; font-size: 16px; display: block; }
+    .buyer-amount { color: #059669; font-weight: bold; font-size: 14px; }
+</style>
+</head><body>
+<div style="max-width:500px; margin:auto;">
+    <div id="login-sec" style="padding:40px 20px; text-align:center;">
+        <h1 style="color:#fbbf24;">KIWII GAME STORE</h1>
+        <input type="text" id="l_user" placeholder="Telegram Username">
+        <input type="password" id="l_pw" placeholder="Password">
+        <button onclick="handleLogin()" class="buy-btn">LOGIN</button>
+        <p onclick="showReg()" style="margin-top:20px; color:#fbbf24; cursor:pointer;">အကောင့်မရှိသေးပါက Register နှိပ်ပါ</p>
+    </div>
+
+    <div id="reg-sec" style="padding:40px 20px; text-align:center; display:none;">
+        <h1 style="color:#fbbf24;">REGISTER</h1>
+        <input type="text" id="r_name" placeholder="Full Name">
+        <input type="text" id="r_user" placeholder="Telegram Username">
+        <input type="password" id="r_pw" placeholder="Password">
+        <input type="password" id="r_rpw" placeholder="Retype Password">
+        <button onclick="handleRegister()" class="buy-btn">SIGN UP</button>
+        <p onclick="showLogin()" style="margin-top:20px; color:#fbbf24; cursor:pointer;">အကောင့်ရှိလျှင် Login ဝင်ရန်</p>
+    </div>
+
+    <div id="main-shop" style="display:none;">
+        <div id="h-sec">
+            <h1 style="text-align:center;color:#fbbf24;margin-top:20px;">KIWII GAME STORE</h1>
+            <div class="game-grid" id="g-list"></div>
+        </div>
+
+        <div id="o-sec" style="display:none; padding:15px;">
+            <button onclick="goH()" style="background:none;color:white;border:1px solid #334155;padding:8px;border-radius:8px;cursor:pointer;">← Back</button>
+            <h2 id="g-title" style="color:#fbbf24; margin-top:10px;"></h2>
+            <div id="tabs" style="display:flex; gap:8px; overflow-x:auto; padding-bottom:10px;"></div>
+            <div id="p-list" class="pkg-grid"></div>
+            <div class="pay-box">
+                <div class="pay-icons"><img src="/static/kpay.jpg"> <img src="/static/wave.jpg"> <img src="/static/ayapay.jpg"></div>
+                <b style="color:#fbbf24; font-size:22px;">09775394979</b><br><b style="color:white;">Name: Thansin Kyaw</b>
+            </div>
+            <form id="orderForm" onsubmit="confirmOrder(event)">
+                <input type="tel" id="uid" name="uid" placeholder="Game ID" required>
+                <input type="tel" id="zid" name="zid" placeholder="Zone ID" required>
+                <input type="file" id="photo" name="photo" required accept="image/*">
+                <button type="submit" id="submitBtn" class="buy-btn">PLACE ORDER</button>
+            </form>
+        </div>
+
+        <div id="hist-sec" style="display:none; padding:15px;">
+            <h3 style="color:#fbbf24;">My History</h3>
+            <div id="hist-list"></div>
+            <button onclick="logout()" class="logout-btn">LOGOUT</button>
+        </div>
+
+        <div id="top-sec" style="display:none; padding:15px;">
+            <h2 style="color:#fbbf24; text-align:center;">🏆 Top Buyers List</h2>
+            <div id="top-list-container"></div>
+        </div>
+    </div>
+</div>
+
+<div class="nav-bar">
+    <div onclick="goH()" style="flex:1; text-align:center; cursor:pointer;"><i class="fas fa-home"></i><br><small>Home</small></div>
+    <div onclick="showH()" style="flex:1; text-align:center; cursor:pointer;"><i class="fas fa-history"></i><br><small>History</small></div>
+    <div onclick="showTop()" style="flex:1; text-align:center; cursor:pointer;"><i class="fas fa-trophy"></i><br><small>Top 10</small></div>
+    <div onclick="window.open('https://t.me/thansinkyaw144')" style="flex:1; text-align:center; cursor:pointer; color:#fbbf24;"><i class="fas fa-headset"></i><br><small>CS</small></div>
+</div>
+
+<script>
+let sel_srv='', sel_pkg='', sel_prc='';
+let currentUser = localStorage.getItem('logged_user') || "";
+const games = {{ games | tojson }};
+
+window.onload = function() {
+    if(currentUser) {
+        document.getElementById('login-sec').style.display = 'none';
+        document.getElementById('main-shop').style.display = 'block';
+        init();
+    }
+};
+
+function showReg() { document.getElementById('login-sec').style.display='none'; document.getElementById('reg-sec').style.display='block'; }
+function showLogin() { document.getElementById('reg-sec').style.display='none'; document.getElementById('login-sec').style.display='block'; }
+
+async function handleRegister() {
+    const name = document.getElementById('r_name').value;
+    const tg_u = document.getElementById('r_user').value;
+    const pw = document.getElementById('r_pw').value;
+    const rpw = document.getElementById('r_rpw').value;
+    if(!name || !tg_u || !pw) return alert("အချက်အလက်များ ဖြည့်ပါ");
+    if(pw !== rpw) return alert("Password မတူပါ");
+    const r = await fetch('/api/register', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ name, tg_u, pw }) });
+    const res = await r.json();
+    if(res.status === "success") { alert("Register အောင်မြင်ပါသည်!"); showLogin(); } else alert(res.msg);
 }
 
-function goH() { document.getElementById('o-sec').style.display='none'; document.getElementById('hist-sec').style.display='none'; document.getElementById('h-sec').style.display='block'; }
+async function handleLogin() {
+    const tg_u = document.getElementById('l_user').value;
+    const pw = document.getElementById('l_pw').value;
+    const r = await fetch('/api/login', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ tg_u, pw }) });
+    const res = await r.json();
+    if(res.status === "success") { localStorage.setItem('logged_user', res.user); location.reload(); } else alert(res.msg);
+}
+
+function logout() { localStorage.removeItem('logged_user'); location.reload(); }
+
+function init() { document.getElementById('g-list').innerHTML = games.map(g => `<div class="game-card" onclick="selG(${g.id})"><img src="${g.img}" width="40"><br><b>${g.name}</b></div>`).join(''); }
+
+function selG(id) {
+    const g = games.find(i => i.id === id); sel_srv = g.name;
+    document.getElementById('h-sec').style.display='none'; document.getElementById('o-sec').style.display='block';
+    document.getElementById('g-title').innerText = g.name;
+    document.getElementById('tabs').innerHTML = g.cat_order.map((c, i) => `<div class="cat-tab ${i===0?'active':''}" onclick="renderP(${id}, '${c}', this)">${c}</div>`).join('');
+    renderP(id, g.cat_order[0]);
+}
+
+function renderP(id, cat, el) {
+    if(el){document.querySelectorAll('.cat-tab').forEach(t=>t.classList.remove('active')); el.classList.add('active');}
+    const pkgs = games.find(i=>i.id===id).cats[cat];
+    document.getElementById('p-list').innerHTML = pkgs.map(p=>`<div class="pkg-card" onclick="selP(this, '${p.d}', '${p.p}')"><span>${p.d}</span><br><b>${p.p} Ks</b></div>`).join('');
+}
+
+function selP(el, d, p) { document.querySelectorAll('.pkg-card').forEach(c=>c.classList.remove('selected')); el.classList.add('selected'); sel_pkg=d; sel_prc=p; }
+
+async function submitOrder() {
+    const btn = document.getElementById('submitBtn'); btn.disabled = true; btn.innerText = "Processing...";
+    const fd = new FormData(document.getElementById('orderForm'));
+    fd.append('tg_u', currentUser); fd.append('server', sel_srv); fd.append('p', sel_pkg); fd.append('a', sel_prc);
+    const r = await fetch('/order', { method: 'POST', body: fd });
+    if(await r.text()==="Success") { alert("Order Success! ✅"); location.reload(); } else { alert("Error!"); btn.disabled = false; }
+}
+
+function confirmOrder(e) { e.preventDefault(); if(!sel_pkg) return alert("Package အရင်ရွေးပါ!"); if(confirm(`📢 အတည်ပြုပါ\\nServer: ${sel_srv}\\nPackage: ${sel_pkg}\\nဈေးနှုန်း: ${sel_prc} Ks`)) submitOrder(); }
+
+function goH() { 
+    document.getElementById('o-sec').style.display='none'; 
+    document.getElementById('hist-sec').style.display='none'; 
+    document.getElementById('top-sec').style.display='none';
+    document.getElementById('h-sec').style.display='block'; 
+}
+
 function showH() { 
     document.getElementById('h-sec').style.display='none'; 
     document.getElementById('o-sec').style.display='none'; 
+    document.getElementById('top-sec').style.display='none';
     document.getElementById('hist-sec').style.display='block'; 
     loadH();
 }
@@ -369,6 +534,42 @@ async function loadH() {
     const r = await fetch('/api/history?user=' + encodeURIComponent(currentUser));
     const data = await r.json();
     document.getElementById('hist-list').innerHTML = data.map(o => `<div style="background:#1e293b;padding:12px;margin-bottom:10px;border-radius:10px;border-left:4px solid #fbbf24;"><b>${o.pkg}</b><br><small>${o.date}</small> | <b>${o.status}</b></div>`).join('') || "No history.";
+}
+
+function showTop() {
+    document.getElementById('h-sec').style.display='none';
+    document.getElementById('o-sec').style.display='none';
+    document.getElementById('hist-sec').style.display='none';
+    document.getElementById('top-sec').style.display='block';
+    loadTopBuyers();
+}
+
+async function loadTopBuyers() {
+    try {
+        const r = await fetch(`/api/top-buyers?user=${encodeURIComponent(currentUser)}`);
+        const data = await r.json();
+        const container = document.getElementById('top-list-container');
+        let html = "";
+        if (data.top_10 && data.top_10.length > 0) {
+            html += data.top_10.map((u, i) => `
+                <div class="top-buyer-card">
+                    <div class="rank-circle">${i + 1}</div>
+                    <div class="buyer-info">
+                        <span class="buyer-name">${u._id}</span>
+                        <span class="buyer-amount">${u.total_spent.toLocaleString()} ကျပ်</span>
+                    </div>
+                </div>`).join('');
+        } else { html = "<p style='text-align:center; color:white; padding:20px;'>ဒေတာ မရှိသေးပါ။</p>"; }
+        if (data.user_rank) {
+            html += `
+                <div style="margin: 20px 0 10px 0; text-align: center; color: #94a3b8; font-size: 12px;">— YOUR RANKING —</div>
+                <div class="my-rank-card">
+                    <div><span class="my-rank-text">Your Current Status</span><div class="buyer-name" style="color:white;">${currentUser}</div><div class="buyer-amount" style="color:#fbbf24;">${data.user_rank.total_spent.toLocaleString()} ကျပ်</div></div>
+                    <div style="text-align:center;"><div style="font-size:12px;">Rank</div><div style="font-size:24px; font-weight:bold; color:#fbbf24;">#${data.user_rank.rank}</div></div>
+                </div>`;
+        }
+        container.innerHTML = html;
+    } catch (e) { console.error(e); }
 }
 </script></body></html>
 '''
