@@ -163,13 +163,20 @@ HTML_CODE = '''
     </div>
 
     <form action="/order" method="post" enctype="multipart/form-data">
-        <input type="hidden" name="server" id="s_in"><input type="hidden" name="p" id="p_in"><input type="hidden" name="a" id="a_in">
-        <input type="text" name="u" placeholder="Player ID" required>
-        <input type="text" name="z" placeholder="Zone ID (Optional)">
-        <div style="margin:10px 0; font-size:13px; color:#94a3b8;">Payment Screenshot:</div>
-        <input type="file" name="photo" required accept="image/*" style="border:none; padding:5px 0;">
-        <button type="submit" class="buy-btn">PLACE ORDER</button>
-    </form>
+    <input type="hidden" name="server" id="s_in">
+    <input type="hidden" name="p" id="p_in">
+    <input type="hidden" name="a" id="a_in">
+    
+    <input type="tel" name="u" placeholder="Game ID (နံပါတ်သာ)" required 
+           oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+
+    <input type="tel" name="z" placeholder="Zone ID (နံပါတ်သာ)" required 
+           oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+
+    <div style="margin:10px 0; font-size:13px; color:#94a3b8;">Payment Screenshot:</div>
+    <input type="file" name="photo" required accept="image/*" style="border:none; padding:5px 0;">
+    <button type="submit" class="buy-btn">PLACE ORDER</button>
+</form>
 </div>
 
 <div id="hist-sec" style="display:none; padding:15px;">
@@ -263,29 +270,36 @@ init();
 </body></html>
 '''
 
-# --- Flask Routes ---
-@app.route('/')
-def index():
-    return render_template_string(HTML_CODE, games=GAMES_DATA, pay=PAY_DATA, cs=CS_LINK)
-
 @app.route('/order', methods=['POST'])
 def order():
     try:
         server = request.form.get('server')
         uid = request.form.get('u')
-        zone = request.form.get('z') or "-"
+        zone = request.form.get('z')
         pkg = request.form.get('p')
         amt = request.form.get('a')
         photo = request.files.get('photo')
-        
-        # MongoDB Insert
+
+        # အချက်အလက်မစုံရင် တားမြစ်ခြင်း
+        if not all([uid, zone, pkg, photo]):
+            return "<html><body style='background:#0f172a;color:#ef4444;text-align:center;padding-top:100px;'><h2>⚠️ အချက်အလက်မပြည့်စုံပါ</h2><p>ID၊ Zone၊ Package နှင့် ပြေစာ အားလုံးလိုအပ်ပါသည်။</p><button onclick='history.back()'>Back</button></body></html>"
+
+        # MongoDB သိမ်းဆည်းခြင်း
         orders_col.insert_one({
-            "uid": uid, "pkg": pkg, "price": amt,
+            "uid": uid, "zone": zone, "pkg": pkg, "price": amt,
             "date": datetime.now(timezone(timedelta(hours=6, minutes=30))).strftime("%Y-%m-%d %H:%M")
         })
 
-        # Telegram Notification
-        msg = f"🔔 *New Order!*\nServer: {server}\nID: `{uid} ({zone})`\nPkg: {pkg}\nAmt: {amt} Ks"
+        # Telegram ပို့ခြင်း (Admin Link ပါဝင်သည်)
+        admin_user = CS_LINK.split('/')[-1]
+        msg = (f"🔔 *New Order!*\n"
+               f"📍 Server: {server}\n"
+               f"🆔 ID: `{uid}`\n"
+               f"🌐 Zone: `{zone}`\n"
+               f"💎 Pkg: {pkg}\n"
+               f"💰 Amt: {amt} Ks\n\n"
+               f"👤 [Admin (Done/Reject ပြုလုပ်ရန်)](https://t.me/{admin_user})")
+
         if photo:
             photo.seek(0)
             requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto", 
