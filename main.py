@@ -119,6 +119,18 @@ HTML_CODE = '''
     .nav-bar { position:fixed; bottom:0; left:0; right:0; background:#1e293b; display:flex; padding:12px; border-top:1px solid #334155; z-index:100; }
     .pay-box { background:#1e293b; border:2px solid #fbbf24; padding:15px; border-radius:12px; text-align:center; margin-bottom:15px; }
     .pay-icons img { height:40px; margin:0 5px; border-radius:5px; }
+        .warning-box {
+        background: rgba(239, 68, 68, 0.1); 
+        border: 1px solid #ef4444; 
+        color: #fca5a5;
+        padding: 12px; 
+        border-radius: 10px; 
+        text-align: center; 
+        margin-bottom: 15px;
+        box-shadow: 0 0 10px rgba(239, 68, 68, 0.3); 
+        font-weight: bold;
+    }
+    
 </style>
 </head><body>
 <div style="max-width:500px; margin:auto;">
@@ -139,9 +151,11 @@ HTML_CODE = '''
             </div>
             <b style="color:#fbbf24;font-size:22px;">09775394979</b><br>
             <b style="color:white;">Name: Thansin Kyaw</b>
-            <b style="color:red;">Note: Payment သာရေးပါ</b>
         </div>
-
+                <div class="warning-box">
+            ⚠️ Note - Payment သာရေးပါ
+        </div>
+        
         <form id="orderForm" onsubmit="confirmOrder(event)">
             <input type="text" id="tg_u" name="tg_u" placeholder="Telegram Username" required>
             <input type="tel" id="uid" name="uid" placeholder="Game ID" required>
