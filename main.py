@@ -6,14 +6,13 @@ from pymongo import MongoClient
 app = Flask(__name__)
 app.secret_key = "KIWII_ULTIMATE_SECRET"
 
-# main.py ထဲမှာ ဒါကိုပဲ အစားထိုးပါ
-MONGO_URI = "mongodb+srv://EscanorX:Conti144@cluster0.m2tomm.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+MONGO_URI = "mongodb+srv://EscanorX:Conti144@cluster0.m2mtomm.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=30000)
 db = client['kiwii_game_shop']
 orders_col = db['orders']
 
 # --- ⚙️ CONFIGURATION ---
-BOT_TOKEN = "8089066962:AAFOHBGeuDF7E3Ygej3nAwOODSNj4ujVvk"
+BOT_TOKEN = "8089066962:AAFOHBGeuDF7E3Ygej3nAwOODsNj4ujVvk"
 CHAT_ID = "7089720301"
 CS_LINK = "https://t.me/Bby_kiwii7"
 
