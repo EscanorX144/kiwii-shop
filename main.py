@@ -218,41 +218,34 @@ def order():
         tg_user = request.form.get('tg_user')
         uid = request.form.get('uid')
         zid = request.form.get('zid')
-        # price ကို သေချာအောင် clean လုပ်ပြီးမှ ယူပါမယ်
         price_str = request.form.get('price', '0').replace(' Ks', '').replace(',', '')
         price = int(price_str)
         photo = request.files.get('photo')
         pkg = request.form.get('pkg')
-        server_name = request.form.get('server') # server name ကိုပါ ယူထားမယ်
         
-        # Database ထဲ သိမ်းမယ်
+        # Database ထဲ သိမ်းခြင်း
         oid = orders_col.insert_one({
             "tg_user": tg_user, "uid": uid, "zone": zid, 
-            "server": server_name, "pkg": pkg, "price": price, "status": "Pending", 
+            "pkg": pkg, "price": price, "status": "Pending", 
             "date": datetime.now(timezone(timedelta(hours=6, minutes=30))).strftime("%d/%m/%Y %I:%M %p")
         }).inserted_id
         
-        # Telegram အတွက် Button
+        # Telegram Button
         keyboard = {"inline_keyboard": [[{"text": "Done ✅", "callback_data": f"done_{oid}"}, {"text": "Reject ❌", "callback_data": f"reject_{oid}"}]]}
         
-        # Message format ကို ပြန်ပြင်ထားပါတယ်
-        msg = f"⚠️ *New Order!*\n\n👤 *User:* {tg_user}\n🎮 *Game:* {server_name}\n🆔 *ID:* `{uid}` ({zid})\n📦 *Package:* {pkg}\n💰 *Price:* {price} Ks"
+        # Telegram Message
+        msg = f"⚠️ *New Order!*\nUser: {tg_user}\nID: `{uid}` ({zid})\nPackage: {pkg}\nPrice: {price} Ks"
         
-        # Telegram ဆီ ပုံနဲ့တကွ ပို့မယ်
-        resp = requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto", 
+        # Telegram ဆီ ပို့ခြင်း
+        requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto", 
                       data={"chat_id": CHAT_ID, "caption": msg, "parse_mode": "Markdown", "reply_markup": json.dumps(keyboard)}, 
                       files={'photo': photo})
         
-        # Telegram ကနေ error ပြန်လာရင် log မှာ ကြည့်လို့ရအောင်
-        if resp.status_code != 200:
-            print(f"Telegram Error: {resp.text}")
-            return "Error"
-            
-        return "Success"
-        
+        return "Success" # ပုံမှန်ဆိုရင် ဒီနေရာမှာ Success ပြန်ရမယ်
+
     except Exception as e:
-        print(f"Error in order function: {e}")
-        return "Error"
+        print(f"Error: {e}")
+        return "Error" # Error ဖြစ်ရင် ဒါကို ပြန်ပို့ပေးမယ်
 
 @app.route('/api/top10')
 def get_top10():
