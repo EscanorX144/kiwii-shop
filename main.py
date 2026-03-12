@@ -78,7 +78,7 @@ HTML_CODE = '''
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <style>
     body { background:#0f172a; color:white; font-family:sans-serif; margin:0; padding-bottom:80px; }
-    .hero-img { width:100%; border-radius:15px; margin-top:10px; }
+    .hero-img { width:100%; border-radius:15px; margin-bottom:20px; }
     .game-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; padding: 15px; }
     .game-card { background:#1e293b; border-radius:15px; padding:20px; text-align:center; border:1px solid #334155; cursor:pointer; }
     .cat-tab { padding:10px 18px; background:#1e293b; border-radius:10px; font-size:12px; cursor:pointer; border:1px solid #334155; white-space:nowrap; }
@@ -96,8 +96,8 @@ HTML_CODE = '''
 <div style="max-width:500px; margin:auto;">
     <div id="h-sec">
         <h1 style="text-align:center;color:#fbbf24;margin-top:20px;">KIWII GAME STORE</h1>
-        <div class="game-grid" id="g-list"></div>
         <div style="padding: 15px;"><img src="/static/hero.webp" class="hero-img"></div>
+        <div class="game-grid" id="g-list"></div>
     </div>
 
     <div id="o-sec" style="display:none; padding:15px;">
@@ -109,6 +109,132 @@ HTML_CODE = '''
         <div class="pay-box">
             <div class="pay-icons">
                 <img src="/static/kpay.jpg"> <img src="/static/wave.jpg"> <img src="/static/ayapay.jpg">
+            </div>
+            <b style="color:#fbbf24;font-size:22px;">09775394979</b><br>
+            <b style="color:white;">Name: Thansin Kyaw</b>
+        </div>
+
+        <form id="orderForm" onsubmit="confirmOrder(event)">
+            <input type="text" id="tg_u" name="tg_u" placeholder="Telegram Username" required>
+            <input type="tel" id="uid" name="uid" placeholder="Game ID" required>
+            <input type="tel" id="zid" name="zid" placeholder="Zone ID" required>
+            <input type="file" id="photo" name="photo" required accept="image/*">
+            <button type="submit" id="submitBtn" class="buy-btn">PLACE ORDER</button>
+        </form>
+    </div>
+
+    <div id="hist-sec" style="display:none; padding:15px;">
+        <h3 style="color:#fbbf24;">History</h3>
+        <input type="text" id="h_search" placeholder="Enter Username first.">
+        <button onclick="loadH()" class="buy-btn" style="padding:10px; margin-top:5px;">Search</button>
+        <div id="hist-list" style="margin-top:20px;"></div>
+    </div>
+</div>
+
+<div class="nav-bar">
+    <div onclick="goH()" style="flex:1; text-align:center; cursor:pointer;"><i class="fas fa-home"></i><br><small>Home</small></div>
+    <div onclick="showH()" style="flex:1; text-align:center; cursor:pointer;"><i class="fas fa-history"></i><br><small>History</small></div>
+    <div onclick="window.open('https://t.me/thansinkyaw144')" style="flex:1; text-align:center; cursor:pointer; color:#fbbf24;"><i class="fas fa-headset"></i><br><small>CS</small></div>
+</div>
+
+<script>
+let sel_srv='', sel_pkg='', sel_prc='';
+const games = {{ games | tojson }};
+
+function init() { document.getElementById('g-list').innerHTML = games.map(g => `<div class="game-card" onclick="selG(${g.id})"><img src="${g.img}" width="40"><br><b>${g.name}</b></div>`).join(''); }
+
+function selG(id) {
+    const g = games.find(i => i.id === id); sel_srv = g.name;
+    document.getElementById('h-sec').style.display='none'; document.getElementById('o-sec').style.display='block';
+    document.getElementById('g-title').innerText = g.name;
+    document.getElementById('tabs').innerHTML = g.cat_order.map((c, i) => `<div class="cat-tab ${i===0?'active':''}" onclick="renderP(${id}, '${c}', this)">${c}</div>`).join('');
+    renderP(id, g.cat_order[0]);
+}
+
+function renderP(id, cat, el) {
+    if(el){document.querySelectorAll('.cat-tab').forEach(t=>t.classList.remove('active')); el.classList.add('active');}
+    const pkgs = games.find(i=>i.id===id).cats[cat];
+    document.getElementById('p-list').innerHTML = pkgs.map(p=>`<div class="pkg-card" onclick="selP(this, '${p.d}', '${p.p}')"><span>${p.d}</span><br><b>${p.p} Ks</b></div>`).join('');
+}
+
+function selP(el, d, p) { document.querySelectorAll('.pkg-card').forEach(c=>c.classList.remove('selected')); el.classList.add('selected'); sel_pkg=d; sel_prc=p; }
+
+function confirmOrder(e) {
+    e.preventDefault();
+    if(!sel_pkg) return alert("Package အရင်ရွေးပါ!");
+    if(confirm(`📢 အတည်ပြုပါ\\nServer: ${sel_srv}\\nID: ${document.getElementById('uid').value}\\nPackage: ${sel_pkg}\\nဈေးနှုန်း: ${sel_prc} Ks`)) submitOrder();
+}
+
+async function submitOrder() {
+    const btn = document.getElementById('submitBtn'); btn.disabled = true; btn.innerText = "Processing...";
+    const fd = new FormData(document.getElementById('orderForm'));
+    fd.append('server', sel_srv); fd.append('p', sel_pkg); fd.append('a', sel_prc);
+    const r = await fetch('/order', { method: 'POST', body: fd });
+    if(await r.text()==="Success") { alert("Order Success! ✅"); location.reload(); }
+    else { alert("Error! Bot စီစာမရောက်ပါ"); btn.disabled = false; btn.innerText = "PLACE ORDER"; }
+}
+
+function goH() { document.getElementById('o-sec').style.display='none'; document.getElementById('hist-sec').style.display='none'; document.getElementById('h-sec').style.display='block'; }
+function showH() { document.getElementById('h-sec').style.display='none'; document.getElementById('o-sec').style.display='none'; document.getElementById('hist-sec').style.display='block'; }
+async function loadH() {
+    const u = document.getElementById('h_search').value;
+    const r = await fetch('/api/history?user=' + encodeURIComponent(u));
+    const data = await r.json();
+    document.getElementById('hist-list').innerHTML = data.map(o => `<div style="background:#1e293b;padding:12px;margin-bottom:10px;border-radius:10px;border-left:4px solid #fbbf24;"><b>${o.pkg}</b><br><small>${o.date}</small> | <b>${o.status}</b></div>`).join('') || "No history.";
+}
+init();
+</script></body></html>
+'''
+
+@app.route('/')
+def index(): return render_template_string(HTML_CODE, games=GAMES_DATA)
+
+@app.route('/order', methods=['POST'])
+def order():
+    try:
+        user = request.form.get('tg_u')
+        server = request.form.get('server')
+        uid = request.form.get('uid')
+        zone = request.form.get('zid')
+        pkg = request.form.get('p')
+        amt = request.form.get('a')
+        photo = request.files.get('photo')
+
+        oid = str(orders_col.insert_one({
+            "customer": user, "uid": uid, "zone": zone, 
+            "pkg": pkg, "price": amt, "status": "Pending", 
+            "date": datetime.now(timezone(timedelta(hours=6, minutes=30))).strftime("%Y-%m-%d %H:%M")
+        }).inserted_id)
+
+        msg = f"🔔 *New Order!*\n👤 User: `{user}`\n🆔 ID: `{uid}` ({zone})\n🌍 Server: {server}\n💎 Pkg: {pkg}\n💰 Amt: {amt} Ks\n\n✅ [DONE]({request.host_url}admin/update/{oid}/Completed) | ❌ [REJECT]({request.host_url}admin/update/{oid}/Rejected)"
+        
+        # Bot ဆီစာပို့ရန် Indentation ကို သေချာပြန်ညှိထားပါတယ်
+        requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto", 
+                      data={"chat_id": CHAT_ID, "caption": msg, "parse_mode": "Markdown"}, 
+                      files={'photo': photo})
+        return "Success"
+    except Exception as e: 
+        print(f"Error: {e}")
+        return "Error"
+
+@app.route('/admin/update/<oid>/<status>')
+def update_status(oid, status):
+    try:
+        orders_col.update_one({"_id": ObjectId(oid)}, {"$set": {"status": status}})
+        return f"Order {oid} has been updated to {status}. You can close this tab."
+    except Exception as e:
+        return f"Error: {str(e)}"
+
+@app.route('/api/history')
+def get_history():
+    u = request.args.get('user')
+    hist = list(orders_col.find({"customer": u}).sort("_id", -1))
+    for h in hist: h["_id"] = str(h["_id"])
+    return jsonify(hist)
+
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
+
             </div>
             <b style="color:#fbbf24;font-size:22px;">09775394979</b><br>
             <b style="color:white;">Name: Thansin Kyaw</b>
