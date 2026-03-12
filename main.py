@@ -262,30 +262,45 @@ def order():
 def webhook():
     try:
         data = request.json
-        if "callback_query" in data:
-            callback = data["callback_query"]
-            action_data = callback["data"]
-            chat_id = callback["message"]["chat"]["id"]
-            message_id = callback["message"]["message_id"]
+        if not data or "callback_query" not in data:
+            return "OK", 200
+
+        callback = data["callback_query"]
+        action_data = callback["data"]
+        chat_id = callback["message"]["chat"]["id"]
+        message_id = callback["message"]["message_id"]
+
+        if "_" not in action_data:
+            return "OK", 200
             
-            action, oid = action_data.split("_")
-            new_status = "Completed" if action == "done" else "Rejected"
-            
-            from bson.objectid import ObjectId
-            orders_col.update_one({"_id": ObjectId(oid)}, {"$set": {"status": new_status}})
-            
-            current_caption = callback["message"].get("caption", "")
-            updated_text = f"{current_caption}\n\n📢 Status: <b>{new_status}</b>"
-            
-            requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/editMessageCaption", 
-                          data={"chat_id": chat_id, "message_id": message_id, "caption": updated_text, "parse_mode": "HTML"})
-            
-            requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/answerCallbackQuery", 
-                          data={"callback_query_id": callback["id"], "text": f"Order {new_status}!"})
+        action, oid = action_data.split("_")
+        new_status = "Completed" if action == "done" else "Rejected"
+
+        # Database Update
+        from bson.objectid import ObjectId
+        orders_col.update_one({"_id": ObjectId(oid)}, {"$set": {"status": new_status}})
+
+        # Telegram Message Update
+        current_caption = callback["message"].get("caption", "")
+        base_caption = current_caption.split("\n\n📢 Status:")[0]
+        updated_text = f"{base_caption}\n\n📢 Status: <b>{new_status}</b>"
+
+        requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/editMessageCaption", 
+                      data={
+                          "chat_id": chat_id, 
+                          "message_id": message_id, 
+                          "caption": updated_text, 
+                          "parse_mode": "HTML"
+                      })
+
+        requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/answerCallbackQuery", 
+                      data={"callback_query_id": callback["id"], "text": f"Order {new_status}!"})
+
         return "OK", 200
+
     except Exception as e:
-        print(f"Webhook Error: {str(e)}")
-        return "Error", 500
+        print(f"Webhook Error Detail: {str(e)}")
+        return "OK", 200
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)
