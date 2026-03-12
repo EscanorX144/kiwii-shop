@@ -28,7 +28,7 @@ GAMES_DATA = [
         }
     },
     {
-        "id": 2, "name": "Malaysia Server (🇲🇾)", "img": "https://flagcdn.com/w160/my.png", 
+        "id": 2, "name": "Malaysia (🇲🇾)", "img": "https://flagcdn.com/w160/my.png", 
         "cat_order": ["Direct Dia", "Weekly Pass", "2X Dia", "Bundle Pack"], 
         "cats": {
             "Direct Dia": [{"d": "14 💎", "p": "1100"}, {"d": "56 💎", "p": "4350"}, {"d": "140 💎", "p": "10200"}, {"d": "284 💎", "p": "20200"}, {"d": "583 💎", "p": "41200"}, {"d": "1145 💎", "p": "80500"}, {"d": "2976 💎", "p": "201000"}, {"d": "7502 💎", "p": "503500"}],
@@ -38,7 +38,7 @@ GAMES_DATA = [
         }
     },
     {
-        "id": 6, "name": "Singapore Server (🇸🇬)", "img": "https://flagcdn.com/w160/sg.png", 
+        "id": 6, "name": "Singapore (🇸🇬)", "img": "https://flagcdn.com/w160/sg.png", 
         "cat_order": ["Direct Dia", "Weekly Pass", "2X Dia"], 
         "cats": {
             "Direct Dia": [{"d": "14 💎", "p": "1100"}, {"d": "56 💎", "p": "4350"}, {"d": "140 💎", "p": "10200"}, {"d": "284 💎", "p": "20200"}, {"d": "583 💎", "p": "41200"}, {"d": "1145 💎", "p": "80500"}],
@@ -192,13 +192,39 @@ def index(): return render_template_string(HTML_CODE, games=GAMES_DATA)
 @app.route('/order', methods=['POST'])
 def order():
     try:
-        user, server, uid, zone, pkg, amt = request.form.get('tg_u'), request.form.get('server'), request.form.get('uid'), request.form.get('zid'), request.form.get('p'), request.form.get('a')
+        user = request.form.get('tg_u')
+        server = request.form.get('server')
+        uid = request.form.get('uid')
+        zone = request.form.get('zid')
+        pkg = request.form.get('p')
+        amt = request.form.get('a')
         photo = request.files.get('photo')
-        oid = str(orders_col.insert_one({"customer": user, "uid": uid, "zone": zone, "pkg": pkg, "price": amt, "status": "Pending", "date": datetime.now(timezone(timedelta(hours=6, minutes=30))).strftime("%Y-%m-%d %H:%M")}).inserted_id)
-        msg = f"🔔 *New Order!*\n👤 User: `{user}`\n🆔 ID: `{uid}` ({zone})\n🌍 Server: {server}\n💎 Pkg: {pkg}\n💰 Amt: {amt} Ks\n\n✅ [DONE]({request.host_url}admin/upd/{oid}/Completed) | ❌ [REJECT]({request.host_url}admin/upd/{oid}/Rejected)"
-        requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto", data={"chat_id": CHAT_ID, "caption": msg, "parse_mode": "Markdown"}, files={'photo': photo})
+        
+        # Database ထဲ သိမ်းခြင်း
+        oid = str(orders_col.insert_one({
+            "customer": user, "uid": uid, "zone": zone, 
+            "pkg": pkg, "price": amt, "status": "Pending", 
+            "date": datetime.now(timezone(timedelta(hours=6, minutes=30))).strftime("%Y-%m-%d %H:%M")
+        }).inserted_id)
+
+        # Telegram ဆီ ပို့မည့် Message (Link ကို /admin/update/ လို့ ပြင်ထားပါတယ်)
+        msg = f"🔔 *New Order!*\n👤 User: `{user}`\n🆔 ID: `{uid}` ({zone})\n🌍 Server: {server}\n💎 Pkg: {pkg}\n💰 Amt: {amt} Ks\n\n✅ [DONE]({request.host_url}admin/update/{oid}/Completed) | ❌ [REJECT]({request.host_url}admin/update/{oid}/Rejected)"
+        
+        requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto", 
+                      data={"chat_id": CHAT_ID, "caption": msg, "parse_mode": "Markdown"}, 
+                      files={'photo': photo})
         return "Success"
-    except: return "Error"
+    except Exception as e:
+        return f"Error: {str(e)}"
+
+# --- ✅ ADMIN ROUTE (Telegram Link နဲ့ ကိုက်ညီအောင် တစ်ခုပဲ ထားရပါမယ်) ---
+@app.route('/admin/update/<oid>/<status>')
+def update_status(oid, status):
+    try:
+        orders_col.update_one({"_id": ObjectId(oid)}, {"$set": {"status": status}})
+        return f"Order {oid} has been updated to {status}. You can close this tab."
+    except Exception as e:
+        return f"Error: {str(e)}"
 
 @app.route('/api/history')
 def get_history():
@@ -207,10 +233,5 @@ def get_history():
     for h in hist: h["_id"] = str(h["_id"])
     return jsonify(hist)
 
-@app.route('/admin/upd/<oid>/<status>')
-def update_status(oid, status):
-    orders_col.update_one({"_id": ObjectId(oid)}, {"$set": {"status": status}})
-    return f"Order Status updated to {status}"
-
-if __name__ == "__main__": app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
-    
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
