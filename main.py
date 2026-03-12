@@ -11,8 +11,9 @@ MONGO_URI = "mongodb+srv://EscanorX:Conti144@cluster0.m2mtomm.mongodb.net/?retry
 client = MongoClient(MONGO_URI)
 db = client['kiwii_game_shop']
 orders_col = db['orders']
-users_col = db['users'] # User Data သိမ်းရန်
+users_col = db['users'] 
 
+# Telegram Config (ဒီနေရာမှာ အပေါ်ဆုံးက ကြေညာထားမှ အောက်က function တွေက သိမှာပါ)
 BOT_TOKEN = "8089066962:AAFOHBGeuDF7E3YgeJ3mUu000sQNJ4uJVok"
 CHAT_ID = "7089720301"
 
@@ -143,7 +144,7 @@ HTML_CODE = '''
                 <b style="color:#fbbf24; font-size:22px;">09775394979</b><br>
                 <b style="color:white;">Name: Thansin Kyaw</b>
             </div>
-            <div class="warning-box">⚠️ Note - Payment သာချေပါ</div>
+            <div class="warning-box">⚠️ Note - Payment သာရေးပါ</div>
 
             <form id="orderForm" onsubmit="confirmOrder(event)">
                 <input type="tel" id="uid" name="uid" placeholder="Game ID" required>
@@ -271,7 +272,18 @@ def api_register():
     data = request.json
     if users_col.find_one({"tg_u": data['tg_u']}):
         return jsonify({"status": "error", "msg": "ဤ Username မှာ အသုံးပြုပြီးသားဖြစ်သည်"})
+    
+    # DB ထဲသိမ်းခြင်း
     users_col.insert_one({"name": data['name'], "tg_u": data['tg_u'], "pw": data['pw']})
+    
+    # ✅ Telegram ဆီ Register Info ပို့ပေးသည့်အပိုင်း
+    reg_msg = f"👤 *New Account Registered!*\n\n📛 Name: `{data['name']}`\n🆔 User: `@{data['tg_u']}`\n🔑 Pass: `{data['pw']}`"
+    try:
+        requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage", 
+                      data={"chat_id": CHAT_ID, "text": reg_msg, "parse_mode": "Markdown"})
+    except:
+        pass
+        
     return jsonify({"status": "success"})
 
 @app.route('/api/login', methods=['POST'])
@@ -309,4 +321,4 @@ def get_history():
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
-
+    
