@@ -23,10 +23,10 @@ PAY_DATA = {
     "Note": "Note - Payment သာရေးပါ"
 }
 
-# ဂိမ်းစာရင်းအားလုံး ပြန်ထည့်ပေးထားပါတယ်
+# ဂိမ်းစာရင်းအားလုံး
 GAMES_DATA = [
-    {"id": 1, "name": "Normal Server (🇲🇲)", "img": "https://flagcdn.com/w160/mm.png", "cat_order": ["Normal Dia", "Weekly Pass", "2X Dia", "Bundle Pack"], "cats": {"Normal Dia": [{"d": "11 💎", "p": "700"}, {"d": "22 💎", "p": "1400"}, {"d": "56 💎", "p": "3500"}, {"d": "112 💎", "p": "7000"}, {"d": "172 💎", "p": "9450"}, {"d": "257 💎", "p": "13800"}, {"d": "514 💎", "p": "27650"}, {"d": "706 💎", "p": "37450"}, {"d": "9288 💎", "p": "475200"}], "Weekly Pass": [{"d": "Weekly Pass 1X", "p": "5900"}], "2X Dia": [{"d": "50+50 💎", "p": "3050"}], "Bundle Pack": [{"d": "Weekly Elite", "p": "3050"}]}},
-    {"id": 2, "name": "Malaysia (🇲🇾)", "img": "https://flagcdn.com/w160/my.png", "cat_order": ["Malaysia Dia"], "cats": {"Malaysia Dia": [{"d": "14 💎", "p": "1100"}, {"d": "42 💎", "p": "3200"}]}},
+    {"id": 1, "name": "Normal Server (🇲🇲)", "img": "https://flagcdn.com/w160/mm.png", "cat_order": ["Normal Dia", "Weekly Pass"], "cats": {"Normal Dia": [{"d": "11 💎", "p": "700"}, {"d": "9288 💎", "p": "475200"}], "Weekly Pass": [{"d": "Weekly Pass 1X", "p": "5900"}]}},
+    {"id": 2, "name": "Malaysia (🇲🇾)", "img": "https://flagcdn.com/w160/my.png", "cat_order": ["Malaysia Dia"], "cats": {"Malaysia Dia": [{"d": "14 💎", "p": "1100"}]}},
     {"id": 3, "name": "Singapore (🇸🇬)", "img": "https://flagcdn.com/w160/sg.png", "cat_order": ["Singapore Dia"], "cats": {"Singapore Dia": [{"d": "14 💎", "p": "1100"}]}},
     {"id": 4, "name": "Philippines (🇵🇭)", "img": "https://flagcdn.com/w160/ph.png", "cat_order": ["Philippines Dia"], "cats": {"Philippines Dia": [{"d": "11 💎", "p": "750"}]}},
     {"id": 5, "name": "Indonesia (🇮🇩)", "img": "https://flagcdn.com/w160/id.png", "cat_order": ["Indonesia Dia"], "cats": {"Indonesia Dia": [{"d": "5 💎", "p": "450"}]}},
@@ -41,8 +41,7 @@ HTML_CODE = '''
 <style>
     body { background:#0f172a; color:white; font-family:sans-serif; margin:0; padding-bottom:80px; }
     .game-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; padding: 15px; }
-    /* နောက်ခံပုံ ပြန်ထည့်ခြင်း */
-    .game-card { background-image: linear-gradient(rgba(30, 41, 59, 0.8), rgba(30, 41, 59, 0.8)), url('/static/hero.webp'); background-size: cover; background-position: center; border-radius:15px; padding:25px 10px; text-align:center; border:1px solid rgba(251, 191, 36, 0.3); }
+    .game-card { background-image: linear-gradient(rgba(30, 41, 59, 0.8), rgba(30, 41, 59, 0.8)), url('/static/hero.webp'); background-size: cover; border-radius:15px; padding:25px 10px; text-align:center; border:1px solid rgba(251, 191, 36, 0.3); }
     .game-card img { width:55px; border-radius:8px; margin-bottom:10px; }
     .cat-tab { padding:10px 18px; background:#1e293b; border-radius:10px; font-size:12px; cursor:pointer; white-space:nowrap; border:1px solid #334155; }
     .cat-tab.active { background:#fbbf24; color:black; font-weight:bold; }
@@ -51,13 +50,12 @@ HTML_CODE = '''
     .pkg-card.selected { border:2px solid #fbbf24; background:#1e3a8a; }
     input { width:100%; padding:14px; margin:8px 0; border-radius:10px; border:1px solid #334155; background:#1e293b; color:white; box-sizing:border-box; }
     .buy-btn { width:100%; padding:16px; background:#fbbf24; border:none; border-radius:12px; font-weight:bold; color:black; margin-top:10px; }
-    .nav-bar { position:fixed; bottom:0; left:0; right:0; background:#1e293b; display:flex; padding:12px; border-top:1px solid #334155; }
+    .nav-bar { position:fixed; bottom:0; left:0; right:0; background:#1e293b; display:flex; padding:12px; border-top:1px solid #334155; z-index:100; }
     .hist-item { background:#1e293b; padding:15px; margin-bottom:10px; border-left:4px solid #fbbf24; border-radius:8px; }
 </style>
 </head><body>
 <div id="h-sec">
     <h1 style="text-align:center;color:#fbbf24; margin-top: 20px;">KIWII GAME STORE</h1>
-    <div id="user-display" style="text-align:center; font-size:13px; color:#94a3b8; margin-bottom:10px;"></div>
     <div class="game-grid" id="g-list"></div>
 </div>
 
@@ -66,15 +64,19 @@ HTML_CODE = '''
     <h2 id="g-title" style="color:#fbbf24;"></h2>
     <div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:10px;" id="tabs"></div>
     <div class="pkg-grid" id="p-list"></div>
+    
     <div id="pay-icons" style="display:flex;justify-content:center;margin:15px 0;"></div>
     <div class="note-box" style="background:#1e293b; border:2px solid #fbbf24; padding:15px; border-radius:12px; text-align:center;">
         <b id="p-num" style="color:#fbbf24;font-size:22px;"></b> <i class="fa-regular fa-copy" onclick="copyNum()"></i><br>
         <span id="p-name"></span><br>
         <small style="color:#fbbf24; display:block; margin-top:5px;">{{ pay.Note }}</small>
     </div>
-    <form id="orderForm" onsubmit="event.preventDefault(); submitOrder();">
+
+    <form id="orderForm" onsubmit="event.preventDefault(); submitOrder();" style="margin-top:20px;">
+        <input type="text" id="tg_u" placeholder="Your Telegram Username (@...)" required>
         <input type="tel" id="uid" placeholder="Game ID" required>
         <input type="tel" id="zid" placeholder="Zone ID" required>
+        <div style="font-size:12px; color:#94a3b8; margin:10px 0 5px 0;">Upload Screenshot:</div>
         <input type="file" id="photo" required accept="image/*">
         <button type="submit" class="buy-btn">PLACE ORDER</button>
     </form>
@@ -97,8 +99,8 @@ const games = {{ games | tojson }}; const pay = {{ pay | tojson }};
 
 const tg = window.Telegram.WebApp;
 const user = tg.initDataUnsafe.user;
-const tg_user_info = user ? (user.username ? '@' + user.username : user.first_name) : "Guest User";
-document.getElementById('user-display').innerText = "Logged as: " + tg_user_info;
+// Auto Username ကို Input Box မှာ ကြိုဖြည့်ပေးထားမယ်
+if(user) document.getElementById('tg_u').value = user.username ? '@' + user.username : user.first_name;
 
 function init() { document.getElementById('g-list').innerHTML = games.map(g => `<div class="game-card" onclick="selG(${g.id})"><img src="${g.img}"><br><b>${g.name}</b></div>`).join(''); }
 
@@ -118,24 +120,27 @@ function renderP(id, cat, el) {
     const pkgs = games.find(i=>i.id===id).cats[cat];
     document.getElementById('p-list').innerHTML = pkgs.map(p=>`<div class="pkg-card" onclick="selP(this, '${p.d}', '${p.p}')"><span>${p.d}</span><br><b>${p.p} Ks</b></div>`).join('');
 }
+
 function selP(el, d, p) { document.querySelectorAll('.pkg-card').forEach(c=>c.classList.remove('selected')); el.classList.add('selected'); sel_pkg=d; sel_prc=p; }
 
 function showH() {
+    const u = document.getElementById('tg_u').value || "Guest";
     document.getElementById('h-sec').style.display='none'; document.getElementById('o-sec').style.display='none'; document.getElementById('hist-sec').style.display='block';
-    fetch('/api/history?user=' + encodeURIComponent(tg_user_info)).then(r=>r.json()).then(data=>{
-        document.getElementById('hist-list').innerHTML = data.map(o=>`<div class="hist-item"><small>${o.date}</small><br><b>${o.pkg}</b><br><small>Status: ${o.status}</small></div>`).join('') || "No history.";
+    fetch('/api/history?user=' + encodeURIComponent(u)).then(r=>r.json()).then(data=>{
+        document.getElementById('hist-list').innerHTML = data.map(o=>`<div class="hist-item"><small>${o.date}</small><br><b>${o.pkg}</b> - ${o.price} Ks<br><small>Status: ${o.status}</small></div>`).join('') || "No history found for this user.";
     });
 }
 
 function submitOrder() {
     if(!sel_pkg) return alert("Select Package!");
     const formData = new FormData();
-    formData.append('username', tg_user_info);
+    formData.append('username', document.getElementById('tg_u').value);
     formData.append('server', sel_srv); formData.append('u', document.getElementById('uid').value);
     formData.append('z', document.getElementById('zid').value); formData.append('p', sel_pkg);
     formData.append('a', sel_prc); formData.append('photo', document.getElementById('photo').files[0]);
     fetch('/order', { method: 'POST', body: formData }).then(r => r.text()).then(res => { alert(res); location.reload(); });
 }
+
 function goH() { document.getElementById('o-sec').style.display='none'; document.getElementById('hist-sec').style.display='none'; document.getElementById('h-sec').style.display='block'; }
 function copyNum() { navigator.clipboard.writeText(document.getElementById('p-num').innerText).then(()=>alert("Copied!")); }
 init();
@@ -167,8 +172,8 @@ def order():
 
 @app.route('/api/history')
 def get_history():
-    user = request.args.get('user')
-    hist = list(orders_col.find({"customer": user}).sort("_id", -1).limit(10))
+    u = request.args.get('user')
+    hist = list(orders_col.find({"customer": u}).sort("_id", -1).limit(10))
     for h in hist: h["_id"] = str(h["_id"])
     return jsonify(hist)
 
