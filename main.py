@@ -153,7 +153,7 @@ HTML_CODE = '''
             <div class="game-grid" id="g-list"></div>
         </div>
 
-        <div id="o-sec" style="display:none; padding:15px;">
+                        <div id="o-sec" style="display:none; padding:15px;">
             <button onclick="goH()" style="background:none;color:white;border:1px solid #334155;padding:8px;border-radius:8px;cursor:pointer;">← Back</button>
             <h2 id="g-title" style="color:#fbbf24; margin-top:10px;"></h2>
             <div id="tabs" style="display:flex; gap:8px; overflow-x:auto; padding-bottom:10px;"></div>
@@ -181,8 +181,44 @@ HTML_CODE = '''
             <div id="hist-list"></div>
             <button onclick="logout()" class="logout-btn">LOGOUT</button>
         </div>
-    </div>
-</div>
+
+        <div id="top-sec" style="display:none; padding:15px;">
+            <h2 style="color:#fbbf24; text-align:center;">🏆 Top Buyers List</h2>
+            <div id="top-list-container"></div>
+        </div>
+
+    </div> ```
+
+---
+
+### ၂။ JavaScript Function များကို စစ်ဆေးရန်
+ဓာတ်ပုံ (၁၇) ရဲ့ အောက်ဆုံးနားက JavaScript ထဲမှာ `goH()` နဲ့ `showH()` function တွေကို အခုလို ပြင်ပေးမှ Section တစ်ခုဖွင့်ရင် တစ်ခု ပျောက်သွားမှာ ဖြစ်ပါတယ်-
+
+```javascript
+function goH() { 
+    document.getElementById('o-sec').style.display='none'; 
+    document.getElementById('hist-sec').style.display='none'; 
+    document.getElementById('top-sec').style.display='none'; 
+    document.getElementById('h-sec').style.display='block'; 
+}
+
+function showH() { 
+    document.getElementById('h-sec').style.display='none'; 
+    document.getElementById('o-sec').style.display='none'; 
+    document.getElementById('top-sec').style.display='none'; 
+    document.getElementById('hist-sec').style.display='block'; 
+    loadH();
+}
+
+// showTop() function ကိုလည်း သေချာစစ်ပါ (ဓာတ်ပုံ ၁၁ အရ)
+function showTop() {
+    document.getElementById('h-sec').style.display='none';
+    document.getElementById('o-sec').style.display='none';
+    document.getElementById('hist-sec').style.display='none';
+    document.getElementById('top-sec').style.display='block';
+    loadTopBuyers();
+}
+
 
 <div class="nav-bar">
     <div onclick="goH()" style="flex:1; text-align:center; cursor:pointer;"><i class="fas fa-home"></i><br><small>Home</small></div>
