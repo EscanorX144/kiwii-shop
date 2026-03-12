@@ -207,11 +207,6 @@ function updateNav(id) {
 '''
 
 # --- 🚀 BACKEND ---
-
-@app.route('/')
-def index():
-    return render_template_string(HTML_CODE, games=GAMES_DATA, cs_link=CS_TELEGRAM)
-
 @app.route('/order', methods=['POST'])
 def order():
     try:
@@ -223,28 +218,40 @@ def order():
         photo = request.files.get('photo')
         pkg = request.form.get('pkg')
         
-        # Database ထဲ သိမ်းခြင်း
+        # Database ထဲသိမ်းဆည်းခြင်း
         oid = orders_col.insert_one({
             "tg_user": tg_user, "uid": uid, "zone": zid, 
             "pkg": pkg, "price": price, "status": "Pending", 
             "date": datetime.now(timezone(timedelta(hours=6, minutes=30))).strftime("%d/%m/%Y %I:%M %p")
         }).inserted_id
         
-        # Telegram အတွက်ပြင်ဆင်ခြင်း
+        # Telegram Message ပြင်ဆင်ခြင်း
         keyboard = {"inline_keyboard": [[{"text": "Done ✅", "callback_data": f"done_{oid}"}, {"text": "Reject ❌", "callback_data": f"reject_{oid}"}]]}
-        msg = f"⚠️ *New Order!*\nUser: {tg_user}\nID: `{uid}` ({zid})\nPackage: {pkg}\nPrice: {price} Ks"
+        msg = f"⚠️ *New Order!*\n\n👤 *User:* {tg_user}\n🆔 *ID:* `{uid}` ({zid})\n📦 *Package:* {pkg}\n💰 *Price:* {price} Ks"
         
-        # Telegram ဆီ ပုံနဲ့တကွ ပို့ခြင်း (ဒီအဆင့်ပြီးမှ return ပြန်ရပါမယ်)
-        requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto", 
-                      data={"chat_id": CHAT_ID, "caption": msg, "parse_mode": "Markdown", "reply_markup": json.dumps(keyboard)}, 
-                      files={'photo': photo})
+        # Telegram ဆီသို့ ပို့ဆောင်ခြင်း
+        url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto"
+        payload = {
+            "chat_id": CHAT_ID,
+            "caption": msg,
+            "parse_mode": "Markdown",
+            "reply_markup": json.dumps(keyboard)
+        }
         
-        # အောင်မြင်ကြောင်း Browser ကို အကြောင်းကြားခြင်း
-        return "Success" 
+        # ပုံပါမှ ပို့ဆောင်မည်
+        if photo:
+            files = {"photo": photo}
+            requests.post(url, data=payload, files=files)
+        else:
+            # ပုံမပါလျှင် စာသားသီးသန့်ပို့မည်
+            requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage", data={"chat_id": CHAT_ID, "text": msg, "parse_mode": "Markdown", "reply_markup": json.dumps(keyboard)})
+        
+        return "Success"
 
     except Exception as e:
-        print(f"Error: {e}")
+        print(f"Telegram Error: {str(e)}")
         return "Error"
+
 
 @app.route('/api/top10')
 def get_top10():
