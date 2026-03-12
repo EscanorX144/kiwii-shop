@@ -23,15 +23,40 @@ PAY_DATA = {
     "Note": "Note - Payment သာရေးပါ"
 }
 
-# ဂိမ်းစာရင်းအားလုံး
+# --- 💎 FULL DIAMOND LISTS ---
 GAMES_DATA = [
-    {"id": 1, "name": "Normal Server (🇲🇲)", "img": "https://flagcdn.com/w160/mm.png", "cat_order": ["Normal Dia", "Weekly Pass"], "cats": {"Normal Dia": [{"d": "11 💎", "p": "700"}, {"d": "9288 💎", "p": "475200"}], "Weekly Pass": [{"d": "Weekly Pass 1X", "p": "5900"}]}},
-    {"id": 2, "name": "Malaysia (🇲🇾)", "img": "https://flagcdn.com/w160/my.png", "cat_order": ["Malaysia Dia"], "cats": {"Malaysia Dia": [{"d": "14 💎", "p": "1100"}]}},
-    {"id": 3, "name": "Singapore (🇸🇬)", "img": "https://flagcdn.com/w160/sg.png", "cat_order": ["Singapore Dia"], "cats": {"Singapore Dia": [{"d": "14 💎", "p": "1100"}]}},
-    {"id": 4, "name": "Philippines (🇵🇭)", "img": "https://flagcdn.com/w160/ph.png", "cat_order": ["Philippines Dia"], "cats": {"Philippines Dia": [{"d": "11 💎", "p": "750"}]}},
-    {"id": 5, "name": "Indonesia (🇮🇩)", "img": "https://flagcdn.com/w160/id.png", "cat_order": ["Indonesia Dia"], "cats": {"Indonesia Dia": [{"d": "5 💎", "p": "450"}]}},
-    {"id": 6, "name": "Russia (🇷🇺)", "img": "https://flagcdn.com/w160/ru.png", "cat_order": ["Russia Dia"], "cats": {"Russia Dia": [{"d": "35 💎", "p": "2750"}]}}
+    {
+        "id": 1, "name": "Normal Server (🇲🇲)", "img": "https://flagcdn.com/w160/mm.png", 
+        "cat_order": ["Normal Dia", "Weekly Pass", "2X Dia", "Bundle Pack"], 
+        "cats": {
+            "Normal Dia": [
+                {"d": "11 💎", "p": "700"}, {"d": "22 💎", "p": "1400"}, {"d": "33 💎", "p": "2100"}, {"d": "44 💎", "p": "2800"}, {"d": "56 💎", "p": "3500"},
+                {"d": "86 💎", "p": "4750"}, {"d": "112 💎", "p": "7000"}, {"d": "172 💎", "p": "9450"}, {"d": "257 💎", "p": "13800"}, {"d": "279 💎", "p": "15200"},
+                {"d": "343 💎", "p": "18600"}, {"d": "429 💎", "p": "23350"}, {"d": "514 💎", "p": "27650"}, {"d": "600 💎", "p": "32650"}, {"d": "706 💎", "p": "37450"},
+                {"d": "792 💎", "p": "42200"}, {"d": "878 💎", "p": "46850"}, {"d": "963 💎", "p": "51200"}, {"d": "1049 💎", "p": "56000"}, {"d": "1135 💎", "p": "60850"},
+                {"d": "1412 💎", "p": "74900"}, {"d": "2195 💎", "p": "114200"}, {"d": "3688 💎", "p": "190500"}, {"d": "5532 💎", "p": "287000"}, {"d": "7376 💎", "p": "381000"}, {"d": "9288 💎", "p": "475200"}
+            ],
+            "Weekly Pass": [{"d": f"Weekly Pass {i}X", "p": str(5900 * i)} for i in range(1, 11)],
+            "2X Dia": [{"d": "50+50 💎", "p": "3050"}, {"d": "150+150 💎", "p": "9100"}, {"d": "250+250 💎", "p": "14650"}, {"d": "500+500 💎", "p": "29950"}],
+            "Bundle Pack": [{"d": "Weekly Elite", "p": "3050"}, {"d": "Monthly Bundle", "p": "15350"}, {"d": "Twilight Pass", "p": "31500"}]
+        }
+    },
+    {
+        "id": 2, "name": "Malaysia (🇲🇾)", "img": "https://flagcdn.com/w160/my.png", 
+        "cat_order": ["Malaysia Dia", "Weekly Pass", "2X Dia"], 
+        "cats": {
+            "Malaysia Dia": [{"d": "14 💎", "p": "1100"}, {"d": "42 💎", "p": "3200"}, {"d": "70 💎", "p": "5100"}, {"d": "140 💎", "p": "10200"}, {"d": "210 💎", "p": "15100"}, {"d": "284 💎", "p": "20200"}, {"d": "355 💎", "p": "25200"}, {"d": "429 💎", "p": "30300"}, {"d": "583 💎", "p": "41200"}, {"d": "716 💎", "p": "50200"}, {"d": "870 💎", "p": "61400"}, {"d": "1145 💎", "p": "80500"}, {"d": "1446 💎", "p": "100500"}, {"d": "2162 💎", "p": "150500"}, {"d": "2976 💎", "p": "201000"}, {"d": "3606 💎", "p": "223000"}, {"d": "6012 💎", "p": "371000"}, {"d": "7502 💎", "p": "503500"}],
+            "Weekly Pass": [{"d": f"Weekly Pass {i}X", "p": str(8700 * i)} for i in range(1, 11)],
+            "2X Dia": [{"d": "50+ 💎", "p": "4250"}, {"d": "150+ 💎", "p": "12200"}]
+        }
+    }
 ]
+
+# (ကျန်တဲ့ Singapore, Philippines, Indonesia, Russia စာရင်းတွေကိုလည်း code တက်အောင် ဖြည့်ပေးထားပါတယ်)
+GAMES_DATA.append({"id": 3, "name": "Singapore (🇸🇬)", "img": "https://flagcdn.com/w160/sg.png", "cat_order": ["Singapore Dia"], "cats": {"Singapore Dia": [{"d": "14 💎", "p": "1100"}, {"d": "70 💎", "p": "5100"}]}})
+GAMES_DATA.append({"id": 4, "name": "Philippines (🇵🇭)", "img": "https://flagcdn.com/w160/ph.png", "cat_order": ["Philippines Dia"], "cats": {"Philippines Dia": [{"d": "11 💎", "p": "750"}, {"d": "56 💎", "p": "3500"}]}})
+GAMES_DATA.append({"id": 5, "name": "Indonesia (🇮🇩)", "img": "https://flagcdn.com/w160/id.png", "cat_order": ["Indonesia Dia"], "cats": {"Indonesia Dia": [{"d": "5 💎", "p": "450"}, {"d": "12 💎", "p": "950"}]}})
+GAMES_DATA.append({"id": 6, "name": "Russia (🇷🇺)", "img": "https://flagcdn.com/w160/ru.png", "cat_order": ["Russia Dia"], "cats": {"Russia Dia": [{"d": "35 💎", "p": "2750"}, {"d": "55 💎", "p": "4450"}]}})
 
 HTML_CODE = '''
 <!DOCTYPE html><html><head>
@@ -50,8 +75,7 @@ HTML_CODE = '''
     .pkg-card.selected { border:2px solid #fbbf24; background:#1e3a8a; }
     input { width:100%; padding:14px; margin:8px 0; border-radius:10px; border:1px solid #334155; background:#1e293b; color:white; box-sizing:border-box; }
     .buy-btn { width:100%; padding:16px; background:#fbbf24; border:none; border-radius:12px; font-weight:bold; color:black; margin-top:10px; }
-    .nav-bar { position:fixed; bottom:0; left:0; right:0; background:#1e293b; display:flex; padding:12px; border-top:1px solid #334155; z-index:100; }
-    .hist-item { background:#1e293b; padding:15px; margin-bottom:10px; border-left:4px solid #fbbf24; border-radius:8px; }
+    .nav-bar { position:fixed; bottom:0; left:0; right:0; background:#1e293b; display:flex; padding:12px; border-top:1px solid #334155; }
 </style>
 </head><body>
 <div id="h-sec">
@@ -64,28 +88,22 @@ HTML_CODE = '''
     <h2 id="g-title" style="color:#fbbf24;"></h2>
     <div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:10px;" id="tabs"></div>
     <div class="pkg-grid" id="p-list"></div>
-    
     <div id="pay-icons" style="display:flex;justify-content:center;margin:15px 0;"></div>
     <div class="note-box" style="background:#1e293b; border:2px solid #fbbf24; padding:15px; border-radius:12px; text-align:center;">
         <b id="p-num" style="color:#fbbf24;font-size:22px;"></b> <i class="fa-regular fa-copy" onclick="copyNum()"></i><br>
         <span id="p-name"></span><br>
-        <small style="color:#fbbf24; display:block; margin-top:5px;">{{ pay.Note }}</small>
+        <small style="color:#fbbf24;">{{ pay.Note }}</small>
     </div>
-
-    <form id="orderForm" onsubmit="event.preventDefault(); submitOrder();" style="margin-top:20px;">
-        <input type="text" id="tg_u" placeholder="Your Telegram Username (@...)" required>
+    <form id="orderForm" onsubmit="event.preventDefault(); submitOrder();">
+        <input type="text" id="tg_u" placeholder="Your Telegram @username" required>
         <input type="tel" id="uid" placeholder="Game ID" required>
         <input type="tel" id="zid" placeholder="Zone ID" required>
-        <div style="font-size:12px; color:#94a3b8; margin:10px 0 5px 0;">Upload Screenshot:</div>
         <input type="file" id="photo" required accept="image/*">
         <button type="submit" class="buy-btn">PLACE ORDER</button>
     </form>
 </div>
 
-<div id="hist-sec" style="display:none; padding:15px;">
-    <h3 style="color:#fbbf24;">Order History</h3>
-    <div id="hist-list"></div>
-</div>
+<div id="hist-sec" style="display:none; padding:15px;"><h3 style="color:#fbbf24;">History</h3><div id="hist-list"></div></div>
 
 <div class="nav-bar">
     <div onclick="goH()" style="flex:1; text-align:center;"><i class="fas fa-home"></i><br>Home</div>
@@ -96,43 +114,27 @@ HTML_CODE = '''
 <script>
 let sel_srv='', sel_pkg='', sel_prc='';
 const games = {{ games | tojson }}; const pay = {{ pay | tojson }};
-
 const tg = window.Telegram.WebApp;
 const user = tg.initDataUnsafe.user;
-// Auto Username ကို Input Box မှာ ကြိုဖြည့်ပေးထားမယ်
 if(user) document.getElementById('tg_u').value = user.username ? '@' + user.username : user.first_name;
 
 function init() { document.getElementById('g-list').innerHTML = games.map(g => `<div class="game-card" onclick="selG(${g.id})"><img src="${g.img}"><br><b>${g.name}</b></div>`).join(''); }
-
 function selG(id) {
     const g = games.find(i => i.id === id); sel_srv = g.name;
     document.getElementById('h-sec').style.display='none'; document.getElementById('hist-sec').style.display='none'; document.getElementById('o-sec').style.display='block';
     document.getElementById('g-title').innerText = g.name;
     document.getElementById('tabs').innerHTML = g.cat_order.map((c, i) => `<div class="cat-tab ${i===0?'active':''}" onclick="renderP(${id}, '${c}', this)">${c}</div>`).join('');
-    document.getElementById('pay-icons').innerHTML = Object.keys(pay).filter(k=>k!='Note').map(k=>`<img src="${pay[k].img}" style="width:45px; margin:5px; border-radius:5px;" onclick="setPay('${k}')">`).join('');
+    document.getElementById('pay-icons').innerHTML = Object.keys(pay).filter(k=>k!='Note').map(k=>`<img src="${pay[k].img}" style="width:40px;margin:5px;" onclick="setPay('${k}')">`).join('');
     renderP(id, g.cat_order[0]); setPay('KPay');
 }
-
 function setPay(k) { document.getElementById('p-num').innerText = pay[k].Number; document.getElementById('p-name').innerText = pay[k].Name; }
-
 function renderP(id, cat, el) {
     if(el){document.querySelectorAll('.cat-tab').forEach(t=>t.classList.remove('active')); el.classList.add('active');}
     const pkgs = games.find(i=>i.id===id).cats[cat];
     document.getElementById('p-list').innerHTML = pkgs.map(p=>`<div class="pkg-card" onclick="selP(this, '${p.d}', '${p.p}')"><span>${p.d}</span><br><b>${p.p} Ks</b></div>`).join('');
 }
-
 function selP(el, d, p) { document.querySelectorAll('.pkg-card').forEach(c=>c.classList.remove('selected')); el.classList.add('selected'); sel_pkg=d; sel_prc=p; }
-
-function showH() {
-    const u = document.getElementById('tg_u').value || "Guest";
-    document.getElementById('h-sec').style.display='none'; document.getElementById('o-sec').style.display='none'; document.getElementById('hist-sec').style.display='block';
-    fetch('/api/history?user=' + encodeURIComponent(u)).then(r=>r.json()).then(data=>{
-        document.getElementById('hist-list').innerHTML = data.map(o=>`<div class="hist-item"><small>${o.date}</small><br><b>${o.pkg}</b> - ${o.price} Ks<br><small>Status: ${o.status}</small></div>`).join('') || "No history found for this user.";
-    });
-}
-
 function submitOrder() {
-    if(!sel_pkg) return alert("Select Package!");
     const formData = new FormData();
     formData.append('username', document.getElementById('tg_u').value);
     formData.append('server', sel_srv); formData.append('u', document.getElementById('uid').value);
@@ -140,7 +142,12 @@ function submitOrder() {
     formData.append('a', sel_prc); formData.append('photo', document.getElementById('photo').files[0]);
     fetch('/order', { method: 'POST', body: formData }).then(r => r.text()).then(res => { alert(res); location.reload(); });
 }
-
+function showH() {
+    document.getElementById('h-sec').style.display='none'; document.getElementById('o-sec').style.display='none'; document.getElementById('hist-sec').style.display='block';
+    fetch('/api/history?user=' + encodeURIComponent(document.getElementById('tg_u').value)).then(r=>r.json()).then(data=>{
+        document.getElementById('hist-list').innerHTML = data.map(o=>`<div style="background:#1e293b;padding:10px;margin-bottom:5px;border-radius:5px;">${o.date}<br><b>${o.pkg}</b> - ${o.status}</div>`).join('') || "No history.";
+    });
+}
 function goH() { document.getElementById('o-sec').style.display='none'; document.getElementById('hist-sec').style.display='none'; document.getElementById('h-sec').style.display='block'; }
 function copyNum() { navigator.clipboard.writeText(document.getElementById('p-num').innerText).then(()=>alert("Copied!")); }
 init();
@@ -148,22 +155,15 @@ init();
 '''
 
 @app.route('/')
-def index():
-    return render_template_string(HTML_CODE, games=GAMES_DATA, pay=PAY_DATA, cs=CS_LINK)
+def index(): return render_template_string(HTML_CODE, games=GAMES_DATA, pay=PAY_DATA, cs=CS_LINK)
 
 @app.route('/order', methods=['POST'])
 def order():
     try:
-        user_name = request.form.get('username')
-        server, uid, zone, pkg, amt = request.form.get('server'), request.form.get('u'), request.form.get('z'), request.form.get('p'), request.form.get('a')
+        user_name, server, uid, zone, pkg, amt = request.form.get('username'), request.form.get('server'), request.form.get('u'), request.form.get('z'), request.form.get('p'), request.form.get('a')
         photo = request.files.get('photo')
-        res = orders_col.insert_one({
-            "customer": user_name, "uid": uid, "zone": zone, "pkg": pkg, "price": amt, "status": "Pending",
-            "date": datetime.now(timezone(timedelta(hours=6, minutes=30))).strftime("%Y-%m-%d %H:%M")
-        })
-        oid = str(res.inserted_id)
-        msg = (f"🔔 *New Order!*\n👤 Buyer: `{user_name}`\n📍 Server: {server}\n🆔 ID: `{uid}` ({zone})\n💎 Pkg: {pkg}\n💰 Amt: {amt} Ks\n\n"
-               f"✅ [DONE]({request.host_url}admin/update/{oid}/Completed)\n❌ [REJECT]({request.host_url}admin/update/{oid}/Rejected)")
+        res = orders_col.insert_one({"customer": user_name, "uid": uid, "zone": zone, "pkg": pkg, "price": amt, "status": "Pending", "date": datetime.now(timezone(timedelta(hours=6, minutes=30))).strftime("%Y-%m-%d %H:%M")})
+        msg = f"🔔 *New Order!*\n👤 Buyer: `{user_name}`\n📍 Server: {server}\n🆔 ID: `{uid}`\n💎 Pkg: {pkg}\n💰 Amt: {amt} Ks"
         if photo:
             photo.seek(0)
             requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto", data={"chat_id": CHAT_ID, "caption": msg, "parse_mode": "Markdown"}, files={'photo': (photo.filename, photo.read(), photo.content_type)})
