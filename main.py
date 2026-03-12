@@ -232,10 +232,15 @@ def order():
         }).inserted_id
         
         # Admin Alert Telegram
+                # Admin Alert Telegram
         keyboard = {"inline_keyboard": [[{"text": "Done ✅", "callback_data": f"done_{oid}"}, {"text": "Reject ❌", "callback_data": f"reject_{oid}"}]]}
+        
+        # ဤစာသားကို အတိအကျ ကူးထည့်ပါ (f-string format မှန်ကန်စေရန်)
         msg = f"🔔 *New Order!*\nUser: {tg_user}\nID: `{uid}` ({zid})\nPackage: {request.form.get('pkg')}\nPrice: {price} Ks"
-        requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto", data={"chat_id": CHAT_ID, "caption": msg, "parse_mode": "Markdown", "reply_markup": json.dumps(keyboard)}, files={'photo': photo})
-        return "Success"
+        requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto", 
+                      data={"chat_id": CHAT_ID, "caption": msg, "parse_mode": "Markdown", "reply_markup": json.dumps(keyboard)}, 
+                      files={'photo': photo})
+return "Success"
     except Exception as e:
         print(e)
         return "Error"
