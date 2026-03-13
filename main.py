@@ -289,14 +289,15 @@ HTML_CODE = '''
         renderP(g.cat_order[0], document.querySelector('.tab-btn.active'));
     }
 
-    // Line 115 ဝန်းကျင်က getDiaImg နဲ့ renderP နေရာမှာ အစားထိုးရန်
     function getPkgImg(text) {
-        let num = parseInt(text);
+        // Diamond ပမာဏကနေ ကိန်းဂဏန်းသီးသန့် ထုတ်ယူတာပါ (ဥပမာ "11 💎" ဆိုရင် "11" ပဲယူမယ်)
+        let num = text.replace(/[^0-9]/g, ''); 
+        
         if (text.includes("Weekly")) return "/static/weekly_pass.png";
         if (text.includes("Twilight")) return "/static/twilight.png";
-        if (num <= 50) return "/static/dia1.png";
-        if (num <= 300) return "/static/dia2.png";
-        return "/static/dia3.png";
+        
+        // dia11.png, dia22.png စသဖြင့် ပုံစံမျိုးနဲ့ ခေါ်ပေးမှာပါ
+        return `/static/dia${num}.png`;
     }
 
     function renderP(cat, btn) {
@@ -305,7 +306,7 @@ HTML_CODE = '''
         const pkgs = games.find(i => i.id === sel_srv).cats[cat];
         document.getElementById('p-list').innerHTML = pkgs.map(p => `
             <div class="pkg-card" onclick="selP(this, '${p.d}', '${p.p}')">
-                <img src="${getPkgImg(p.d)}" class="pkg-dia-img">
+                <img src="${getPkgImg(p.d)}" class="pkg-dia-img" onerror="this.src='/static/dia1.png'"> 
                 <div class="pkg-info">
                     <span class="pkg-d-text">${p.d}</span>
                     <span class="pkg-p-text">${p.p} Ks</span>
