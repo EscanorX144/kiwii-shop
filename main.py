@@ -375,7 +375,7 @@ HTML_CODE = '''
 
     </body>
 </html>
-''' % json.dumps(GAMES_DATA)
+'''
 
 # --- 🚀 BACKEND ---
 
