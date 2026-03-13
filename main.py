@@ -437,6 +437,42 @@ def history():
     for h in hist: h['_id'] = str(h['_id'])
     return jsonify(hist)
 
+@app.route('/api/top10')
+def top10():
+    try:
+        current_user = request.args.get('user')
+        
+        # Database ထဲမှ status 'Completed' ဖြစ်သော order များကို စုပေါင်းတွက်ချက်ခြင်း
+        pipeline = [
+            {"$match": {"status": "Completed"}},
+            {"$group": {
+                "_id": "$tg_user", 
+                "totalSpent": {"$sum": "$price"}
+            }},
+            {"$sort": {"totalSpent": -1}},
+            {"$limit": 10}
+        ]
+        
+        all_ranks = list(orders_col.aggregate(pipeline))
+        
+        # လက်ရှိ User ၏ Rank ကို ရှာဖွေခြင်း
+        user_rank = "N/A"
+        user_spent = 0
+        
+        for i, u in enumerate(all_ranks):
+            if u['_id'] == current_user:
+                user_rank = i + 1
+                user_spent = u['totalSpent']
+                break
+        
+        return jsonify({
+            "top10": all_ranks, 
+            "userRank": user_rank, 
+            "userSpent": user_spent
+        })
+    except Exception as e:
+        return jsonify({"top10": [], "userRank": "N/A", "userSpent": 0, "error": str(e)})
+
 @app.route('/admin/users')
 def view_users():
     # --- 🔐 ADMIN LOGIN (Username: admin, Password: Kiwii123) ---
