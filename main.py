@@ -169,14 +169,14 @@ HTML_CODE = '''
         <div class="header-logo">KIWII GAME STORE</div>
         <div id="login-form">
             <h2>LOGIN</h2>
-            <input type="text" id="l-user" class="auth-input" placeholder="Telegram Username (@kiwii)">
+            <input type="text" id="l-user" class="auth-input" placeholder="Telegram Username (Eg..Bby_kiwii7)">
             <input type="password" id="l-pass" class="auth-input" placeholder="Password">
             <button class="auth-btn" onclick="handleAuth('login')">LOGIN</button>
             <div class="auth-toggle" onclick="toggleAuth()">No account? Register here</div>
         </div>
         <div id="reg-form" style="display:none;">
             <h2>REGISTER</h2>
-            <input type="text" id="r-user" class="auth-input" placeholder="Username (@Bby_kiwii7)">
+            <input type="text" id="r-user" class="auth-input" placeholder="Telegram Username (Eg..@Bby_kiwii7)">
             <input type="password" id="r-pass" class="auth-input" placeholder="Create Password">
             <button class="auth-btn" onclick="handleAuth('register')">CREATE ACCOUNT</button>
             <div class="auth-toggle" onclick="toggleAuth()">Already have an account? Login</div>
