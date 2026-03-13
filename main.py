@@ -34,20 +34,25 @@ HTML_CODE = '''
     body { background:#0f172a; color:white; font-family:sans-serif; margin:0; padding-bottom:80px; }
     #main-container { max-width:500px; margin:auto; }
     .header-logo { text-align:center; padding:25px 0; color:#fbbf24; font-size:26px; font-weight:bold; }
-    .game-grid { display:grid; grid-template-columns:1fr 1fr; gap:15px; padding:20px; border-radius: 15px; margin: 10px; }
-    .game-card { background:rgba(30, 41, 59, 0.85); border-radius:15px; padding:25px 15px; text-align:center; border:1px solid #334155; cursor:pointer; }
-    .pay-icons { display:flex; gap:12px; justify-content:center; margin-bottom:12px; }
-    .pay-icons img { width:45px; height:45px; border-radius:10px; border:1px solid #444; }
-    .nav-bar { position:fixed; bottom:0; width:100%; max-width:500px; background:#1e293b; display:flex; padding:12px 0; border-top:1px solid #334155; z-index:1000; }
-    .nav-item { flex:1; text-align:center; color:#94a3b8; cursor:pointer; font-size:12px; }
-    .nav-item.active { color:#fbbf24; }
+    .game-grid { display:grid; grid-template-columns:1fr 1fr; gap:15px; padding:20px; }
+    .game-card { background:rgba(30, 41, 59, 0.85); border-radius:15px; padding:20px; text-align:center; border:1px solid #334155; cursor:pointer; }
+    
+    /* Category Tabs Styling */
+    .cat-tabs { display:flex; gap:10px; overflow-x:auto; padding:10px 0; margin-bottom:15px; scrollbar-width: none; -ms-overflow-style: none; }
+    .cat-tabs::-webkit-scrollbar { display: none; }
+    .tab-btn { background:#1e293b; border:1px solid #334155; color:#94a3b8; padding:10px 15px; border-radius:10px; white-space:nowrap; cursor:pointer; font-size:14px; }
+    .tab-btn.active { background:#fbbf24; color:black; border-color:#fbbf24; font-weight:bold; }
+
     .pkg-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:15px 0; }
     .pkg-card { background:#1e293b; border:1px solid #334155; padding:15px; border-radius:12px; text-align:center; cursor:pointer; }
     .pkg-card.selected { border:2px solid #fbbf24; background:#1e3a8a; }
-    .buy-btn { width:100%; padding:16px; background:#fbbf24; border:none; border-radius:12px; font-weight:bold; color:black; cursor:pointer; font-size:16px; }
+    
+    .nav-bar { position:fixed; bottom:0; width:100%; max-width:500px; background:#1e293b; display:flex; padding:12px 0; border-top:1px solid #334155; z-index:1000; }
+    .nav-item { flex:1; text-align:center; color:#94a3b8; cursor:pointer; font-size:12px; }
+    .nav-item.active { color:#fbbf24; }
+    
     input { width:100%; padding:14px; margin:8px 0; border-radius:10px; background:#1e293b; color:white; border:1px solid #334155; box-sizing:border-box; }
-    .rank-item { display:flex; align-items:center; background:#1e293b; padding:15px; margin-bottom:10px; border-radius:12px; border:1px solid #334155; }
-    .rank-num { width:35px; height:35px; background:#fbbf24; color:black; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:bold; margin-right:15px; }
+    .buy-btn { width:100%; padding:16px; background:#fbbf24; border:none; border-radius:12px; font-weight:bold; color:black; cursor:pointer; margin-top:10px; }
 </style>
 </head><body>
 <div id="main-container">
@@ -55,17 +60,18 @@ HTML_CODE = '''
         <div class="header-logo">KIWII GAME STORE</div>
         <div class="game-grid" id="g-list"></div>
     </div>
+
     <div id="o-sec" style="display:none; padding:15px;">
         <button onclick="goH()" style="background:none;color:white;border:1px solid #334155;padding:8px 15px;border-radius:8px;margin-bottom:15px;">← Back</button>
-        <h2 id="g-title" style="color:#fbbf24;"></h2>
+        <h2 id="g-title" style="color:#fbbf24; margin-bottom:5px;"></h2>
+        <div id="cat-container" class="cat-tabs"></div>
         <div id="p-list" class="pkg-grid"></div>
+
         <div style="background:#1e293b; padding:20px; border-radius:15px; border:1px solid #fbbf24; text-align:center; margin-bottom:15px;">
-            <div class="pay-icons">
-                <img src="/static/kpay.jpg"> <img src="/static/wave.jpg"> <img src="/static/ayapay.jpg">
-            </div>
             <b style="color:#fbbf24; font-size:22px;">09775394979</b><br>
             <small>Thansin Kyaw (Kpay/Wave)</small>
         </div>
+
         <form id="orderForm" onsubmit="handleOrder(event)">
             <input type="tel" id="uid" placeholder="Game ID" required>
             <input type="tel" id="zid" placeholder="Zone ID" required>
@@ -73,25 +79,30 @@ HTML_CODE = '''
             <button type="submit" class="buy-btn" id="submitBtn">PLACE ORDER</button>
         </form>
     </div>
+
     <div id="top-sec" style="display:none; padding:15px;">
         <h3 style="color:#fbbf24; text-align:center;">🏆 TOP 10 USERS</h3>
         <div id="top-list"></div>
     </div>
+
     <div id="hist-sec" style="display:none; padding:15px;">
         <h3 style="color:#fbbf24;">History</h3>
         <div id="hist-list"></div>
     </div>
 </div>
+
 <div class="nav-bar">
     <div class="nav-item active" id="nav-home" onclick="goH()"><i class="fas fa-home"></i><br>Home</div>
     <div class="nav-item" id="nav-hist" onclick="showH()"><i class="fas fa-history"></i><br>History</div>
     <div class="nav-item" id="nav-top" onclick="showTop()"><i class="fas fa-trophy"></i><br>Top 10</div>
     <div class="nav-item" onclick="window.open('{{ cs_link }}')"><i class="fas fa-headset"></i><br>CS</div>
 </div>
+
 <script>
 let sel_srv='', sel_pkg='', sel_prc='';
 const games = {{ games | tojson }};
-const CURRENT_LOGIN_USER = "@Bby_kiwii7"; 
+const CURRENT_LOGIN_USER = "@Bby_kiwii7";
+
 function init() {
     document.getElementById('g-list').innerHTML = games.map(g => `
         <div class="game-card" onclick="selG(${g.id})">
@@ -100,51 +111,77 @@ function init() {
         </div>`).join('');
 }
 init();
+
 function selG(id) {
-    const g = games.find(i => i.id === id); sel_srv = g.name;
-    document.getElementById('h-sec').style.display='none'; 
+    const g = games.find(i => i.id === id);
+    sel_srv = id;
+    document.getElementById('h-sec').style.display='none';
     document.getElementById('o-sec').style.display='block';
-    document.getElementById('top-sec').style.display='none';
-    document.getElementById('hist-sec').style.display='none';
     document.getElementById('g-title').innerText = g.name;
-    renderP(id, g.cat_order[0]);
+
+    const cats = g.cat_order;
+    document.getElementById('cat-container').innerHTML = cats.map((c, index) => `
+        <div class="tab-btn ${index===0?'active':''}" onclick="renderP('${c}', this)">${c}</div>
+    `).join('');
+    renderP(cats[0], document.querySelector('.tab-btn.active'));
 }
-function renderP(id, cat) {
-    const pkgs = games.find(i=>i.id===id).cats[cat];
-    document.getElementById('p-list').innerHTML = pkgs.map(p=>`
+
+function renderP(catName, btnEl) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    if(btnEl) btnEl.classList.add('active');
+    const g = games.find(i => i.id === sel_srv);
+    const pkgs = g.cats[catName];
+    document.getElementById('p-list').innerHTML = pkgs.map(p => `
         <div class="pkg-card" onclick="selP(this, '${p.d}', '${p.p}')">
             <span>${p.d}</span><br><b style="color:#fbbf24;">${p.p} Ks</b>
         </div>`).join('');
 }
+
 function selP(el, d, p) {
     document.querySelectorAll('.pkg-card').forEach(c=>c.classList.remove('selected'));
     el.classList.add('selected'); sel_pkg=d; sel_prc=p;
 }
+
 async function handleOrder(e) {
     e.preventDefault();
     if(!sel_pkg) return alert("Package ရွေးပေးပါ။");
+    const btn = document.getElementById('submitBtn');
+    btn.innerText = "SENDING..."; btn.disabled = true;
+
     const fd = new FormData();
     fd.append('tg_user', CURRENT_LOGIN_USER);
     fd.append('uid', document.getElementById('uid').value);
     fd.append('zid', document.getElementById('zid').value);
-    fd.append('server', sel_srv); fd.append('pkg', sel_pkg);
-    fd.append('price', sel_prc); fd.append('photo', document.getElementById('photo').files[0]);
-    const r = await fetch('/order', { method: 'POST', body: fd });
-    if(await r.text() === "Success") { alert("Order Successful!"); location.reload(); }
-    else { alert("Order Failed."); }
+    fd.append('server', games.find(i=>i.id===sel_srv).name);
+    fd.append('pkg', sel_pkg);
+    fd.append('price', sel_prc);
+    fd.append('photo', document.getElementById('photo').files[0]);
+
+    try {
+        const r = await fetch('/order', { method: 'POST', body: fd });
+        if(await r.text() === "Success") {
+            alert("Order Successful!");
+            location.reload();
+        } else {
+            alert("Order Failed.");
+        }
+    } catch(err) { alert("Error: " + err); }
+    btn.innerText = "PLACE ORDER"; btn.disabled = false;
 }
+
 async function showTop() {
     document.getElementById('h-sec').style.display='none'; document.getElementById('o-sec').style.display='none';
     document.getElementById('hist-sec').style.display='none'; document.getElementById('top-sec').style.display='block';
     const r = await fetch('/api/top10');
     const data = await r.json();
     document.getElementById('top-list').innerHTML = data.map((u, i) => `
-        <div class="rank-item">
-            <div class="rank-num">${i+1}</div>
+        <div style="background:#1e293b;padding:15px;margin-bottom:10px;border-radius:12px;display:flex;align-items:center;">
+            <div style="width:30px;height:30px;background:#fbbf24;color:black;border-radius:50%;text-align:center;line-height:30px;margin-right:15px;font-weight:bold;">${i+1}</div>
             <div style="flex:1;"><b>${u._id}</b></div>
-            <div style="color:#fbbf24; font-weight:bold;">${u.totalSpent.toLocaleString()} Ks</div>
+            <div style="color:#fbbf24;font-weight:bold;">${u.totalSpent.toLocaleString()} Ks</div>
         </div>`).join('') || "No data";
 }
+
 async function showH() {
     document.getElementById('h-sec').style.display='none'; document.getElementById('o-sec').style.display='none';
     document.getElementById('top-sec').style.display='none'; document.getElementById('hist-sec').style.display='block';
@@ -163,7 +200,7 @@ function goH() { location.reload(); }
 @app.route('/')
 def index():
     return render_template_string(HTML_CODE, games=GAMES_DATA, cs_link=CS_TELEGRAM)
-    
+
 @app.route('/order', methods=['POST'])
 def order():
     try:
@@ -171,46 +208,46 @@ def order():
         uid = request.form.get('uid'); zid = request.form.get('zid')
         price_str = request.form.get('price', '0').replace(' Ks', '').replace(',', '')
         price = int(price_str)
-        pkg = request.form.get('pkg'); photo = request.files.get('photo')
+        pkg = request.form.get('pkg'); srv = request.form.get('server')
+        photo = request.files.get('photo')
         
         oid = orders_col.insert_one({
             "tg_user": tg_user, "uid": uid, "zone": zid, "pkg": pkg, "price": price, "status": "Pending", 
             "date": datetime.now(timezone(timedelta(hours=6, minutes=30))).strftime("%d/%m/%Y %I:%M %p")
         }).inserted_id
         
-        # သင့်ရဲ့ Link အမှန်ကို ဒီမှာ ထည့်ပေးထားပါတယ်
         base_url = "https://kiwiigameshop.onrender.com"
-        keyboard = {
-            "inline_keyboard": [[
-                {"text": "Done ✅", "url": f"{base_url}/admin/status/done/{oid}"},
-                {"text": "Reject ❌", "url": f"{base_url}/admin/status/reject/{oid}"}
-            ]]
-        }
+        keyboard = {"inline_keyboard": [[
+            {"text": "Done ✅", "url": f"{base_url}/admin/status/done/{oid}"},
+            {"text": "Reject ❌", "url": f"{base_url}/admin/status/reject/{oid}"}
+        ]]}
         
-        msg = f"<b>⚠️ New Order!</b>\n\n<b>👤 User:</b> {tg_user}\n<b>🆔 ID:</b> <code>{uid}</code> ({zid})\n<b>📦 Package:</b> {pkg}\n<b>💰 Price:</b> {price} Ks"
+        msg = f"<b>⚠️ New Order!</b>\n\n<b>👤 User:</b> {tg_user}\n<b>🌍 Server:</b> {srv}\n<b>🆔 ID:</b> <code>{uid}</code> ({zid})\n<b>📦 Package:</b> {pkg}\n<b>💰 Price:</b> {price} Ks"
         
-        url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto"
         if photo:
-            requests.post(url, data={"chat_id": CHAT_ID, "caption": msg, "parse_mode": "HTML", "reply_markup": json.dumps(keyboard)}, files={"photo": photo})
+            requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto", 
+                data={"chat_id": CHAT_ID, "caption": msg, "parse_mode": "HTML", "reply_markup": json.dumps(keyboard)}, 
+                files={"photo": photo})
         else:
-            requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage", data={"chat_id": CHAT_ID, "text": msg, "parse_mode": "HTML", "reply_markup": json.dumps(keyboard)})
+            requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage", 
+                data={"chat_id": CHAT_ID, "text": msg, "parse_mode": "HTML", "reply_markup": json.dumps(keyboard)})
         
         return "Success"
     except Exception as e:
         return str(e), 500
 
-@app.route('/admin/status/<action>/<oid>', methods=['GET', 'POST'])
+@app.route('/admin/status/<action>/<oid>')
 def update_status(action, oid):
     try:
         new_status = "Completed" if action == "done" else "Rejected"
         orders_col.update_one({"_id": ObjectId(oid)}, {"$set": {"status": new_status}})
-        return f"<html><body style='background:#0f172a;color:white;text-align:center;padding-top:50px;font-family:sans-serif;'><h1>Order {new_status} Successfully!</h1><p>You can close this tab now.</p></body></html>"
+        return f"<html><body style='background:#0f172a;color:white;text-align:center;padding:50px;'><h1>Order {new_status}!</h1></body></html>"
     except Exception as e:
-        return f"Error: {str(e)}", 500
+        return str(e), 500
 
 @app.route('/api/history')
 def history():
-    hist = list(orders_col.find().sort("_id", -1).limit(10))
+    hist = list(orders_col.find().sort("_id", -1).limit(15))
     for h in hist: h['_id'] = str(h['_id'])
     return jsonify(hist)
 
@@ -221,4 +258,3 @@ def top10():
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)
-    
