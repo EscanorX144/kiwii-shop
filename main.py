@@ -113,37 +113,42 @@ HTML_CODE = '''
     .pkg-card { background:#1e293b; border:1px solid #334155; padding:15px; border-radius:12px; text-align:center; cursor:pointer; }
     .pkg-card.selected { border:2px solid #fbbf24; background:#1e3a8a; }
     
-    /* --- Payment Section Styling --- */
-    .pay-box { background:#1e293b; padding:20px; border-radius:15px; border:1px solid #fbbf24; text-align:center; margin-bottom:15px; }
-    .pay-icons { display:flex; justify-content:center; gap:15px; margin-bottom:15px; }
-    .pay-icons img { width:55px; height:55px; border-radius:12px; cursor:pointer; border:2px solid transparent; transition: 0.3s; }
-    .pay-icons img:active { transform: scale(0.9); }
+    /* --- Modern Payment UI --- */
+    .pay-box { background: #1e293b; padding: 25px 20px; border-radius: 20px; border: 1.5px solid #fbbf24; text-align: center; margin-bottom: 20px; position: relative; overflow: hidden; }
+    .pay-icons { display: flex; justify-content: center; gap: 20px; margin-bottom: 20px; }
+    .pay-icons img { width: 60px; height: 60px; border-radius: 12px; cursor: pointer; border: 3px solid transparent; transition: all 0.3s ease; opacity: 0.5; }
+    .pay-icons img.active { border-color: #fbbf24; transform: scale(1.1); opacity: 1; box-shadow: 0 0 15px rgba(251, 191, 36, 0.4); }
     
-    .copy-btn { background:#fbbf24; color:black; border:none; padding:6px 12px; border-radius:8px; font-size:12px; font-weight:bold; cursor:pointer; margin-left:10px; vertical-align: middle; }
+    .pay-info { margin: 15px 0; }
+    #pay-type { color: #fbbf24; font-size: 15px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+    #pay-num { font-size: 20px; font-weight: 800; color: #fff; margin: 5px 0; display: block; }
+    .pay-name { color: #cbd5e1; font-size: 16px; font-weight: 500; }
     
-    /* Blinking Red Glow Box */
+    .copy-btn { background: #fbbf24; color: #000; border: none; padding: 6px 15px; border-radius: 8px; font-size: 13px; font-weight: bold; cursor: pointer; margin-left: 8px; vertical-align: middle; transition: 0.2s; }
+    .copy-btn:active { transform: scale(0.9); }
+    
     .note-box { 
         background: rgba(239, 68, 68, 0.1); 
         border: 2px solid #ef4444; 
         color: #ef4444; 
-        padding: 10px; 
-        border-radius: 10px; 
+        padding: 12px; 
+        border-radius: 12px; 
         font-weight: bold; 
-        margin-top: 15px;
+        font-size: 16px;
+        margin-top: 20px;
         animation: blink-glow 1.5s infinite;
     }
     @keyframes blink-glow {
-        0% { box-shadow: 0 0 5px #ef4444; opacity: 1; }
-        50% { box-shadow: 0 0 20px #ef4444; opacity: 0.8; }
-        100% { box-shadow: 0 0 5px #ef4444; opacity: 1; }
+        0% { box-shadow: 0 0 5px #ef4444; opacity: 1; border-color: #ef4444; }
+        50% { box-shadow: 0 0 20px #ef4444; opacity: 0.8; border-color: #fca5a5; }
+        100% { box-shadow: 0 0 5px #ef4444; opacity: 1; border-color: #ef4444; }
     }
 
+    input, select { width:100%; padding:14px; margin:8px 0; border-radius:10px; background:#1e293b; color:white; border:1px solid #334155; box-sizing:border-box; font-size: 15px; }
+    .buy-btn { width:100%; padding:16px; background:#fbbf24; border:none; border-radius:12px; font-weight:bold; color:black; cursor:pointer; margin-top:10px; font-size: 16px; }
     .nav-bar { position:fixed; bottom:0; width:100%; max-width:500px; background:#1e293b; display:flex; padding:12px 0; border-top:1px solid #334155; z-index:1000; }
     .nav-item { flex:1; text-align:center; color:#94a3b8; cursor:pointer; font-size:12px; }
     .nav-item.active { color:#fbbf24; }
-    
-    input { width:100%; padding:14px; margin:8px 0; border-radius:10px; background:#1e293b; color:white; border:1px solid #334155; box-sizing:border-box; }
-    .buy-btn { width:100%; padding:16px; background:#fbbf24; border:none; border-radius:12px; font-weight:bold; color:black; cursor:pointer; margin-top:10px; }
 </style>
 </head><body>
 <div id="main-container">
@@ -160,20 +165,16 @@ HTML_CODE = '''
 
         <div class="pay-box">
             <div class="pay-icons">
-                <img src="/static/kpay.jpg" onclick="setPay('09775394979', 'Kpay')">
-                <img src="/static/wave.jpg" onclick="setPay('09775394979', 'Wave')">
-                <img src="/static/ayapay.jpg" onclick="setPay('09775394979', 'Ayapay')">
+                <img src="/static/kpay.jpg" class="active" onclick="setPay(this, '09775394979', 'Kpay')">
+                <img src="/static/wave.jpg" onclick="setPay(this, '09775394979', 'Wave')">
+                <img src="/static/ayapay.jpg" onclick="setPay(this, '09775394979', 'Ayapay')">
             </div>
-            <div style="margin-bottom:10px;">
-                <b id="pay-type" style="color:#fbbf24; font-size:14px;">Select Payment</b><br>
-                <span id="pay-num" style="font-size:24px; font-weight:bold; color:white;">09775394979</span>
-                <button class="copy-btn" onclick="copyNum()">COPY</button>
+            <div class="pay-info">
+                <div id="pay-type">KPAY ACCOUNT</div>
+                <span id="pay-num">09775394979</span> <button class="copy-btn" onclick="copyNum()">COPY</button>
+                <div class="pay-name">Name - Thansin Kyaw</div>
             </div>
-            <div style="color:#94a3b8; font-size:14px;">Name - Thansin Kyaw</div>
-            
-            <div class="note-box">
-                Note - Payment သာရေးပါ
-            </div>
+            <div class="note-box">Note - Payment သာရေးပါ</div>
         </div>
 
         <form id="orderForm" onsubmit="handleOrder(event)">
@@ -184,15 +185,8 @@ HTML_CODE = '''
         </form>
     </div>
 
-    <div id="top-sec" style="display:none; padding:15px;">
-        <h3 style="color:#fbbf24; text-align:center;">🏆 TOP 10 USERS</h3>
-        <div id="top-list"></div>
-    </div>
-
-    <div id="hist-sec" style="display:none; padding:15px;">
-        <h3 style="color:#fbbf24;">History</h3>
-        <div id="hist-list"></div>
-    </div>
+    <div id="top-sec" style="display:none; padding:15px;"><h3 style="color:#fbbf24; text-align:center;">🏆 TOP 10 USERS</h3><div id="top-list"></div></div>
+    <div id="hist-sec" style="display:none; padding:15px;"><h3 style="color:#fbbf24;">History</h3><div id="hist-list"></div></div>
 </div>
 
 <div class="nav-bar">
@@ -221,7 +215,6 @@ function selG(id) {
     document.getElementById('h-sec').style.display='none';
     document.getElementById('o-sec').style.display='block';
     document.getElementById('g-title').innerText = g.name;
-
     const cats = g.cat_order;
     document.getElementById('cat-container').innerHTML = cats.map((c, index) => `
         <div class="tab-btn ${index===0?'active':''}" onclick="renderP('${c}', this)">${c}</div>
@@ -245,10 +238,11 @@ function selP(el, d, p) {
     el.classList.add('selected'); sel_pkg=d; sel_prc=p;
 }
 
-// Payment Functions
-function setPay(num, type) {
+function setPay(imgEl, num, type) {
+    document.querySelectorAll('.pay-icons img').forEach(i => i.classList.remove('active'));
+    imgEl.classList.add('active');
     document.getElementById('pay-num').innerText = num;
-    document.getElementById('pay-type').innerText = type + " Account";
+    document.getElementById('pay-type').innerText = type + " ACCOUNT";
 }
 
 function copyNum() {
@@ -269,9 +263,8 @@ async function handleOrder(e) {
     if(!sel_pkg) return alert("Package ရွေးပေးပါ။");
     const btn = document.getElementById('submitBtn');
     btn.innerText = "SENDING..."; btn.disabled = true;
-
     const fd = new FormData();
-    fd.append('tg_user', "@Bby_kiwii7"); // Fixed user for now
+    fd.append('tg_user', "@Bby_kiwii7");
     fd.append('uid', document.getElementById('uid').value);
     fd.append('zid', document.getElementById('zid').value);
     fd.append('server', games.find(i=>i.id===sel_srv).name);
