@@ -307,7 +307,11 @@ HTML_CODE = '''
     function getPkgImg(text) {
         let lowerText = text.toLowerCase();
         let num = text.replace(/[^0-9]/g, ''); 
-        
+
+        if (lowerText.includes("50+50")) return "/static/dia50+50.png";
+        if (lowerText.includes("150+150")) return "/static/dia150+150.png";
+        if (lowerText.includes("250+250")) return "/static/dia250+250.png";
+        if (lowerText.includes("500+500")) return "/static/dia500+500.png";
         if (lowerText.includes("weekly elite")) return "/static/weeklyelite.png";
         if (lowerText.includes("monthly epic")) return "/static/monthlyepic.png";
         if (lowerText.includes("weekly")) return "/static/weeklypass.png";
