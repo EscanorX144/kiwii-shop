@@ -116,7 +116,14 @@ HTML_CODE = '''
         display:flex; flex-direction:column; align-items:center; min-height:120px;
     }
     .pkg-card.selected { border:2px solid #fbbf24; background:#1e3a8a; }
-    .pkg-dia-img { width:48px; height:48px; object-fit:contain; margin-top:10px; }
+    .pkg-dia-img { 
+        width: 75px;  /* အရင် 48px ကနေ 75px အထိ ပိုကြီးပေးလိုက်ပါတယ် */
+        height: 75px; /* အရင် 48px ကနေ 75px အထိ ပိုကြီးပေးလိုက်ပါတယ် */
+        object-fit: contain; 
+        margin-top: 5px; 
+        margin-bottom: 8px;
+    }
+    
     .pkg-info { margin-top:auto; width:100%; }
     .pkg-d-text { font-size:13px; color:white; font-weight:bold; display:block; margin-bottom:2px; }
     .pkg-p-text { font-size:14px; color:#fbbf24; font-weight:bold; }
