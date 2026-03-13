@@ -11,6 +11,7 @@ MONGO_URI = "mongodb+srv://EscanorX:Conti144@cluster0.m2mtomm.mongodb.net/?retry
 client = MongoClient(MONGO_URI)
 db = client['kiwii_game_shop']
 orders_col = db['orders']
+users_col = db['users']   # <--- ဒီစာကြောင်းကို အသစ်ထည့်ပေးပါ
 
 BOT_TOKEN = "8424534925:AAGyfQ3q5TBPo5ggHt2OBktgGqMHOKMWSqU"
 CHAT_ID = "-1003801691345"
