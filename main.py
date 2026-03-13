@@ -12,7 +12,7 @@ client = MongoClient(MONGO_URI)
 db = client['kiwii_game_shop']
 orders_col = db['orders']
 
-BOT_TOKEN = "88424534925:AAGyfQ3q5TBPo5ggHt2OBktgGqMHOKMWSqU"
+BOT_TOKEN = "8424534925:AAGyfQ3q5TBPo5ggHt2OBktgGqMHOKMWSqU"
 CHAT_ID = "-1003801691345"
 CS_TELEGRAM = "https://t.me/Bby_kiwii7"
 ADMIN_USERNAMES = ["@Escanor_XX", "@Escanor_X", "@Bby_kiwii7"]
