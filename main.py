@@ -4,7 +4,7 @@ from datetime import datetime, timedelta, timezone
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 
-app = Flask(name)
+app = Flask(__name__)
 
 # --- ⚙️ CONFIGURATION ---
 MONGO_URI = "mongodb+srv://EscanorX:Conti144@cluster0.m2mtomm.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
