@@ -498,18 +498,23 @@ def auth():
 def order():
     try:
         tg_user = request.form.get('tg_user')
-        uid = request.form.get('uid'); zid = request.form.get('zid')
-        pkg = request.form.get('pkg'); srv = request.form.get('server')
+        uid = request.form.get('uid')
+        zid = request.form.get('zid')
+        pkg = request.form.get('pkg')
+        srv = request.form.get('server') # ဒီမှာ server လို့ ပြင်ထားတယ်
         photo = request.files.get('photo')
         
         raw_price = request.form.get('price', '0')
         price_str = str(raw_price).replace(' Ks', '').replace(',', '').strip()
         price = int(price_str) if price_str.isdigit() else 0
+        
+        # Date သတ်မှတ်ချက်
+        order_date = datetime.now(timezone(timedelta(hours=6, minutes=30))).strftime("%d/%m/%Y %I:%M %p")
 
         oid = orders_col.insert_one({
             "tg_user": tg_user, "uid": uid, "zone": zid, "pkg": pkg, "srv": srv, 
             "price": price, "status": "Pending", 
-            "date": datetime.now(timezone(timedelta(hours=6, minutes=30))).strftime("%d/%m/%Y %I:%M %p")
+            "date": order_date
         }).inserted_id
         
         base_url = "https://kiwiigameshop.onrender.com"
@@ -517,8 +522,12 @@ def order():
             {"text": "Done ✅", "url": f"{base_url}/admin/status/done/{oid}"},
             {"text": "Reject ❌", "url": f"{base_url}/admin/status/reject/{oid}"}
         ]]}
-        
-                # Telegram သို့ ပို့မည့် စာသားပုံစံကို သပ်ရပ်အောင် ပြင်ဆင်ခြင်း
+
+        # ဤစာကြောင်း ၂ ကြောင်းကို msg အပေါ်မှာ ထည့်ပေးပါ
+        server = request.form.get('server')
+        order_date = datetime.now(timezone(timedelta(hours=6, minutes=30))).strftime("%d/%m/%Y %I:%M %p")
+
+        # Telegram သို့ ပို့မည့် စာသားပုံစံ
         msg = (
             f"<b>🔔 New Order Received!</b>\n"
             f"━━━━━━━━━━━━━━━━━━━━━\n"
@@ -530,7 +539,7 @@ def order():
             f"<b>📦 Package:</b> {pkg}\n"
             f"<b>💰 Price:</b> {price} Ks\n"
             f"━━━━━━━━━━━━━━━━━━━━━\n"
-            f"<b>📅 Date:</b> {date}"
+            f"<b>📅 Date:</b> {order_date}"
         )
         
         requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto", 
@@ -538,6 +547,7 @@ def order():
             files={"photo": photo})
         
     except Exception as e:
+        print(f"Error: {e}") # Error ကို log ထုတ်ကြည့်ဖို့
         return str(e), 500
     return "Success"
 
