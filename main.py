@@ -439,13 +439,67 @@ def history():
 
 @app.route('/admin/users')
 def view_users():
+    # --- 🔐 ADMIN LOGIN (Username: admin, Password: Kiwii123) ---
     auth = request.authorization
     if not auth or not (auth.username == "admin" and auth.password == "Kiwii123"):
-        return make_response('Verify!', 401, {'WWW-Authenticate': 'Basic realm="Login Required"'})
-    
-    all_users = list(users_col.find({}, {"_id": 0}))
-    # (ယခင်ပေးထားသော HTML Table Code ကို ဒီနေရာတွင် ဆက်သုံးနိုင်သည်)
-    return jsonify(all_users)
+        return make_response(
+            'Could not verify your login!', 401,
+            {'WWW-Authenticate': 'Basic realm="Login Required"'}
+        )
+
+    try:
+        all_users = list(users_col.find({}, {"_id": 0}))
+        
+        # သေသပ်လှပသော Admin Table Design
+        html_table = '''
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Admin - User Management</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <style>
+                body { font-family: sans-serif; background: #0f172a; color: white; padding: 20px; }
+                .container { max-width: 800px; margin: auto; }
+                h2 { color: #fbbf24; text-align: center; }
+                .table-container { overflow-x: auto; background: #1e293b; border-radius: 12px; padding: 10px; border: 1px solid #334155; }
+                table { width: 100%; border-collapse: collapse; }
+                th, td { padding: 12px; text-align: left; border-bottom: 1px solid #334155; }
+                th { background-color: #fbbf24; color: black; text-transform: uppercase; font-size: 14px; }
+                tr:hover { background: #334155; }
+                .back-btn { display: inline-block; margin-bottom: 15px; color: #fbbf24; text-decoration: none; border: 1px solid #fbbf24; padding: 8px 16px; border-radius: 8px; font-size: 14px; }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <a href="/" class="back-btn">← Back to Shop</a>
+                <h2>👥 Registered Users List</h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Username</th>
+                                <th>Password</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+        '''
+        
+        for u in all_users:
+            uname = u.get('user') or u.get('name') or "N/A"
+            upsw = u.get('pass') or u.get('pw') or "N/A"
+            html_table += f"<tr><td>{uname}</td><td>{upsw}</td></tr>"
+            
+        html_table += '''
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </body>
+        </html>
+        '''
+        return html_table
+    except Exception as e:
+        return f"Error: {str(e)}", 500
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
