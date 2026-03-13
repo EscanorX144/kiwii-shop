@@ -442,9 +442,14 @@ def top10():
     try:
         current_user = request.args.get('user')
         
-        # Database ထဲမှ status 'Completed' ဖြစ်သော order များကို စုပေါင်းတွက်ချက်ခြင်း
+        # --- 🏆 Top 10 Pipeline (Admin များကို ဖယ်ထုတ်ထားသည်) ---
         pipeline = [
-            {"$match": {"status": "Completed"}},
+            {
+                "$match": {
+                    "status": "Completed",
+                    "tg_user": {"$nin": ["@Escanor_XX", "@Escanor_X", "@Bby_kiwii7"]} # Admin စာရင်းကို ဖယ်ထုတ်ခြင်း
+                }
+            },
             {"$group": {
                 "_id": "$tg_user", 
                 "totalSpent": {"$sum": "$price"}
