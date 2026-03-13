@@ -55,7 +55,7 @@ GAMES_DATA = [
         "cats": {
             "Singapore Dia": [{"d": "14 💎", "p": "1100"}, {"d": "42 💎", "p": "3200"}, {"d": "56 💎", "p": "4350"}, {"d": "70 💎", "p": "5100"}, {"d": "140 💎", "p": "10200"}, {"d": "210 💎", "p": "15100"}, {"d": "284 💎", "p": "20200"}, {"d": "355 💎", "p": "25200"}, {"d": "429 💎", "p": "30300"}, {"d": "583 💎", "p": "41200"}, {"d": "716 💎", "p": "50200"}, {"d": "870 💎", "p": "61400"}, {"d": "1145 💎", "p": "80500"}, {"d": "1446 💎", "p": "100500"}, {"d": "2162 💎", "p": "150500"}, {"d": "2976 💎", "p": "201000"}, {"d": "3606 💎", "p": "223000"}, {"d": "6012 💎", "p": "371000"}, {"d": "7502 💎", "p": "503500"}],
             "Weekly Pass": [
-                {"d": "Weekly Pass 1X", "p": "8700"}, {"d": "Weekly Pass 2X", "p": "17400"}, {"d": "Weekly Pass 3X", "p": "26100"}, {"d": "Weekly Pass 4X", "p": "34800"}, {"d": "Weekly Pass 5X", "p": "43500"}, {"d": "Weekly Pass 6X", "p": "52200"}, {"d": "Weekly Pass 7X", "60900"}, {"d": "Weekly Pass 8X", "p": "69600"}, {"d": "Weekly Pass 9X", "p": "78300"}, {"d": "Weekly Pass 10X", "p": "87000"}
+                {"d": "Weekly Pass 1X", "p": "8700"}, {"d": "Weekly Pass 2X", "p": "17400"}, {"d": "Weekly Pass 3X", "p": "26100"}, {"d": "Weekly Pass 4X", "p": "34800"}, {"d": "Weekly Pass 5X", "p": "43500"}, {"d": "Weekly Pass 6X", "p": "52200"}, {"d": "Weekly Pass 7X", "p": "60900"}, {"d": "Weekly Pass 8X", "p": "69600"}, {"d": "Weekly Pass 9X", "p": "78300"}, {"d": "Weekly Pass 10X", "p": "87000"}
             ],
             "2X Dia": [{"d": "50+ 💎", "p": "4250"}, {"d": "150+ 💎", "p": "12200"}, {"d": "250+ 💎", "p": "20200"}, {"d": "500+ 💎", "p": "40600"}],
             "Bundle Pack": [{"d": "Weekly Elite", "p": "4250"}, {"d": "Monthly Epic", "p": "20000"}]
@@ -325,7 +325,7 @@ HTML_CODE = '''
         });
     }
 
- async function handleOrder(e) {
+    async function handleOrder(e) {
         e.preventDefault();
         if(!sel_pkg) return alert("Please select a package");
         const btn = document.getElementById('submitBtn');
@@ -355,29 +355,14 @@ HTML_CODE = '''
                     location.reload();
                 });
             } else {
-                Swal.fire({
-                    title: 'Failed!',
-                    text: 'အော်ဒါတင်ခြင်း မအောင်မြင်ပါ။ ပြန်လည်ကြိုးစားပေးပါ။',
-                    icon: 'error',
-                    confirmButtonColor: '#ef4444',
-                    background: '#1e293b',
-                    color: '#fff'
-                });
+                Swal.fire({ title: 'Failed!', text: 'အော်ဒါတင်ခြင်း မအောင်မြင်ပါ။', icon: 'error', background: '#1e293b', color: '#fff' });
                 btn.innerText = "PLACE ORDER"; btn.disabled = false;
             }
         } catch(err) {
-            Swal.fire({
-                title: 'Error!',
-                text: 'စနစ်ချို့ယွင်းချက် ဖြစ်ပေါ်နေပါသည်။',
-                icon: 'error',
-                confirmButtonColor: '#ef4444',
-                background: '#1e293b',
-                color: '#fff'
-            });
+            Swal.fire({ title: 'Error!', text: 'စနစ်ချို့ယွင်းချက် ဖြစ်ပေါ်နေပါသည်။', icon: 'error', background: '#1e293b', color: '#fff' });
             btn.innerText = "PLACE ORDER"; btn.disabled = false;
         }
     }
-
     function goH() {
         document.getElementById('h-sec').style.display='block';
         document.getElementById('o-sec').style.display='none';
@@ -398,15 +383,11 @@ HTML_CODE = '''
         try {
             const r = await fetch(`/api/top10?user=${currentUser}`);
             const data = await r.json();
-            
             let topHTML = data.top10.map((u, i) => `
                 <div style="background:#1e293b;padding:15px;margin-bottom:10px;border-radius:12px;display:flex;justify-content:space-between;border-left:5px solid ${i===0?'#fbbf24':i===1?'#94a3b8':i===2?'#b45309':'#334155'};">
                     <span><b>#${i+1}</b> ${u._id}</span>
                     <b style="color:#fbbf24;">${u.totalSpent.toLocaleString()} Ks</b>
                 </div>`).join('');
-                
-            if(data.top10.length === 0) topHTML = "<p style='text-align:center; color:#94a3b8;'>No top users yet.</p>";
-
             document.getElementById('top-list').innerHTML = topHTML + `
                 <div class="my-rank-card">
                     <p style="margin:0; font-size:12px; font-weight:bold;">YOUR CURRENT RANK</p>
@@ -423,43 +404,24 @@ HTML_CODE = '''
         document.getElementById('hist-sec').style.display='block';
         document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
         document.getElementById('nav-hist').classList.add('active');
-
         try {
             const r = await fetch('/api/history');
             const data = await r.json();
             const myHist = data.filter(o => o.tg_user === currentUser);
-            
-            if (myHist.length === 0) {
-                document.getElementById('hist-list').innerHTML = "<p style='text-align:center; color:#94a3b8; padding: 20px 0;'>No order history found.</p>";
-                return;
-            }
-
             document.getElementById('hist-list').innerHTML = myHist.map(o => {
                 let statusColor = o.status === 'Completed' ? '#10b981' : (o.status === 'Rejected' ? '#ef4444' : '#fbbf24');
-                let priceStr = o.price ? o.price.toLocaleString() : "0";
                 return `
                 <div style="background:#1e293b;padding:15px;margin-bottom:10px;border-radius:12px;border-left:5px solid ${statusColor};">
-                    <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
-                        <b>${o.pkg}</b>
-                        <span style="color:${statusColor}; font-weight:bold; font-size:14px;">${o.status}</span>
-                    </div>
-                    <div style="color:#94a3b8; font-size:12px;">ID: ${o.uid} | Price: ${priceStr} Ks</div>
-                    <div style="color:#64748b; font-size:11px; margin-top:5px; text-align:right;">${o.date}</div>
+                    <div style="display:flex; justify-content:space-between;"><b>${o.pkg}</b><span style="color:${statusColor}; font-weight:bold;">${o.status}</span></div>
+                    <div style="color:#94a3b8; font-size:12px;">ID: ${o.uid} | Price: ${o.price.toLocaleString()} Ks</div>
                 </div>`
             }).join('');
-        } catch (error) {
-            document.getElementById('hist-list').innerHTML = "<p style='text-align:center; color:#ef4444;'>Failed to load history.</p>";
-        }
+        } catch (error) { document.getElementById('hist-list').innerHTML = "Failed to load history."; }
     }
 </script>
 
-<a href="https://t.me/Bby_kiwii7" target="_blank" class="cs-float">
-    <span class="cs-badge">Online</span>
-    💬
-</a>
-
-</body>
-</html>
+<a href="https://t.me/Bby_kiwii7" target="_blank" class="cs-float">💬</a>
+</body></html>
 '''
 
 # --- 🚀 BACKEND ---
@@ -474,78 +436,37 @@ def auth():
         data = request.json
         utype, user, psw = data['type'], data['user'], data['pass']
         if utype == 'register':
-            if users_col.find_one({"user": user}): 
-                return jsonify({"success": False, "msg": "User already exists!"})
+            if users_col.find_one({"user": user}): return jsonify({"success": False, "msg": "User already exists!"})
             users_col.insert_one({"user": user, "pass": psw})
             return jsonify({"success": True})
         else:
             u = users_col.find_one({"user": user, "pass": psw})
-            if u:
-                return jsonify({"success": True})
-            return jsonify({"success": False, "msg": "Invalid Username or Password!"})
-    except Exception as e:
-        return jsonify({"success": False, "msg": str(e)})
+            if u: return jsonify({"success": True})
+            return jsonify({"success": False, "msg": "Invalid Login!"})
+    except Exception as e: return jsonify({"success": False, "msg": str(e)})
 
 @app.route('/order', methods=['POST'])
 def order():
     try:
-        tg_user = request.form.get('tg_user')
-        uid = request.form.get('uid')
-        zid = request.form.get('zid')
-        pkg = request.form.get('pkg')
-        srv = request.form.get('srv')
+        tg_user, uid, zid, pkg, srv = request.form.get('tg_user'), request.form.get('uid'), request.form.get('zid'), request.form.get('pkg'), request.form.get('srv')
         photo = request.files.get('photo')
-        price_raw = request.form.get('price', '0').replace(',', '')
-        price = int(price_raw)
-
+        price = int(request.form.get('price', '0').replace(',', ''))
         order_date = datetime.now(timezone(timedelta(hours=6, minutes=30))).strftime("%d/%m/%Y %I:%M %p")
-        
-        oid = orders_col.insert_one({
-            "tg_user": tg_user, "uid": uid, "zone": zid, "pkg": pkg, "srv": srv,
-            "price": price, "status": "Pending", "date": order_date
-        }).inserted_id
-
-        msg = (
-            "🔔 <b>New Order Received!</b>\n"
-            "━━━━━━━━━━━━━━━━━━\n"
-            f"👤 <b>User:</b> <code>{tg_user}</code>\n"
-            f"🌍 <b>Server:</b> <code>{srv}</code>\n"
-            f"🆔 <b>Game ID:</b> <code>{uid} ({zid})</code>\n"
-            f"📦 <b>Package:</b> <code>{pkg}</code>\n"
-            f"💰 <b>Price:</b> <b>{price} Ks</b>\n"
-            "━━━━━━━━━━━━━━━━━━\n"
-            "⚡ <b>Action:</b>"
-        )
-
-        reply_markup = {
-            "inline_keyboard": [[
-                {"text": "✅ Done", "callback_data": f"st_Completed_{str(oid)}"},
-                {"text": "❌ Reject", "callback_data": f"st_Rejected_{str(oid)}"}
-            ]]
-            }
-        
-        requests.post(
-            f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto",
-            data={"chat_id": CHAT_ID, "caption": msg, "parse_mode": "HTML", "reply_markup": json.dumps(reply_markup)},
-            files={"photo": photo}
-        )
+        oid = orders_col.insert_one({"tg_user": tg_user, "uid": uid, "zone": zid, "pkg": pkg, "srv": srv, "price": price, "status": "Pending", "date": order_date}).inserted_id
+        msg = f"🔔 <b>New Order!</b>\n👤 <code>{tg_user}</code>\n🌍 <code>{srv}</code>\n🆔 <code>{uid} ({zid})</code>\n📦 <code>{pkg}</code>\n💰 <b>{price} Ks</b>"
+        reply_markup = {"inline_keyboard": [[{"text": "✅ Done", "callback_data": f"st_Completed_{str(oid)}"},{"text": "❌ Reject", "callback_data": f"st_Rejected_{str(oid)}"}]]}
+        requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto", data={"chat_id": CHAT_ID, "caption": msg, "parse_mode": "HTML", "reply_markup": json.dumps(reply_markup)}, files={"photo": photo})
         return "Success"
-    except Exception as e:
-        return f"Error: {str(e)}", 500
+    except Exception as e: return str(e), 500
 
 @app.route('/webhook/telegram', methods=['POST'])
 def telegram_webhook():
     data = request.json
     if "callback_query" in data:
         cb = data["callback_query"]
-        action_data = cb["data"] 
-        _, new_status, order_id = action_data.split("_")
+        _, new_status, order_id = cb["data"].split("_")
         orders_col.update_one({"_id": ObjectId(order_id)}, {"$set": {"status": new_status}})
-        new_caption = cb["message"]["caption"] + f"\n\n📢 <b>Status: {new_status}</b>"
-        requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/editMessageCaption", json={
-            "chat_id": CHAT_ID, "message_id": cb["message"]["message_id"],
-            "caption": new_caption, "parse_mode": "HTML"
-        })
+        requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/editMessageCaption", json={"chat_id": CHAT_ID, "message_id": cb["message"]["message_id"], "caption": cb["message"]["caption"] + f"\n📢 <b>Status: {new_status}</b>", "parse_mode": "HTML"})
     return "OK", 200
 
 @app.route('/api/history')
@@ -558,34 +479,13 @@ def history():
 def top10():
     try:
         current_user = request.args.get('user')
-        pipeline = [
-            {"$match": {"status": "Completed", "tg_user": {"$nin": ["@Escanor_XX", "@Escanor_X", "@Bby_kiwii7"]}}},
-            {"$group": {"_id": "$tg_user", "totalSpent": {"$sum": "$price"}}},
-            {"$sort": {"totalSpent": -1}}, 
-            {"$limit": 10}
-        ]
+        pipeline = [{"$match": {"status": "Completed", "tg_user": {"$nin": ADMIN_USERNAMES}}}, {"$group": {"_id": "$tg_user", "totalSpent": {"$sum": "$price"}}}, {"$sort": {"totalSpent": -1}}, {"$limit": 10}]
         all_ranks = list(orders_col.aggregate(pipeline))
         user_rank, user_spent = "N/A", 0
         for i, u in enumerate(all_ranks):
-            if u['_id'] == current_user:
-                user_rank, user_spent = i + 1, u['totalSpent']
-                break
+            if u['_id'] == current_user: user_rank, user_spent = i + 1, u['totalSpent']; break
         return jsonify({"top10": all_ranks, "userRank": user_rank, "userSpent": user_spent})
-    except Exception as e:
-        return jsonify({"top10": [], "userRank": "N/A", "userSpent": 0, "error": str(e)})
-
-@app.route('/admin/users')
-def view_users():
-    auth = request.authorization
-    if not auth or not (auth.username == "admin" and auth.password == "Kiwii123"):
-        return make_response('Verify!', 401, {'WWW-Authenticate': 'Basic realm="Login Required"'})
-    all_users = list(users_col.find({}, {"_id": 0}))
-    
-    html_table = "<h2>Registered Users</h2><table border='1'><tr><th>User</th><th>Pass</th></tr>"
-    for u in all_users:
-        html_table += f"<tr><td>{u.get('user')}</td><td>{u.get('pass')}</td></tr>"
-    html_table += "</table>"
-    return html_table
+    except: return jsonify({"top10": [], "userRank": "N/A", "userSpent": 0})
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
