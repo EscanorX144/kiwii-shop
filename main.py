@@ -162,18 +162,18 @@ HTML_CODE = '''
 }
 
     /* Personal Rank Style */
-    .my-rank-card { margin-top:20px; padding:15px; background:linear-gradient(135deg, #fbbf24, #f59e0b); color:black; border-radius:12px; text-align:center; box-shadow: 0 4px 15px rgba(251, 191, 36, 0.3); }
-/* Personal Rank Style */
-.my-rank-card {
-    margin: 20px auto; 
-    width: calc(100% - 40px); 
-    max-width: 460px; 
-    padding: 20px;
+    .my-rank-card {
+    margin: 15px auto; 
+    width: calc(100% - 30px); 
+    max-width: 470px; 
+    padding: 15px; 
     background: linear-gradient(135deg, #fbbf24, #f59e0b);
-    border-radius: 15px;
+    border-radius: 12px; 
     color: black;
     text-align: center;
-    box-shadow: 0 0 20px rgba(251, 191, 36, 0.6); 
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); 
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
     animation: rank-glow 2s infinite alternate; 
 }
 
@@ -425,14 +425,14 @@ async function showTop() {
         </div>`).join('') || "No data";
 
             let personalHtml = `
-            <div class="my-rank-card">
-                <p style="margin:0; font-size:14px; font-weight:bold; opacity:0.8;">MY CURRENT STATUS</p>
-                <div style="font-size:24px; font-weight:bold; margin:10px 0;">
-                    👤 ${currentUser}
-                </div>
-                <div style="font-size:20px; font-weight:bold;">Rank: #${data.userRank || 'N/A'}</div>
-                <p style="margin:5px 0 0; font-size:14px;">Total Spent: ${data.userSpent.toLocaleString()} Ks</p>
-            </div>`;
+    <div class="my-rank-card">
+        <p style="margin:0; font-size:12px; font-weight:bold; text-transform:uppercase; opacity:0.7;">My Current Status</p>
+        <div style="font-size:20px; font-weight:bold; margin:8px 0; display:flex; align-items:center; justify-content:center; gap:8px;">
+            <span style="font-size:24px;">👤</span> ${currentUser}
+        </div>
+        <div style="font-size:18px; font-weight:bold;">Rank: #${data.userRank || 'N/A'}</div>
+        <p style="margin:5px 0 0; font-size:13px; font-weight:500;">Total Spent: ${data.userSpent.toLocaleString()} Ks</p>
+    </div>`;
 
     document.getElementById('top-list').innerHTML = topHtml + personalHtml;
 }
