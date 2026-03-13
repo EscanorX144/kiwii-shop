@@ -104,8 +104,7 @@ HTML_CODE = '''
     .game-grid { display:grid; grid-template-columns:1fr 1fr; gap:15px; padding:20px; }
     .game-card { background:rgba(30, 41, 59, 0.85); border-radius:15px; padding:20px; text-align:center; border:1px solid #334155; cursor:pointer; }
     
-    /* Category Tabs Styling */
-    .cat-tabs { display:flex; gap:10px; overflow-x:auto; padding:10px 0; margin-bottom:15px; scrollbar-width: none; -ms-overflow-style: none; }
+    .cat-tabs { display:flex; gap:10px; overflow-x:auto; padding:10px 0; margin-bottom:15px; scrollbar-width: none; }
     .cat-tabs::-webkit-scrollbar { display: none; }
     .tab-btn { background:#1e293b; border:1px solid #334155; color:#94a3b8; padding:10px 15px; border-radius:10px; white-space:nowrap; cursor:pointer; font-size:14px; }
     .tab-btn.active { background:#fbbf24; color:black; border-color:#fbbf24; font-weight:bold; }
@@ -114,6 +113,31 @@ HTML_CODE = '''
     .pkg-card { background:#1e293b; border:1px solid #334155; padding:15px; border-radius:12px; text-align:center; cursor:pointer; }
     .pkg-card.selected { border:2px solid #fbbf24; background:#1e3a8a; }
     
+    /* --- Payment Section Styling --- */
+    .pay-box { background:#1e293b; padding:20px; border-radius:15px; border:1px solid #fbbf24; text-align:center; margin-bottom:15px; }
+    .pay-icons { display:flex; justify-content:center; gap:15px; margin-bottom:15px; }
+    .pay-icons img { width:55px; height:55px; border-radius:12px; cursor:pointer; border:2px solid transparent; transition: 0.3s; }
+    .pay-icons img:active { transform: scale(0.9); }
+    
+    .copy-btn { background:#fbbf24; color:black; border:none; padding:6px 12px; border-radius:8px; font-size:12px; font-weight:bold; cursor:pointer; margin-left:10px; vertical-align: middle; }
+    
+    /* Blinking Red Glow Box */
+    .note-box { 
+        background: rgba(239, 68, 68, 0.1); 
+        border: 2px solid #ef4444; 
+        color: #ef4444; 
+        padding: 10px; 
+        border-radius: 10px; 
+        font-weight: bold; 
+        margin-top: 15px;
+        animation: blink-glow 1.5s infinite;
+    }
+    @keyframes blink-glow {
+        0% { box-shadow: 0 0 5px #ef4444; opacity: 1; }
+        50% { box-shadow: 0 0 20px #ef4444; opacity: 0.8; }
+        100% { box-shadow: 0 0 5px #ef4444; opacity: 1; }
+    }
+
     .nav-bar { position:fixed; bottom:0; width:100%; max-width:500px; background:#1e293b; display:flex; padding:12px 0; border-top:1px solid #334155; z-index:1000; }
     .nav-item { flex:1; text-align:center; color:#94a3b8; cursor:pointer; font-size:12px; }
     .nav-item.active { color:#fbbf24; }
@@ -134,9 +158,22 @@ HTML_CODE = '''
         <div id="cat-container" class="cat-tabs"></div>
         <div id="p-list" class="pkg-grid"></div>
 
-        <div style="background:#1e293b; padding:20px; border-radius:15px; border:1px solid #fbbf24; text-align:center; margin-bottom:15px;">
-            <b style="color:#fbbf24; font-size:22px;">09775394979</b><br>
-            <small>Thansin Kyaw (Kpay/Wave)</small>
+        <div class="pay-box">
+            <div class="pay-icons">
+                <img src="/static/kpay.jpg" onclick="setPay('09775394979', 'Kpay')">
+                <img src="/static/wave.jpg" onclick="setPay('09775394979', 'Wave')">
+                <img src="/static/ayapay.jpg" onclick="setPay('09775394979', 'Ayapay')">
+            </div>
+            <div style="margin-bottom:10px;">
+                <b id="pay-type" style="color:#fbbf24; font-size:14px;">Select Payment</b><br>
+                <span id="pay-num" style="font-size:24px; font-weight:bold; color:white;">09775394979</span>
+                <button class="copy-btn" onclick="copyNum()">COPY</button>
+            </div>
+            <div style="color:#94a3b8; font-size:14px;">Name - Thansin Kyaw</div>
+            
+            <div class="note-box">
+                Note - Payment သာရေးပါ
+            </div>
         </div>
 
         <form id="orderForm" onsubmit="handleOrder(event)">
@@ -168,7 +205,6 @@ HTML_CODE = '''
 <script>
 let sel_srv='', sel_pkg='', sel_prc='';
 const games = {{ games | tojson }};
-const CURRENT_LOGIN_USER = "@Bby_kiwii7";
 
 function init() {
     document.getElementById('g-list').innerHTML = games.map(g => `
@@ -209,6 +245,25 @@ function selP(el, d, p) {
     el.classList.add('selected'); sel_pkg=d; sel_prc=p;
 }
 
+// Payment Functions
+function setPay(num, type) {
+    document.getElementById('pay-num').innerText = num;
+    document.getElementById('pay-type').innerText = type + " Account";
+}
+
+function copyNum() {
+    const num = document.getElementById('pay-num').innerText;
+    navigator.clipboard.writeText(num).then(() => {
+        const btn = document.querySelector('.copy-btn');
+        btn.innerText = "COPIED!";
+        btn.style.background = "#22c55e";
+        setTimeout(() => { 
+            btn.innerText = "COPY"; 
+            btn.style.background = "#fbbf24";
+        }, 2000);
+    });
+}
+
 async function handleOrder(e) {
     e.preventDefault();
     if(!sel_pkg) return alert("Package ရွေးပေးပါ။");
@@ -216,7 +271,7 @@ async function handleOrder(e) {
     btn.innerText = "SENDING..."; btn.disabled = true;
 
     const fd = new FormData();
-    fd.append('tg_user', CURRENT_LOGIN_USER);
+    fd.append('tg_user', "@Bby_kiwii7"); // Fixed user for now
     fd.append('uid', document.getElementById('uid').value);
     fd.append('zid', document.getElementById('zid').value);
     fd.append('server', games.find(i=>i.id===sel_srv).name);
@@ -229,9 +284,7 @@ async function handleOrder(e) {
         if(await r.text() === "Success") {
             alert("Order Successful!");
             location.reload();
-        } else {
-            alert("Order Failed.");
-        }
+        } else { alert("Order Failed."); }
     } catch(err) { alert("Error: " + err); }
     btn.innerText = "PLACE ORDER"; btn.disabled = false;
 }
