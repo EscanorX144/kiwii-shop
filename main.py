@@ -354,6 +354,7 @@ def auth():
         return jsonify({"success": True if u else False, "msg": "Invalid Login"})
 
 @app.route('/order', methods=['POST'])
+@app.route('/order', methods=['POST'])
 def order():
     try:
         tg_user = request.form.get('tg_user')
@@ -362,19 +363,35 @@ def order():
         pkg = request.form.get('pkg')
         srv = request.form.get('server')
         photo = request.files.get('photo')
-        price = int(request.form.get('price', '0').replace(',', ''))
+        
+        raw_price = request.form.get('price', '0')
+        price_str = str(raw_price).replace(' Ks', '').replace(',', '').strip()
+        price = int(price_str) if price_str.isdigit() else 0
         
         order_date = datetime.now(timezone(timedelta(hours=6, minutes=30))).strftime("%d/%m/%Y %I:%M %p")
+
         oid = orders_col.insert_one({
             "tg_user": tg_user, "uid": uid, "zone": zid, "pkg": pkg, "srv": srv, 
             "price": price, "status": "Pending", "date": order_date
         }).inserted_id
+        
+        base_url = "https://kiwiigameshop.onrender.com"
+        keyboard = {"inline_keyboard": [[
+            {"text": "Done ✅", "url": f"{base_url}/admin/status/done/{oid}"},
+            {"text": "Reject ❌", "url": f"{base_url}/admin/status/reject/{oid}"}
+        ]]}
 
-        msg = f"<b>🔔 New Order!</b>\\n👤 User: {tg_user}\\n🌍 Server: {srv}\\n🆔 ID: {uid} ({zid})\\n📦 Pkg: {pkg}\\n💰 Price: {price} Ks"
-        requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto", data={"chat_id": CHAT_ID, "caption": msg, "parse_mode": "HTML"}, files={"photo": photo})
-        return "Success"
-    except: return "Error", 500
-
+        msg = (
+            f"<b>🔔 New Order!</b>\\n"
+            f"━━━━━━━━━━━━━━━\\n"
+            f"<b>👤 User:</b> {tg_user}\\n"
+            f"<b>🌍 Server:</b> {srv}\\n"
+            f"<b>🆔 ID:</b> {uid} ({zid})\\n"
+            f"<b>📦 Pkg:</b> {pkg}\\n"
+            f"<b>💰 Price:</b> {price} Ks\\n"
+            f"<b>📅 Date:</b> {order_date}"
+        )
+        
 @app.route('/api/history')
 def history():
     hist = list(orders_col.find().sort("_id", -1).limit(30))
