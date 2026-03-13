@@ -302,14 +302,32 @@ async function showTop() {
 }
 
 async function showH() {
-    document.getElementById('h-sec').style.display='none'; document.getElementById('o-sec').style.display='none';
-    document.getElementById('top-sec').style.display='none'; document.getElementById('hist-sec').style.display='block';
+    document.getElementById('h-sec').style.display='none'; 
+    document.getElementById('o-sec').style.display='none';
+    document.getElementById('top-sec').style.display='none'; 
+    document.getElementById('hist-sec').style.display='block';
+    
     const r = await fetch('/api/history');
     const data = await r.json();
-    document.getElementById('hist-list').innerHTML = data.map(o => `
-        <div style="background:#1e293b;padding:15px;margin-bottom:10px;border-radius:12px;border-left:5px solid #fbbf24;">
-            <b>${o.pkg}</b> - ${o.price} Ks<br><small>${o.status} | ${o.date}</small>
-        </div>`).join('') || "No history";
+    
+    document.getElementById('hist-list').innerHTML = data.map(o => {
+        // Status အလိုက် အရောင်သတ်မှတ်ခြင်း
+        let statusColor = '#fbbf24'; // Default အဝါ (Pending)
+        if (o.status === 'Completed') statusColor = '#22c55e'; // အစိမ်း
+        if (o.status === 'Rejected') statusColor = '#ef4444';  // အနီ
+
+        return `
+            <div style="background:#1e293b; padding:15px; margin-bottom:10px; border-radius:12px; border-left:5px solid ${statusColor};">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <b>${o.pkg}</b>
+                    <span style="color:${statusColor}; font-weight:bold; font-size:13px;">${o.status}</span>
+                </div>
+                <div style="margin-top:5px;">
+                    <span>${o.price} Ks</span><br>
+                    <small style="color:#94a3b8;">${o.date}</small>
+                </div>
+            </div>`;
+    }).join('') || '<div style="text-align:center; padding:20px; color:#94a3b8;">No history found.</div>';
 }
 function goH() { location.reload(); }
 </script></body></html>
