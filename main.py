@@ -101,51 +101,29 @@ HTML_CODE = '''
     body { background:#0f172a; color:white; font-family:sans-serif; margin:0; padding-bottom:80px; }
     #main-container { max-width:500px; margin:auto; }
     .header-logo { text-align:center; padding:25px 0; color:#fbbf24; font-size:26px; font-weight:bold; }
-    
-    /* Auth UI */
     .auth-box { padding: 40px 20px; text-align: center; }
-    .auth-box h2 { color: #fbbf24; margin-bottom: 20px; }
-    .auth-input { width:100%; padding:15px; margin:10px 0; border-radius:12px; background:#1e293b; color:white; border:1px solid #334155; box-sizing:border-box; }
-    .auth-btn { width:100%; padding:16px; background:#fbbf24; border:none; border-radius:12px; font-weight:bold; color:black; cursor:pointer; }
+    .auth-input { width:100%%; padding:15px; margin:10px 0; border-radius:12px; background:#1e293b; color:white; border:1px solid #334155; box-sizing:border-box; }
+    .auth-btn { width:100%%; padding:16px; background:#fbbf24; border:none; border-radius:12px; font-weight:bold; color:black; cursor:pointer; }
     .auth-toggle { margin-top:20px; color:#94a3b8; font-size:14px; cursor:pointer; text-decoration: underline; }
-
-    /* App UI */
     .user-banner { background:#1e293b; padding:12px 20px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #334155; }
-    .logout-btn { color:#ef4444; font-weight:bold; cursor:pointer; font-size:13px; }
-    
     .game-grid { display:grid; grid-template-columns:1fr 1fr; gap:15px; padding:20px; }
     .game-card { background:rgba(30, 41, 59, 0.85); border-radius:15px; padding:20px; text-align:center; border:1px solid #334155; cursor:pointer; }
-    
     .cat-tabs { display:flex; gap:10px; overflow-x:auto; padding:10px 0; margin-bottom:15px; scrollbar-width: none; }
     .tab-btn { background:#1e293b; border:1px solid #334155; color:#94a3b8; padding:10px 15px; border-radius:10px; white-space:nowrap; cursor:pointer; font-size:14px; }
     .tab-btn.active { background:#fbbf24; color:black; font-weight:bold; }
-
     .pkg-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:15px 0; }
     .pkg-card { background:#1e293b; border:1px solid #334155; padding:15px; border-radius:12px; text-align:center; cursor:pointer; }
     .pkg-card.selected { border:2px solid #fbbf24; background:#1e3a8a; }
-    
     .pay-box { background: #1e293b; padding: 20px; border-radius: 20px; border: 1.5px solid #fbbf24; text-align: center; margin-bottom: 20px; }
     .pay-icons { display: flex; justify-content: center; gap: 15px; margin-bottom: 15px; }
     .pay-icons img { width: 55px; height: 55px; border-radius: 12px; cursor: pointer; opacity: 0.6; }
     .pay-icons img.active { border: 2px solid #fbbf24; opacity: 1; transform: scale(1.1); }
-    
-    .buy-btn { width:100%; padding:16px; background:#fbbf24; border:none; border-radius:12px; font-weight:bold; color:black; cursor:pointer; margin-top:10px; }
-    .nav-bar { position:fixed; bottom:0; width:100%; max-width:500px; background:#1e293b; display:flex; padding:12px 0; border-top:1px solid #334155; z-index:1000; }
+    .buy-btn { width:100%%; padding:16px; background:#fbbf24; border:none; border-radius:12px; font-weight:bold; color:black; cursor:pointer; margin-top:10px; }
+    .nav-bar { position:fixed; bottom:0; width:100%%; max-width:500px; background:#1e293b; display:flex; padding:12px 0; border-top:1px solid #334155; z-index:1000; }
     .nav-item { flex:1; text-align:center; color:#94a3b8; cursor:pointer; font-size:12px; }
     .nav-item.active { color:#fbbf24; font-weight:bold; }
-
-    .glow-note {
-        color: #ff4444; font-weight: bold; text-align: center; margin: 10px 0; padding: 10px;
-        border: 1.5px solid #ff4444; border-radius: 12px; background: rgba(239, 68, 68, 0.1);
-        animation: blink 1.5s infinite;
-    }
-    @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
-
-    .my-rank-card {
-        margin: 15px auto; width: calc(100% - 30px); max-width: 470px; padding: 15px; 
-        background: linear-gradient(135deg, #fbbf24, #f59e0b); border-radius: 12px; 
-        color: black; text-align: center; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    }
+    .my-rank-card { margin: 15px auto; width: calc(100%% - 30px); padding: 15px; background: linear-gradient(135deg, #fbbf24, #f59e0b); border-radius: 12px; color: black; text-align: center; }
+    @keyframes blink { 0%% { opacity: 1; } 50%% { opacity: 0.7; } 100%% { opacity: 1; } }
 </style>
 </head><body>
 <div id="main-container">
@@ -153,15 +131,14 @@ HTML_CODE = '''
         <div class="header-logo">KIWII GAME STORE</div>
         <div id="login-form">
             <h2>LOGIN</h2>
-            <input type="text" id="l-user" class="auth-input" placeholder="Telegram Username (e.g. @kiwii)">
+            <input type="text" id="l-user" class="auth-input" placeholder="Telegram Username (@kiwii)">
             <input type="password" id="l-pass" class="auth-input" placeholder="Password">
             <button class="auth-btn" onclick="handleAuth('login')">LOGIN</button>
             <div class="auth-toggle" onclick="toggleAuth()">No account? Register here</div>
         </div>
         <div id="reg-form" style="display:none;">
             <h2>REGISTER</h2>
-            <p style="color:#94a3b8; font-size:13px; margin-bottom:10px;">Telegram Username ( Eg. @Bby_kiwii7 )</p>
-            <input type="text" id="r-user" class="auth-input" placeholder="Username (must start with @)">
+            <input type="text" id="r-user" class="auth-input" placeholder="Username (@Bby_kiwii7)">
             <input type="password" id="r-pass" class="auth-input" placeholder="Create Password">
             <button class="auth-btn" onclick="handleAuth('register')">CREATE ACCOUNT</button>
             <div class="auth-toggle" onclick="toggleAuth()">Already have an account? Login</div>
@@ -171,32 +148,28 @@ HTML_CODE = '''
     <div id="app-sec" style="display:none;">
         <div class="user-banner">
             <span>👤 <b id="display-user"></b></span>
-            <span class="logout-btn" onclick="logout()">LOGOUT <i class="fas fa-sign-out-alt"></i></span>
+            <span onclick="logout()" style="color:#ef4444; font-weight:bold; cursor:pointer;">LOGOUT <i class="fas fa-sign-out-alt"></i></span>
         </div>
-
         <div id="h-sec">
             <div class="header-logo">KIWII GAME STORE</div>
             <div class="game-grid" id="g-list"></div>
         </div>
-
         <div id="o-sec" style="display:none; padding:15px;">
             <button onclick="goH()" style="background:none;color:white;border:1px solid #334155;padding:8px 15px;border-radius:8px;margin-bottom:15px;">← Back</button>
             <h2 id="g-title" style="color:#fbbf24;"></h2>
             <div id="cat-container" class="cat-tabs"></div>
             <div id="p-list" class="pkg-grid"></div>
-
+            
             <div class="pay-box">
                 <div class="pay-icons">
                     <img src="/static/kpay.jpg" class="active" onclick="setPay(this, '09775394979', 'Kpay')">
                     <img src="/static/wave.jpg" onclick="setPay(this, '09775394979', 'Wave')">
-                    <img src="/static/ayapay.jpg" onclick="setPay(this, '09775394979', 'Aya')">
                 </div>
                 <div style="margin-top:10px;">
                     <b id="pay-type">KPAY ACCOUNT</b><br>
                     <span id="pay-num" style="font-size:20px;">09775394979</span><br>
-                    <b style="color: #fbbf24;">Name - Thansin Kyaw</b> 
+                    <b style="color: #fbbf24;">Name - Thansin Kyaw</b>
                 </div>
-                <div class="glow-note">Note - Payment သာရေးပါ</div>
             </div>
 
             <form id="orderForm" onsubmit="handleOrder(event)">
@@ -206,15 +179,12 @@ HTML_CODE = '''
                 <button type="submit" class="buy-btn" id="submitBtn">PLACE ORDER</button>
             </form>
         </div>
-
-        <div id="top-sec" style="display:none; padding:15px;"><h3 style="color:#fbbf24; text-align:center;">🏆 TOP 10 USERS</h3><div id="top-list"></div></div>
-        <div id="hist-sec" style="display:none; padding:15px;"><h3 style="color:#fbbf24;">History</h3><div id="hist-list"></div></div>
-
+        <div id="top-sec" style="display:none; padding:15px;"><h3>🏆 TOP 10 USERS</h3><div id="top-list"></div></div>
+        <div id="hist-sec" style="display:none; padding:15px;"><h3>History</h3><div id="hist-list"></div></div>
         <div class="nav-bar">
             <div class="nav-item active" id="nav-home" onclick="goH()"><i class="fas fa-home"></i><br>Home</div>
             <div class="nav-item" id="nav-hist" onclick="showH()"><i class="fas fa-history"></i><br>History</div>
             <div class="nav-item" id="nav-top" onclick="showTop()"><i class="fas fa-trophy"></i><br>Top 10</div>
-            <div class="nav-item" onclick="window.open('{{ cs_link }}')"><i class="fas fa-headset"></i><br>CS</div>
         </div>
     </div>
 </div>
@@ -241,30 +211,19 @@ HTML_CODE = '''
     }
 
     async function handleAuth(type) {
-        const user = document.getElementById(type === 'login' ? 'l-user' : 'r-user').value.trim();
-        const pass = document.getElementById(type === 'login' ? 'l-pass' : 'r-pass').value;
-        if (!user || !pass) return alert("Please fill all fields");
-        if (!user.startsWith('@')) return alert("Username must start with @");
-
+        const user = document.getElementById(type==='login'?'l-user':'r-user').value.trim();
+        const pass = document.getElementById(type==='login'?'l-pass':'r-pass').value;
+        if(!user || !pass) return alert("Please fill all fields");
         const r = await fetch('/api/auth', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ type, user, pass })
+            method:'POST', headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({type, user, pass})
         });
-
         const res = await r.json();
-        if (res.success) {
-            localStorage.setItem('user', user);
-            location.reload();
-        } else {
-            alert(res.msg);
-        }
+        if(res.success) { localStorage.setItem('user', user); location.reload(); }
+        else alert(res.msg);
     }
 
-    function logout() {
-        localStorage.removeItem('user');
-        location.reload();
-    }
+    function logout() { localStorage.removeItem('user'); location.reload(); }
 
     function init() {
         document.getElementById('g-list').innerHTML = games.map(g => `
@@ -275,8 +234,7 @@ HTML_CODE = '''
     }
 
     function selG(id) {
-        const g = games.find(i => i.id === id);
-        sel_srv = id;
+        const g = games.find(i => i.id === id); sel_srv = id;
         document.getElementById('h-sec').style.display='none';
         document.getElementById('o-sec').style.display='block';
         document.getElementById('g-title').innerText = g.name;
@@ -307,35 +265,21 @@ HTML_CODE = '''
 
     async function handleOrder(e) {
         e.preventDefault();
-        if(!sel_pkg) return alert("Package ရွေးပေးပါ။");
-        const uid = document.getElementById('uid').value;
-        const zid = document.getElementById('zid').value;
-        const photoInput = document.getElementById('photo');
-
-        if(!confirm(`Game ID: ${uid}\\nZone ID: ${zid}\\nPackage: ${sel_pkg}\\nConfirm Order?`)) return;
-
-        const btn = document.getElementById('submitBtn');
-        btn.innerText = "SENDING..."; btn.disabled = true;
-
+        if(!sel_pkg) return alert("Please select a package");
         const fd = new FormData();
         fd.append('tg_user', currentUser);
-        fd.append('uid', uid);
-        fd.append('zid', zid);
+        fd.append('uid', document.getElementById('uid').value);
+        fd.append('zid', document.getElementById('zid').value);
         fd.append('server', games.find(i => i.id === sel_srv).name);
         fd.append('pkg', sel_pkg);
         fd.append('price', sel_prc);
-        fd.append('photo', photoInput.files[0]);
+        fd.append('photo', document.getElementById('photo').files[0]);
 
         try {
-            const r = await fetch('/order', { method: 'POST', body: fd });
-            if(await r.text() === "Success") {
-                alert("Order Success!"); location.reload();
-            } else {
-                alert("Order Failed"); btn.innerText = "PLACE ORDER"; btn.disabled = false;
-            }
-        } catch(err) {
-            alert("Error: " + err.message); btn.innerText = "PLACE ORDER"; btn.disabled = false;
-        }
+            const r = await fetch('/order', { method:'POST', body:fd });
+            if(await r.text() === "Success") { alert("Order Success!"); location.reload(); }
+            else { alert("Failed"); }
+        } catch(err) { alert("Error"); }
     }
 
     function goH() {
@@ -343,54 +287,32 @@ HTML_CODE = '''
         document.getElementById('o-sec').style.display='none';
         document.getElementById('top-sec').style.display='none';
         document.getElementById('hist-sec').style.display='none';
-        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-        document.getElementById('nav-home').classList.add('active');
     }
 
     async function showTop() {
         document.getElementById('h-sec').style.display='none';
-        document.getElementById('o-sec').style.display='none';
-        document.getElementById('hist-sec').style.display='none';
         document.getElementById('top-sec').style.display='block';
-        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-        document.getElementById('nav-top').classList.add('active');
-
         const r = await fetch(`/api/top10?user=${currentUser}`);
         const data = await r.json();
-        
-        let topHtml = data.top10.map((u, i) => `
-            <div style="background:#1e293b;padding:15px;margin-bottom:10px;border-radius:12px;display:flex;justify-content:space-between;align-items:center;">
-                <span><b style="color:#fbbf24;">#${i+1}</b> ${u._id}</span>
-                <b style="color:#fbbf24;">${u.totalSpent.toLocaleString()} Ks</b>
-            </div>`).join('') || "No data";
-
-        let personalHtml = `
+        document.getElementById('top-list').innerHTML = data.top10.map((u, i) => `
+            <div style="background:#1e293b;padding:15px;margin-bottom:10px;border-radius:12px;display:flex;justify-content:space-between;">
+                <span>#${i+1} ${u._id}</span><b>${u.totalSpent.toLocaleString()} Ks</b>
+            </div>`).join('') + `
             <div class="my-rank-card">
-                <p style="margin:0; font-size:12px; font-weight:bold; text-transform:uppercase; opacity:0.7;">My Current Status</p>
-                <div style="font-size:18px; font-weight:bold; margin:8px 0;">Rank: #${data.userRank || 'N/A'}</div>
-                <p style="margin:0; font-size:13px;">Total Spent: ${data.userSpent.toLocaleString()} Ks</p>
+                <p>MY RANK: #${data.userRank}</p>
+                <h3>${data.userSpent.toLocaleString()} Ks</h3>
             </div>`;
-
-        document.getElementById('top-list').innerHTML = topHtml + personalHtml;
     }
 
     async function showH() {
         document.getElementById('h-sec').style.display='none';
-        document.getElementById('o-sec').style.display='none';
-        document.getElementById('top-sec').style.display='none';
         document.getElementById('hist-sec').style.display='block';
-        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-        document.getElementById('nav-hist').classList.add('active');
-
         const r = await fetch('/api/history');
         const data = await r.json();
         document.getElementById('hist-list').innerHTML = data.filter(o => o.tg_user === currentUser).map(o => `
-            <div style="background:#1e293b; padding:15px; margin-bottom:10px; border-radius:12px; border-left:5px solid #fbbf24;">
-                <div style="display:flex; justify-content:space-between;">
-                    <b>${o.pkg}</b>
-                    <span style="color:#fbbf24; font-weight:bold;">${o.status}</span>
-                </div>
-                <small style="color:#94a3b8;">${o.date}</small>
+            <div style="background:#1e293b;padding:15px;margin-bottom:10px;border-radius:12px;">
+                <b>${o.pkg}</b> - <span style="color:#fbbf24">${o.status}</span><br>
+                <small>${o.date}</small>
             </div>`).join('') || "No history";
     }
 </script>
@@ -401,21 +323,19 @@ HTML_CODE = '''
 
 @app.route('/')
 def index():
-    return render_template_string(HTML_CODE, games=GAMES_DATA, cs_link=CS_TELEGRAM)
+    return render_template_string(HTML_CODE)
 
 @app.route('/api/auth', methods=['POST'])
 def auth():
     data = request.json
     utype, user, psw = data['type'], data['user'], data['pass']
     if utype == 'register':
-        if users_col.find_one({"user": user}):
-            return jsonify({"success": False, "msg": "Username already exists"})
-        users_col.insert_one({"user": user, "pass": psw, "date": datetime.now().strftime("%d/%m/%Y")})
+        if users_col.find_one({"user": user}): return jsonify({"success": False, "msg": "User exists"})
+        users_col.insert_one({"user": user, "pass": psw})
         return jsonify({"success": True})
     else:
         u = users_col.find_one({"user": user, "pass": psw})
-        if u: return jsonify({"success": True})
-        return jsonify({"success": False, "msg": "Invalid Credentials"})
+        return jsonify({"success": True if u else False, "msg": "Invalid Login"})
 
 @app.route('/order', methods=['POST'])
 def order():
@@ -426,47 +346,18 @@ def order():
         pkg = request.form.get('pkg')
         srv = request.form.get('server')
         photo = request.files.get('photo')
-        
-        raw_price = request.form.get('price', '0')
-        price_str = str(raw_price).replace(' Ks', '').replace(',', '').strip()
-        price = int(price_str) if price_str.isdigit() else 0
+        price = int(request.form.get('price', '0').replace(',', ''))
         
         order_date = datetime.now(timezone(timedelta(hours=6, minutes=30))).strftime("%d/%m/%Y %I:%M %p")
-
         oid = orders_col.insert_one({
             "tg_user": tg_user, "uid": uid, "zone": zid, "pkg": pkg, "srv": srv, 
             "price": price, "status": "Pending", "date": order_date
         }).inserted_id
-        
-        base_url = "https://kiwiigameshop.onrender.com"
-        keyboard = {"inline_keyboard": [[
-            {"text": "Done ✅", "url": f"{base_url}/admin/status/done/{oid}"},
-            {"text": "Reject ❌", "url": f"{base_url}/admin/status/reject/{oid}"}
-        ]]}
 
-        msg = (
-            f"<b>🔔 New Order!</b>\\n"
-            f"━━━━━━━━━━━━━━━\\n"
-            f"<b>👤 User:</b> {tg_user}\\n"
-            f"<b>🌍 Server:</b> {srv}\\n"
-            f"<b>🆔 ID:</b> {uid} ({zid})\\n"
-            f"<b>📦 Pkg:</b> {pkg}\\n"
-            f"<b>💰 Price:</b> {price} Ks\\n"
-            f"<b>📅 Date:</b> {order_date}"
-        )
-        
-        requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto", 
-            data={"chat_id": CHAT_ID, "caption": msg, "parse_mode": "HTML", "reply_markup": json.dumps(keyboard)}, 
-            files={"photo": photo})
+        msg = f"<b>🔔 New Order!</b>\\n👤 User: {tg_user}\\n🌍 Server: {srv}\\n🆔 ID: {uid} ({zid})\\n📦 Pkg: {pkg}\\n💰 Price: {price} Ks"
+        requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto", data={"chat_id": CHAT_ID, "caption": msg, "parse_mode": "HTML"}, files={"photo": photo})
         return "Success"
-    except Exception as e:
-        return str(e), 500
-
-@app.route('/admin/status/<action>/<oid>')
-def update_status(action, oid):
-    new_status = "Completed" if action == "done" else "Rejected"
-    orders_col.update_one({"_id": ObjectId(oid)}, {"$set": {"status": new_status}})
-    return f"<html><body style='background:#0f172a;color:white;text-align:center;padding:50px;'><h1>Order {new_status}!</h1></body></html>"
+    except: return "Error", 500
 
 @app.route('/api/history')
 def history():
@@ -477,11 +368,7 @@ def history():
 @app.route('/api/top10')
 def top10():
     current_user = request.args.get('user')
-    pipeline = [
-        {"$match": {"status": "Completed"}},
-        {"$group": {"_id": "$tg_user", "totalSpent": {"$sum": "$price"}}},
-        {"$sort": {"totalSpent": -1}}
-    ]
+    pipeline = [{"$match": {"status": "Completed"}},{"$group": {"_id": "$tg_user", "totalSpent": {"$sum": "$price"}}}, {"$sort": {"totalSpent": -1}}]
     all_ranks = list(orders_col.aggregate(pipeline))
     user_rank = next((i+1 for i, u in enumerate(all_ranks) if u['_id'] == current_user), "N/A")
     user_spent = next((u['totalSpent'] for u in all_ranks if u['_id'] == current_user), 0)
