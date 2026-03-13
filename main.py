@@ -475,6 +475,31 @@ def top10():
         pipeline = [
             {"$match": {"status": "Completed", "tg_user": {"$nin": ["@Escanor_XX", "@Escanor_X", "@Bby_kiwii7"]}}},
             {"$group": {"_id": "$tg_user", "totalSpent": {"$sum": "$price"}}},
-            {"$sort": {"totalSpent": -1}}, {"$limit": 10}
+            {"$sort": {"totalSpent": -1}}, 
+            {"$limit": 10}
         ]
-        all_ranks = list(orders_col.aggregate
+        all_ranks = list(orders_col.aggregate(pipeline))
+        user_rank, user_spent = "N/A", 0
+        for i, u in enumerate(all_ranks):
+            if u['_id'] == current_user:
+                user_rank, user_spent = i + 1, u['totalSpent']
+                break
+        return jsonify({"top10": all_ranks, "userRank": user_rank, "userSpent": user_spent})
+    except Exception as e:
+        return jsonify({"top10": [], "userRank": "N/A", "userSpent": 0, "error": str(e)})
+
+@app.route('/admin/users')
+def view_users():
+    auth = request.authorization
+    if not auth or not (auth.username == "admin" and auth.password == "Kiwii123"):
+        return make_response('Verify!', 401, {'WWW-Authenticate': 'Basic realm="Login Required"'})
+    all_users = list(users_col.find({}, {"_id": 0}))
+    
+    html_table = "<h2>Registered Users</h2><table border='1'><tr><th>User</th><th>Pass</th></tr>"
+    for u in all_users:
+        html_table += f"<tr><td>{u.get('user')}</td><td>{u.get('pass')}</td></tr>"
+    html_table += "</table>"
+    return html_table
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
