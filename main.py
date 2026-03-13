@@ -305,14 +305,15 @@ HTML_CODE = '''
     }
 
     function getPkgImg(text) {
-        // ဂဏန်းသီးသန့် ထုတ်ယူခြင်း (ဥပမာ "11 💎" -> "11")
+        let lowerText = text.toLowerCase();
         let num = text.replace(/[^0-9]/g, ''); 
         
-        // Weekly Pass အတွက် ပုံအသစ်ကို ချိတ်ခြင်း
-        if (text.toLowerCase().includes("weekly")) return "/static/weeklypass.png";
-        if (text.toLowerCase().includes("twilight")) return "/static/twilight.png";
+        if (lowerText.includes("weekly elite")) return "/static/weeklyelite.png";
+        if (lowerText.includes("monthly epic")) return "/static/monthlyepic.png";
+        if (lowerText.includes("weekly")) return "/static/weeklypass.png";
+        if (lowerText.includes("twilight")) return "/static/twilight.png";
         
-        // ကျန်တဲ့ Diamond တွေအတွက် (ဥပမာ dia11.png, dia22.png)
+        // Diamond ပုံများအတွက် (dia11.png, dia22.png, ...)
         return `/static/dia${num}.png`;
     }
 
