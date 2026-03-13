@@ -15,7 +15,6 @@ orders_col = db['orders']
 BOT_TOKEN = "8089066962:AAFOHBGeuDF7E3YgeJ3mUu000sQNJ4uJVok"
 CHAT_ID = "7089720301"
 CS_TELEGRAM = "https://t.me/Bby_kiwii7"
-
 ADMIN_USERNAMES = ["@Escanor_XX", "@Escanor_X", "@Bby_kiwii7"]
 
 GAMES_DATA = [
@@ -160,10 +159,11 @@ function goH() { location.reload(); }
 </script></body></html>
 '''
 
+# --- 🚀 BACKEND ---
 @app.route('/')
 def index():
     return render_template_string(HTML_CODE, games=GAMES_DATA, cs_link=CS_TELEGRAM)
-
+    
 @app.route('/order', methods=['POST'])
 def order():
     try:
@@ -177,42 +177,32 @@ def order():
             "date": datetime.now(timezone(timedelta(hours=6, minutes=30))).strftime("%d/%m/%Y %I:%M %p")
         }).inserted_id
         
-        keyboard = {"inline_keyboard": [[{"text": "Done ✅", "callback_data": f"done_{oid}"}, {"text": "Reject ❌", "callback_data": f"reject_{oid}"}]]}
+        # Link Button ပုံစံပြောင်းလဲခြင်း
+        base_url = "https://kiwii-game-shop.onrender.com"
+        keyboard = {
+            "inline_keyboard": [[
+                {"text": "Done ✅", "url": f"{base_url}/admin/status/done/{oid}"},
+                {"text": "Reject ❌", "url": f"{base_url}/admin/status/reject/{oid}"}
+            ]]
+        }
+        
         msg = f"<b>⚠️ New Order!</b>\n\n<b>👤 User:</b> {tg_user}\n<b>🆔 ID:</b> <code>{uid}</code> ({zid})\n<b>📦 Package:</b> {pkg}\n<b>💰 Price:</b> {price} Ks"
         
+        url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto"
         if photo:
-            requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto", data={"chat_id": CHAT_ID, "caption": msg, "parse_mode": "HTML", "reply_markup": json.dumps(keyboard)}, files={"photo": photo})
+            requests.post(url, data={"chat_id": CHAT_ID, "caption": msg, "parse_mode": "HTML", "reply_markup": json.dumps(keyboard)}, files={"photo": photo})
         else:
             requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage", data={"chat_id": CHAT_ID, "text": msg, "parse_mode": "HTML", "reply_markup": json.dumps(keyboard)})
+        
         return "Success"
     except Exception as e:
         return str(e), 500
 
-@app.route('/webhook', methods=['POST'])
-def webhook():
-    try:
-        data = request.json
-        if not data or "callback_query" not in data: return "OK", 200
-        cb = data["callback_query"]; action_data = cb["data"]
-        chat_id = cb["message"]["chat"]["id"]; msg_id = cb["message"]["message_id"]
-        
-        action, oid = action_data.split("_")
-        new_status = "Completed" if action == "done" else "Rejected"
-        
-        orders_col.update_one({"_id": ObjectId(oid)}, {"$set": {"status": new_status}})
-        
-        cap = cb["message"].get("caption", cb["message"].get("text", ""))
-        new_cap = cap.split("\n\n📢 Status:")[0] + f"\n\n📢 Status: <b>{new_status}</b>"
-        
-        requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/editMessageCaption", data={"chat_id": chat_id, "message_id": msg_id, "caption": new_cap, "parse_mode": "HTML"})
-        requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/answerCallbackQuery", data={"callback_query_id": cb["id"], "text": f"Order {new_status}!"})
-        return "OK", 200
-    except Exception as e:
-        return "OK", 200
-
-@app.route('/api/top10')
-def top10():
-    return jsonify(list(orders_col.aggregate([{"$match": {"tg_user": {"$nin": ADMIN_USERNAMES}}}, {"$group": {"_id": "$tg_user", "totalSpent": {"$sum": "$price"}}}, {"$sort": {"totalSpent": -1}}, {"$limit": 10}])))
+@app.route('/admin/status/<action>/<oid>')
+def update_status(action, oid):
+    new_status = "Completed" if action == "done" else "Rejected"
+    orders_col.update_one({"_id": ObjectId(oid)}, {"$set": {"status": new_status}})
+    return f"<h1>Order {new_status} Successfully!</h1><p>You can close this tab now and check the history on website.</p>"
 
 @app.route('/api/history')
 def history():
@@ -220,6 +210,11 @@ def history():
     for h in hist: h['_id'] = str(h['_id'])
     return jsonify(hist)
 
+@app.route('/api/top10')
+def top10():
+    pipeline = [{"$match": {"tg_user": {"$nin": ADMIN_USERNAMES}}}, {"$group": {"_id": "$tg_user", "totalSpent": {"$sum": "$price"}}}, {"$sort": {"totalSpent": -1}}, {"$limit": 10}]
+    return jsonify(list(orders_col.aggregate(pipeline)))
+
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)
-        
+    
