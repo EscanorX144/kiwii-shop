@@ -163,6 +163,24 @@ HTML_CODE = '''
 
     /* Personal Rank Style */
     .my-rank-card { margin-top:20px; padding:15px; background:linear-gradient(135deg, #fbbf24, #f59e0b); color:black; border-radius:12px; text-align:center; box-shadow: 0 4px 15px rgba(251, 191, 36, 0.3); }
+/* Personal Rank Style */
+.my-rank-card {
+    margin: 20px auto; 
+    width: calc(100% - 40px); 
+    max-width: 460px; 
+    padding: 20px;
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    border-radius: 15px;
+    color: black;
+    text-align: center;
+    box-shadow: 0 0 20px rgba(251, 191, 36, 0.6); 
+    animation: rank-glow 2s infinite alternate; 
+}
+
+@keyframes rank-glow {
+    from { box-shadow: 0 0 10px rgba(251, 191, 36, 0.4); }
+    to { box-shadow: 0 0 30px rgba(251, 191, 36, 0.8); }
+}
 </style>
 </head><body>
 <div id="main-container">
@@ -406,28 +424,46 @@ async function showTop() {
             <b style="color:#fbbf24;">${u.totalSpent.toLocaleString()} Ks</b>
         </div>`).join('') || "No data";
 
-    let personalHtml = `
-        <div class="my-rank-card">
-            <p style="margin:0; font-size:14px; font-weight:bold;">MY CURRENT STATUS</p>
-            <div style="font-size:22px; font-weight:bold; margin:5px 0;">Rank: #${data.userRank}</div>
-            <p style="margin:0; font-size:14px;">Total Spent: ${data.userSpent.toLocaleString()} Ks</p>
-        </div>`;
+            let personalHtml = `
+            <div class="my-rank-card">
+                <p style="margin:0; font-size:14px; font-weight:bold; opacity:0.8;">MY CURRENT STATUS</p>
+                <div style="font-size:24px; font-weight:bold; margin:10px 0;">
+                    👤 ${currentUser}
+                </div>
+                <div style="font-size:20px; font-weight:bold;">Rank: #${data.userRank || 'N/A'}</div>
+                <p style="margin:5px 0 0; font-size:14px;">Total Spent: ${data.userSpent.toLocaleString()} Ks</p>
+            </div>`;
 
     document.getElementById('top-list').innerHTML = topHtml + personalHtml;
 }
 
 async function showH() {
-    document.getElementById('h-sec').style.display='none'; 
+    document.getElementById('h-sec').style.display='none';
     document.getElementById('o-sec').style.display='none';
-    document.getElementById('top-sec').style.display='none'; 
+    document.getElementById('top-sec').style.display='none';
     document.getElementById('hist-sec').style.display='block';
     updateNav('nav-hist');
     const r = await fetch('/api/history');
     const data = await r.json();
-    document.getElementById('hist-list').innerHTML = data.filter(o => o.tg_user === currentUser).map(o => `
-        <div style="background:#1e293b; padding:15px; margin-bottom:10px; border-radius:12px; border-left:5px solid ${o.status==='Completed'?'#22c55e':'#fbbf24'};">
-            <b>${o.pkg}</b><br><small>${o.date} - ${o.status}</small>
-        </div>`).join('') || "No history";
+    document.getElementById('hist-list').innerHTML = data.filter(o => o.tg_user === currentUser).map(o => {
+        
+        // Status အလိုက် အရောင်သတ်မှတ်ခြင်း
+        let statusColor = '#fbbf24'; // Default: Pending (အဝါ)
+        if (o.status === 'Completed') statusColor = '#22c55e'; // စိမ်း
+        if (o.status === 'Rejected') statusColor = '#ef4444';  // နီ
+
+        return `
+            <div style="background:#1e293b; padding:15px; margin-bottom:10px; border-radius:12px; border-left:5px solid ${statusColor};">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <b>${o.pkg}</b>
+                    <span style="color:${statusColor}; font-weight:bold; font-size:13px;">${o.status}</span>
+                </div>
+                <div style="margin-top:5px;">
+                    <span>${o.price} Ks</span><br>
+                    <small style="color:#94a3b8;">${o.date}</small>
+                </div>
+            </div>`;
+    }).join('') || "No history";
 }
 </script></body></html>
 '''
@@ -485,7 +521,20 @@ def order():
             {"text": "Reject ❌", "url": f"{base_url}/admin/status/reject/{oid}"}
         ]]}
         
-        msg = f"<b>⚠️ New Order!</b>\\n\\n<b>👤 User:</b> {tg_user}\\n<b>🌍 Server:</b> {srv}\\n<b>🆔 ID:</b> <code>{uid}</code> ({zid})\\n<b>📦 Package:</b> {pkg}\\n<b>💰 Price:</b> {price} Ks"
+                # Telegram သို့ ပို့မည့် စာသားပုံစံကို သပ်ရပ်အောင် ပြင်ဆင်ခြင်း
+        msg = (
+            f"<b>🔔 New Order Received!</b>\n"
+            f"━━━━━━━━━━━━━━━━━━━━━\n"
+            f"<b>👤 User:</b> <code>{tg_user}</code>\n"
+            f"<b>🌍 Server:</b> {server}\n"
+            f"<b>🆔 Game ID:</b> <code>{uid}</code>\n"
+            f"<b>🎮 Zone ID:</b> <code>{zid}</code>\n"
+            f"━━━━━━━━━━━━━━━━━━━━━\n"
+            f"<b>📦 Package:</b> {pkg}\n"
+            f"<b>💰 Price:</b> {price} Ks\n"
+            f"━━━━━━━━━━━━━━━━━━━━━\n"
+            f"<b>📅 Date:</b> {date}"
+        )
         
         requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto", 
             data={"chat_id": CHAT_ID, "caption": msg, "parse_mode": "HTML", "reply_markup": json.dumps(keyboard)}, 
