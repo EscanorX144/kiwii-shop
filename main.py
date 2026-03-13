@@ -161,26 +161,20 @@ HTML_CODE = '''
     font-size: 14px;
 }
 
-    /* Personal Rank Style */
+        /* Personal Rank Style */
     .my-rank-card {
-    margin: 15px auto; 
-    width: calc(100% - 30px); 
-    max-width: 470px; 
-    padding: 15px; 
-    background: linear-gradient(135deg, #fbbf24, #f59e0b);
-    border-radius: 12px; 
-    color: black;
-    text-align: center;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); 
-    border: 1px solid rgba(255, 255, 255, 0.3);
-}
-    animation: rank-glow 2s infinite alternate; 
-}
-
-@keyframes rank-glow {
-    from { box-shadow: 0 0 10px rgba(251, 191, 36, 0.4); }
-    to { box-shadow: 0 0 30px rgba(251, 191, 36, 0.8); }
-}
+        margin: 15px auto; 
+        width: calc(100% - 30px); 
+        max-width: 470px; 
+        padding: 15px; 
+        background: linear-gradient(135deg, #fbbf24, #f59e0b);
+        border-radius: 12px; 
+        color: black;
+        text-align: center;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); 
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    
 </style>
 </head><body>
 <div id="main-container">
@@ -254,9 +248,12 @@ HTML_CODE = '''
 </div>
 
 <script>
-let currentUser = localStorage.getItem('user');
-let sel_srv='', sel_pkg='', sel_prc='';
-const games = {{ games | tojson }};
+        let personalHtml = `
+            <div class="my-rank-card">
+                <p style="margin:0; font-size:14px; font-weight:bold; opacity:0.8;">MY CURRENT STATUS</p>
+                <div style="font-size:22px; font-weight:bold; margin:5px 0;">Rank: #${data.userRank}</div>
+                <p style="margin:0; font-size:14px;">Total Spent: ${data.userSpent.toLocaleString()} Ks</p>
+            </div>`;
 
 function checkAuth() {
     if(currentUser) {
