@@ -103,8 +103,8 @@ HTML_CODE = '''
     #main-container { max-width:500px; margin:auto; }
     .header-logo { text-align:center; padding:25px 0; color:#fbbf24; font-size:26px; font-weight:bold; }
     .auth-box { padding: 40px 20px; text-align: center; }
-    .auth-input { width:100%%; padding:15px; margin:10px 0; border-radius:12px; background:#1e293b; color:white; border:1px solid #334155; box-sizing:border-box; }
-    .auth-btn { width:100%%; padding:16px; background:#fbbf24; border:none; border-radius:12px; font-weight:bold; color:black; cursor:pointer; }
+    .auth-input { width:100%; padding:15px; margin:10px 0; border-radius:12px; background:#1e293b; color:white; border:1px solid #334155; box-sizing:border-box; }
+    .auth-btn { width:100%; padding:16px; background:#fbbf24; border:none; border-radius:12px; font-weight:bold; color:black; cursor:pointer; }
     .auth-toggle { margin-top:20px; color:#94a3b8; font-size:14px; cursor:pointer; text-decoration: underline; }
     .user-banner { background:#1e293b; padding:12px 20px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #334155; }
     .game-grid { display:grid; grid-template-columns:1fr 1fr; gap:15px; padding:20px; }
@@ -119,47 +119,15 @@ HTML_CODE = '''
     .pay-icons { display: flex; justify-content: center; gap: 15px; margin-bottom: 15px; }
     .pay-icons img { width: 55px; height: 55px; border-radius: 12px; cursor: pointer; opacity: 0.6; }
     .pay-icons img.active { border: 2px solid #fbbf24; opacity: 1; transform: scale(1.1); }
-    .buy-btn { width:100%%; padding:16px; background:#fbbf24; border:none; border-radius:12px; font-weight:bold; color:black; cursor:pointer; margin-top:10px; }
-    .nav-bar { position:fixed; bottom:0; width:100%%; max-width:500px; background:#1e293b; display:flex; padding:12px 0; border-top:1px solid #334155; z-index:1000; }
+    .buy-btn { width:100%; padding:16px; background:#fbbf24; border:none; border-radius:12px; font-weight:bold; color:black; cursor:pointer; margin-top:10px; }
+    .nav-bar { position:fixed; bottom:0; width:100%; max-width:500px; background:#1e293b; display:flex; padding:12px 0; border-top:1px solid #334155; z-index:1000; }
     .nav-item { flex:1; text-align:center; color:#94a3b8; cursor:pointer; font-size:12px; }
     .nav-item.active { color:#fbbf24; font-weight:bold; }
-    .my-rank-card { margin: 15px auto; width: calc(100%% - 30px); padding: 15px; background: linear-gradient(135deg, #fbbf24, #f59e0b); border-radius: 12px; color: black; text-align: center; }
+    .my-rank-card { margin: 15px auto; width: calc(100% - 30px); padding: 15px; background: linear-gradient(135deg, #fbbf24, #f59e0b); border-radius: 12px; color: black; text-align: center; }
     /* Floating CS Button Design */
-.cs-float {
-    position: fixed;
-    bottom: 80px; /* Navigation bar ရဲ့ အပေါ်မှာ ရှိနေအောင် */
-    right: 20px;
-    background: #fbbf24;
-    color: #0f172a;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-    box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4);
-    z-index: 1000;
-    text-decoration: none;
-    transition: transform 0.3s ease;
-}
-
-.cs-float:hover {
-    transform: scale(1.1);
-    background: #f59e0b;
-}
-
-.cs-badge {
-    position: absolute;
-    top: -5px;
-    right: -5px;
-    background: red;
-    color: white;
-    font-size: 10px;
-    padding: 2px 6px;
-    border-radius: 10px;
-    font-weight: bold;
-}
+    .cs-float { position: fixed; bottom: 80px; right: 20px; background: #fbbf24; color: #0f172a; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4); z-index: 1000; text-decoration: none; transition: transform 0.3s ease; }
+    .cs-float:hover { transform: scale(1.1); background: #f59e0b; }
+    .cs-badge { position: absolute; top: -5px; right: -5px; background: red; color: white; font-size: 10px; padding: 2px 6px; border-radius: 10px; font-weight: bold; }
 </style>
 </head><body>
 <div id="main-container">
@@ -368,24 +336,34 @@ HTML_CODE = '''
         document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
         document.getElementById('nav-hist').classList.add('active');
 
-        const r = await fetch('/api/history');
-        const data = await r.json();
-        
-        const myHist = data.filter(o => o.tg_user === currentUser);
-        document.getElementById('hist-list').innerHTML = myHist.map(o => {
-            let statusColor = o.status === 'Completed' ? '#10b981' : (o.status === 'Rejected' ? '#ef4444' : '#fbbf24');
-            return `
-            <div style="background:#1e293b;padding:15px;margin-bottom:10px;border-radius:12px;border-left:5px solid ${statusColor};">
-                <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
-                    <b>${o.pkg}</b>
-                    <span style="color:${statusColor}; font-weight:bold; font-size:14px;">${o.status}</span>
-                </div>
-                <div style="color:#94a3b8; font-size:12px;">ID: ${o.uid} | Price: ${o.price.toLocaleString()} Ks</div>
-                <div style="color:#64748b; font-size:11px; margin-top:5px; text-align:right;">${o.date}</div>
-            </div>`
-        }).join('') || "<p style='text-align:center; color:#94a3b8;'>No order history found.</p>";
+        try {
+            const r = await fetch('/api/history');
+            const data = await r.json();
+            
+            const myHist = data.filter(o => o.tg_user === currentUser);
+            
+            if (myHist.length === 0) {
+                document.getElementById('hist-list').innerHTML = "<p style='text-align:center; color:#94a3b8; padding: 20px 0;'>No order history found.</p>";
+                return;
+            }
+
+            document.getElementById('hist-list').innerHTML = myHist.map(o => {
+                let statusColor = o.status === 'Completed' ? '#10b981' : (o.status === 'Rejected' ? '#ef4444' : '#fbbf24');
+                let priceStr = o.price ? o.price.toLocaleString() : "0";
+                return `
+                <div style="background:#1e293b;padding:15px;margin-bottom:10px;border-radius:12px;border-left:5px solid ${statusColor};">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                        <b>${o.pkg}</b>
+                        <span style="color:${statusColor}; font-weight:bold; font-size:14px;">${o.status}</span>
+                    </div>
+                    <div style="color:#94a3b8; font-size:12px;">ID: ${o.uid} | Price: ${priceStr} Ks</div>
+                    <div style="color:#64748b; font-size:11px; margin-top:5px; text-align:right;">${o.date}</div>
+                </div>`
+            }).join('');
+        } catch (error) {
+            document.getElementById('hist-list').innerHTML = "<p style='text-align:center; color:#ef4444;'>Failed to load history.</p>";
+        }
     }
-</script>
         
 <a href="https://t.me/Bby_kiwii7" target="_blank" class="cs-float">
             <span class="cs-badge">Online</span>
