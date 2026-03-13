@@ -369,18 +369,7 @@ HTML_CODE = '''
     }
 </script>
         
-@app.route('/order', methods=['POST'])
-def order():
-    try:
-        tg_user = request.form.get('tg_user')
-        uid = request.form.get('uid')
-        zid = request.form.get('zid')
-        pkg = request.form.get('pkg')
-        srv = request.form.get('srv')
-        photo = request.files.get('photo')
-        price = int(request.form.get('price', '0').replace(',', ''))
-
-        order_date = datetime.now(timezone(timedelta(ho<a href="https://t.me/Bby_kiwii7" target="_blank" class="cs-float">
+<a href="https://t.me/Bby_kiwii7" target="_blank" class="cs-float">
             <span class="cs-badge">Online</span>
             💬
         </a>
@@ -509,7 +498,6 @@ def view_users():
         return make_response('Verify!', 401, {'WWW-Authenticate': 'Basic realm="Login Required"'})
     all_users = list(users_col.find({}, {"_id": 0}))
     
-    # Admin Table မျက်နှာပြင်ပြသရန်
     html_table = "<h2>Registered Users</h2><table border='1'><tr><th>User</th><th>Pass</th></tr>"
     for u in all_users:
         html_table += f"<tr><td>{u.get('user')}</td><td>{u.get('pass')}</td></tr>"
@@ -517,5 +505,4 @@ def view_users():
     return html_table
 
 if __name__ == "__main__":
-    # Render အတွက် port 5000 ဖြင့် run ခြင်း
     app.run(host="0.0.0.0", port=5000)
