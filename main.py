@@ -101,13 +101,24 @@ HTML_CODE = '''
     body { background:#0f172a; color:white; font-family:sans-serif; margin:0; padding-bottom:80px; }
     #main-container { max-width:500px; margin:auto; }
     .header-logo { text-align:center; padding:25px 0; color:#fbbf24; font-size:26px; font-weight:bold; }
+    
+    /* Auth UI */
+    .auth-box { padding: 40px 20px; text-align: center; }
+    .auth-box h2 { color: #fbbf24; margin-bottom: 20px; }
+    .auth-input { width:100%; padding:15px; margin:10px 0; border-radius:12px; background:#1e293b; color:white; border:1px solid #334155; box-sizing:border-box; }
+    .auth-btn { width:100%; padding:16px; background:#fbbf24; border:none; border-radius:12px; font-weight:bold; color:black; cursor:pointer; }
+    .auth-toggle { margin-top:20px; color:#94a3b8; font-size:14px; cursor:pointer; text-decoration: underline; }
+
+    /* App UI */
+    .user-banner { background:#1e293b; padding:12px 20px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #334155; }
+    .logout-btn { color:#ef4444; font-weight:bold; cursor:pointer; font-size:13px; }
+    
     .game-grid { display:grid; grid-template-columns:1fr 1fr; gap:15px; padding:20px; }
     .game-card { background:rgba(30, 41, 59, 0.85); border-radius:15px; padding:20px; text-align:center; border:1px solid #334155; cursor:pointer; }
     
     .cat-tabs { display:flex; gap:10px; overflow-x:auto; padding:10px 0; margin-bottom:15px; scrollbar-width: none; }
-    .cat-tabs::-webkit-scrollbar { display: none; }
     .tab-btn { background:#1e293b; border:1px solid #334155; color:#94a3b8; padding:10px 15px; border-radius:10px; white-space:nowrap; cursor:pointer; font-size:14px; }
-    .tab-btn.active { background:#fbbf24; color:black; border-color:#fbbf24; font-weight:bold; }
+    .tab-btn.active { background:#fbbf24; color:black; font-weight:bold; }
 
     .pkg-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:15px 0; }
     .pkg-card { background:#1e293b; border:1px solid #334155; padding:15px; border-radius:12px; text-align:center; cursor:pointer; }
@@ -115,80 +126,125 @@ HTML_CODE = '''
     
     .pay-box { background: #1e293b; padding: 20px; border-radius: 20px; border: 1.5px solid #fbbf24; text-align: center; margin-bottom: 20px; }
     .pay-icons { display: flex; justify-content: center; gap: 15px; margin-bottom: 15px; }
-    .pay-icons img { width: 55px; height: 55px; border-radius: 12px; cursor: pointer; border: 2px solid transparent; transition: all 0.3s ease; opacity: 0.6; }
-    .pay-icons img.active { border-color: #fbbf24; transform: scale(1.05); opacity: 1; box-shadow: 0 0 12px rgba(251, 191, 36, 0.3); }
+    .pay-icons img { width: 55px; height: 55px; border-radius: 12px; cursor: pointer; opacity: 0.6; }
+    .pay-icons img.active { border: 2px solid #fbbf24; opacity: 1; transform: scale(1.1); }
     
-    .pay-info { margin: 10px 0; }
-    #pay-type { color: #fbbf24; font-size: 13px; font-weight: bold; text-transform: uppercase; margin-bottom: 4px; }
-    
-    .num-row { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 4px; }
-    #pay-num { font-size: 20px; font-weight: 800; color: #fff; }
-    .copy-btn { background: #fbbf24; color: #000; border: none; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; transition: 0.2s; }
-    .copy-btn:active { transform: scale(0.9); }
-    
-    .pay-name { color: #cbd5e1; font-size: 15px; font-weight: 500; }
-    
-    .note-box { background: rgba(239, 68, 68, 0.1); border: 2px solid #ef4444; color: #ef4444; padding: 10px; border-radius: 12px; font-weight: bold; font-size: 15px; margin-top: 15px; animation: blink-glow 1.5s infinite; }
-    @keyframes blink-glow { 0% { box-shadow: 0 0 5px #ef4444; opacity: 1; } 50% { box-shadow: 0 0 15px #ef4444; opacity: 0.8; } 100% { box-shadow: 0 0 5px #ef4444; opacity: 1; } }
-
-    input { width:100%; padding:14px; margin:8px 0; border-radius:10px; background:#1e293b; color:white; border:1px solid #334155; box-sizing:border-box; }
     .buy-btn { width:100%; padding:16px; background:#fbbf24; border:none; border-radius:12px; font-weight:bold; color:black; cursor:pointer; margin-top:10px; }
     .nav-bar { position:fixed; bottom:0; width:100%; max-width:500px; background:#1e293b; display:flex; padding:12px 0; border-top:1px solid #334155; z-index:1000; }
-    .nav-item { flex:1; text-align:center; color:#94a3b8; cursor:pointer; font-size:12px; transition: 0.3s; }
-    .nav-item.active { color: #fbbf24 !important; font-weight: bold; }
+    .nav-item { flex:1; text-align:center; color:#94a3b8; cursor:pointer; font-size:12px; }
+    .nav-item.active { color:#fbbf24; font-weight:bold; }
 </style>
 </head><body>
 <div id="main-container">
-    <div id="h-sec">
+    <div id="auth-sec" class="auth-box">
         <div class="header-logo">KIWII GAME STORE</div>
-        <div class="game-grid" id="g-list"></div>
+        <div id="login-form">
+            <h2>LOGIN</h2>
+            <input type="text" id="l-user" class="auth-input" placeholder="Telegram Username (e.g. @kiwii)">
+            <input type="password" id="l-pass" class="auth-input" placeholder="Password">
+            <button class="auth-btn" onclick="handleAuth('login')">LOGIN</button>
+            <div class="auth-toggle" onclick="toggleAuth()">No account? Register here</div>
+        </div>
+        <div id="reg-form" style="display:none;">
+            <h2>REGISTER</h2>
+            <input type="text" id="r-user" class="auth-input" placeholder="Telegram Username (e.g. @kiwii)">
+            <input type="password" id="r-pass" class="auth-input" placeholder="Create Password">
+            <button class="auth-btn" onclick="handleAuth('register')">CREATE ACCOUNT</button>
+            <div class="auth-toggle" onclick="toggleAuth()">Already have an account? Login</div>
+        </div>
     </div>
 
-    <div id="o-sec" style="display:none; padding:15px;">
-        <button onclick="goH()" style="background:none;color:white;border:1px solid #334155;padding:8px 15px;border-radius:8px;margin-bottom:15px;">← Back</button>
-        <h2 id="g-title" style="color:#fbbf24; margin-bottom:5px;"></h2>
-        <div id="cat-container" class="cat-tabs"></div>
-        <div id="p-list" class="pkg-grid"></div>
-
-        <div class="pay-box">
-            <div class="pay-icons">
-                <img src="/static/kpay.jpg" class="active" onclick="setPay(this, '09775394979', 'Kpay')">
-                <img src="/static/wave.jpg" onclick="setPay(this, '09775394979', 'Wave')">
-                <img src="/static/ayapay.jpg" onclick="setPay(this, '09775394979', 'Ayapay')">
-            </div>
-            <div class="pay-info">
-                <div id="pay-type">KPAY ACCOUNT</div>
-                <div class="num-row">
-                    <span id="pay-num">09775394979</span>
-                    <button class="copy-btn" onclick="copyNum()">COPY</button>
-                </div>
-                <div class="pay-name">Name - Thansin Kyaw</div>
-            </div>
-            <div class="note-box">Note - Payment သာရေးပါ</div>
+    <div id="app-sec" style="display:none;">
+        <div class="user-banner">
+            <span>👤 <b id="display-user"></b></span>
+            <span class="logout-btn" onclick="logout()">LOGOUT <i class="fas fa-sign-out-alt"></i></span>
         </div>
 
-        <form id="orderForm" onsubmit="handleOrder(event)">
-            <input type="text" id="uid" placeholder="Game ID" required>
-            <input type="text" id="zid" placeholder="Zone ID" required>
-            <input type="file" id="photo" required accept="image/*">
-            <button type="submit" class="buy-btn" id="submitBtn">PLACE ORDER</button>
-        </form>
+        <div id="h-sec">
+            <div class="header-logo">KIWII GAME STORE</div>
+            <div class="game-grid" id="g-list"></div>
+        </div>
+
+        <div id="o-sec" style="display:none; padding:15px;">
+            <button onclick="goH()" style="background:none;color:white;border:1px solid #334155;padding:8px 15px;border-radius:8px;margin-bottom:15px;">← Back</button>
+            <h2 id="g-title" style="color:#fbbf24;"></h2>
+            <div id="cat-container" class="cat-tabs"></div>
+            <div id="p-list" class="pkg-grid"></div>
+
+            <div class="pay-box">
+                <div class="pay-icons">
+                    <img src="/static/kpay.jpg" class="active" onclick="setPay(this, '09775394979', 'Kpay')">
+                    <img src="/static/wave.jpg" onclick="setPay(this, '09775394979', 'Wave')">
+                </div>
+                <div style="margin-top:10px;">
+                    <b id="pay-type">KPAY ACCOUNT</b><br>
+                    <span id="pay-num" style="font-size:20px;">09775394979</span>
+                </div>
+            </div>
+
+            <form id="orderForm" onsubmit="handleOrder(event)">
+                <input type="text" id="uid" placeholder="Game ID" required class="auth-input">
+                <input type="text" id="zid" placeholder="Zone ID" required class="auth-input">
+                <input type="file" id="photo" required accept="image/*" class="auth-input">
+                <button type="submit" class="buy-btn" id="submitBtn">PLACE ORDER</button>
+            </form>
+        </div>
+
+        <div id="top-sec" style="display:none; padding:15px;"><h3 style="color:#fbbf24; text-align:center;">🏆 TOP 10 USERS</h3><div id="top-list"></div></div>
+        <div id="hist-sec" style="display:none; padding:15px;"><h3 style="color:#fbbf24;">History</h3><div id="hist-list"></div></div>
+
+        <div class="nav-bar">
+            <div class="nav-item active" id="nav-home" onclick="goH()"><i class="fas fa-home"></i><br>Home</div>
+            <div class="nav-item" id="nav-hist" onclick="showH()"><i class="fas fa-history"></i><br>History</div>
+            <div class="nav-item" id="nav-top" onclick="showTop()"><i class="fas fa-trophy"></i><br>Top 10</div>
+            <div class="nav-item" onclick="window.open('{{ cs_link }}')"><i class="fas fa-headset"></i><br>CS</div>
+        </div>
     </div>
-
-    <div id="top-sec" style="display:none; padding:15px;"><h3 style="color:#fbbf24; text-align:center;">🏆 TOP 10 USERS</h3><div id="top-list"></div></div>
-    <div id="hist-sec" style="display:none; padding:15px;"><h3 style="color:#fbbf24;">History</h3><div id="hist-list"></div></div>
-</div>
-
-<div class="nav-bar">
-    <div class="nav-item active" id="nav-home" onclick="goH()"><i class="fas fa-home"></i><br>Home</div>
-    <div class="nav-item" id="nav-hist" onclick="showH()"><i class="fas fa-history"></i><br>History</div>
-    <div class="nav-item" id="nav-top" onclick="showTop()"><i class="fas fa-trophy"></i><br>Top 10</div>
-    <div class="nav-item" onclick="window.open('{{ cs_link }}')"><i class="fas fa-headset"></i><br>CS</div>
 </div>
 
 <script>
+let currentUser = localStorage.getItem('user');
 let sel_srv='', sel_pkg='', sel_prc='';
 const games = {{ games | tojson }};
+
+function checkAuth() {
+    if(currentUser) {
+        document.getElementById('auth-sec').style.display='none';
+        document.getElementById('app-sec').style.display='block';
+        document.getElementById('display-user').innerText = currentUser;
+        init();
+    }
+}
+checkAuth();
+
+function toggleAuth() {
+    const isLogin = document.getElementById('login-form').style.display !== 'none';
+    document.getElementById('login-form').style.display = isLogin ? 'none' : 'block';
+    document.getElementById('reg-form').style.display = isLogin ? 'block' : 'none';
+}
+
+async function handleAuth(type) {
+    const user = document.getElementById(type==='login'?'l-user':'r-user').value.trim();
+    const pass = document.getElementById(type==='login'?'l-pass':'r-pass').value;
+    if(!user || !pass) return alert("Please fill all fields");
+    if(!user.startsWith('@')) return alert("Username must start with @");
+
+    const r = await fetch('/api/auth', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({type, user, pass})
+    });
+    const res = await r.json();
+    if(res.success) {
+        localStorage.setItem('user', user);
+        location.reload();
+    } else { alert(res.msg); }
+}
+
+function logout() {
+    localStorage.removeItem('user');
+    location.reload();
+}
 
 function init() {
     document.getElementById('g-list').innerHTML = games.map(g => `
@@ -197,7 +253,6 @@ function init() {
             <b style="display:block;margin-top:12px;">${g.name}</b>
         </div>`).join('');
 }
-init();
 
 function selG(id) {
     const g = games.find(i => i.id === id);
@@ -206,21 +261,15 @@ function selG(id) {
     document.getElementById('o-sec').style.display='block';
     document.getElementById('g-title').innerText = g.name;
     const cats = g.cat_order;
-    document.getElementById('cat-container').innerHTML = cats.map((c, index) => `
-        <div class="tab-btn ${index===0?'active':''}" onclick="renderP('${c}', this)">${c}</div>
-    `).join('');
+    document.getElementById('cat-container').innerHTML = cats.map((c, i) => `<div class="tab-btn ${i===0?'active':''}" onclick="renderP('${c}', this)">${c}</div>`).join('');
     renderP(cats[0], document.querySelector('.tab-btn.active'));
 }
 
-function renderP(catName, btnEl) {
+function renderP(cat, btn) {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    if(btnEl) btnEl.classList.add('active');
-    const g = games.find(i => i.id === sel_srv);
-    const pkgs = g.cats[catName];
-    document.getElementById('p-list').innerHTML = pkgs.map(p => `
-        <div class="pkg-card" onclick="selP(this, '${p.d}', '${p.p}')">
-            <span>${p.d}</span><br><b style="color:#fbbf24;">${p.p} Ks</b>
-        </div>`).join('');
+    btn.classList.add('active');
+    const pkgs = games.find(i => i.id === sel_srv).cats[cat];
+    document.getElementById('p-list').innerHTML = pkgs.map(p => `<div class="pkg-card" onclick="selP(this, '${p.d}', '${p.p}')"><span>${p.d}</span><br><b>${p.p} Ks</b></div>`).join('');
 }
 
 function selP(el, d, p) {
@@ -228,25 +277,16 @@ function selP(el, d, p) {
     el.classList.add('selected'); sel_pkg=d; sel_prc=p;
 }
 
-function setPay(imgEl, num, type) {
+function setPay(img, num, type) {
     document.querySelectorAll('.pay-icons img').forEach(i => i.classList.remove('active'));
-    imgEl.classList.add('active');
+    img.classList.add('active');
     document.getElementById('pay-num').innerText = num;
     document.getElementById('pay-type').innerText = type + " ACCOUNT";
 }
 
-function updateNav(activeId) {
+function updateNav(id) {
     document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-    document.getElementById(activeId).classList.add('active');
-}
-
-function copyNum() {
-    const num = document.getElementById('pay-num').innerText;
-    navigator.clipboard.writeText(num).then(() => {
-        const btn = document.querySelector('.copy-btn');
-        btn.innerText = "COPIED"; btn.style.background = "#22c55e";
-        setTimeout(() => { btn.innerText = "COPY"; btn.style.background = "#fbbf24"; }, 2000);
-    });
+    document.getElementById(id).classList.add('active');
 }
 
 async function handleOrder(e) {
@@ -256,7 +296,7 @@ async function handleOrder(e) {
     btn.innerText = "SENDING..."; btn.disabled = true;
     
     const fd = new FormData();
-    fd.append('tg_user', "@Bby_kiwii7");
+    fd.append('tg_user', currentUser);
     fd.append('uid', document.getElementById('uid').value);
     fd.append('zid', document.getElementById('zid').value);
     fd.append('server', games.find(i=>i.id===sel_srv).name);
@@ -266,10 +306,9 @@ async function handleOrder(e) {
 
     try {
         const r = await fetch('/order', { method: 'POST', body: fd });
-        if(await r.text() === "Success") {
-            alert("Order Successful!"); location.reload();
-        } else { alert("Order Failed."); }
-    } catch(err) { alert("Error: " + err); }
+        if(await r.text() === "Success") { alert("Order Successful!"); location.reload(); }
+        else { alert("Order Failed."); }
+    } catch(err) { alert("Error"); }
     btn.innerText = "PLACE ORDER"; btn.disabled = false;
 }
 
@@ -289,12 +328,7 @@ async function showTop() {
     updateNav('nav-top');
     const r = await fetch('/api/top10');
     const data = await r.json();
-    document.getElementById('top-list').innerHTML = data.map((u, i) => `
-        <div style="background:#1e293b;padding:15px;margin-bottom:10px;border-radius:12px;display:flex;align-items:center;">
-            <div style="width:30px;height:30px;background:#fbbf24;color:black;border-radius:50%;text-align:center;line-height:30px;margin-right:15px;font-weight:bold;">${i+1}</div>
-            <div style="flex:1;"><b>${u._id}</b></div>
-            <div style="color:#fbbf24;font-weight:bold;">${u.totalSpent.toLocaleString()} Ks</div>
-        </div>`).join('') || "No data";
+    document.getElementById('top-list').innerHTML = data.map((u, i) => `<div style="background:#1e293b;padding:15px;margin-bottom:10px;border-radius:12px;display:flex;justify-content:space-between;"><span>${i+1}. ${u._id}</span><b style="color:#fbbf24;">${u.totalSpent.toLocaleString()} Ks</b></div>`).join('') || "No data";
 }
 
 async function showH() {
@@ -305,46 +339,47 @@ async function showH() {
     updateNav('nav-hist');
     const r = await fetch('/api/history');
     const data = await r.json();
-    document.getElementById('hist-list').innerHTML = data.map(o => {
-        let statusColor = '#fbbf24'; 
-        if (o.status === 'Completed') statusColor = '#22c55e';
-        if (o.status === 'Rejected') statusColor = '#ef4444';
-        return `
-            <div style="background:#1e293b; padding:15px; margin-bottom:10px; border-radius:12px; border-left:5px solid ${statusColor};">
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <b>${o.pkg}</b>
-                    <span style="color:${statusColor}; font-weight:bold; font-size:13px;">${o.status}</span>
-                </div>
-                <div style="margin-top:5px;">
-                    <span>${o.price} Ks</span><br>
-                    <small style="color:#94a3b8;">${o.date}</small>
-                </div>
-            </div>`;
-    }).join('') || "No history";
+    document.getElementById('hist-list').innerHTML = data.filter(o => o.tg_user === currentUser).map(o => `
+        <div style="background:#1e293b; padding:15px; margin-bottom:10px; border-radius:12px; border-left:5px solid ${o.status==='Completed'?'#22c55e':'#fbbf24'};">
+            <b>${o.pkg}</b><br><small>${o.date} - ${o.status}</small>
+        </div>`).join('') || "No history";
 }
 </script></body></html>
 '''
 
 # --- 🚀 BACKEND ---
+users_col = db['users']
+
 @app.route('/')
 def index():
     return render_template_string(HTML_CODE, games=GAMES_DATA, cs_link=CS_TELEGRAM)
+
+@app.route('/api/auth', methods=['POST'])
+def auth():
+    data = request.json
+    utype, user, psw = data['type'], data['user'], data['pass']
+    if utype == 'register':
+        if users_col.find_one({"user": user}):
+            return jsonify({"success": False, "msg": "Username already exists"})
+        users_col.insert_one({"user": user, "pass": psw})
+        return jsonify({"success": True})
+    else:
+        u = users_col.find_one({"user": user, "pass": psw})
+        if u: return jsonify({"success": True})
+        return jsonify({"success": False, "msg": "Invalid Credentials"})
 
 @app.route('/order', methods=['POST'])
 def order():
     try:
         tg_user = request.form.get('tg_user')
         uid = request.form.get('uid'); zid = request.form.get('zid')
-        pkg = request.form.get('pkg')
-        srv = request.form.get('server')
+        pkg = request.form.get('pkg'); srv = request.form.get('server')
         photo = request.files.get('photo')
         
-        # Price ကို စနစ်တကျ ပြောင်းလဲခြင်း
         raw_price = request.form.get('price', '0')
         price_str = str(raw_price).replace(' Ks', '').replace(',', '').strip()
         price = int(price_str) if price_str.isdigit() else 0
 
-        # Database ထဲသို့ "srv" ပါ ထည့်သွင်းခြင်း
         oid = orders_col.insert_one({
             "tg_user": tg_user, "uid": uid, "zone": zid, "pkg": pkg, "srv": srv, 
             "price": price, "status": "Pending", 
@@ -359,13 +394,9 @@ def order():
         
         msg = f"<b>⚠️ New Order!</b>\n\n<b>👤 User:</b> {tg_user}\n<b>🌍 Server:</b> {srv}\n<b>🆔 ID:</b> <code>{uid}</code> ({zid})\n<b>📦 Package:</b> {pkg}\n<b>💰 Price:</b> {price} Ks"
         
-        if photo:
-            requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto", 
-                data={"chat_id": CHAT_ID, "caption": msg, "parse_mode": "HTML", "reply_markup": json.dumps(keyboard)}, 
-                files={"photo": photo})
-        else:
-            requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage", 
-                data={"chat_id": CHAT_ID, "text": msg, "parse_mode": "HTML", "reply_markup": json.dumps(keyboard)})
+        requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto", 
+            data={"chat_id": CHAT_ID, "caption": msg, "parse_mode": "HTML", "reply_markup": json.dumps(keyboard)}, 
+            files={"photo": photo})
         
         return "Success"
     except Exception as e:
@@ -373,24 +404,27 @@ def order():
 
 @app.route('/admin/status/<action>/<oid>')
 def update_status(action, oid):
-    try:
-        new_status = "Completed" if action == "done" else "Rejected"
-        orders_col.update_one({"_id": ObjectId(oid)}, {"$set": {"status": new_status}})
-        return f"<html><body style='background:#0f172a;color:white;text-align:center;padding:50px;'><h1>Order {new_status}!</h1></body></html>"
-    except Exception as e:
-        return str(e), 500
+    new_status = "Completed" if action == "done" else "Rejected"
+    orders_col.update_one({"_id": ObjectId(oid)}, {"$set": {"status": new_status}})
+    return f"<html><body style='background:#0f172a;color:white;text-align:center;padding:50px;'><h1>Order {new_status}!</h1></body></html>"
 
 @app.route('/api/history')
 def history():
-    hist = list(orders_col.find().sort("_id", -1).limit(15))
+    hist = list(orders_col.find().sort("_id", -1).limit(30))
     for h in hist: h['_id'] = str(h['_id'])
     return jsonify(hist)
 
 @app.route('/api/top10')
 def top10():
-    pipeline = [{"$match": {"tg_user": {"$nin": ADMIN_USERNAMES}}}, {"$group": {"_id": "$tg_user", "totalSpent": {"$sum": "$price"}}}, {"$sort": {"totalSpent": -1}}, {"$limit": 10}]
+    pipeline = [
+        {"$match": {"tg_user": {"$nin": ADMIN_USERNAMES}}},
+        {"$group": {"_id": "$tg_user", "totalSpent": {"$sum": "$price"}}},
+        {"$sort": {"totalSpent": -1}},
+        {"$limit": 10}
+    ]
     return jsonify(list(orders_col.aggregate(pipeline)))
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)
-    
+
+
