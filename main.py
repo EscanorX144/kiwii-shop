@@ -174,11 +174,11 @@ HTML_CODE = '''
             <div class="pay-box">
                 <div class="pay-icons">
                     <img src="/static/kpay.jpg" class="active" onclick="setPay(this, '09775394979', 'Kpay', 'Thansin Kyaw')">
-                    <img src="/static/wave.jpg" onclick="setPay(this, '09775394979', 'WavePay', 'Thansin Kyaw')">
+                    <img src="/static/wave.jpg" onclick="setPay(this, '09775394979', 'Wave Pay', 'Thansin Kyaw')">
                     <img src="/static/ayapay.jpg" onclick="setPay(this, '09775394979', 'AYA Pay', 'Thansin Kyaw')">
                 </div>
                 <div style="margin-top:15px;">
-                    <b id="pay-type" style="color: #94a3b8; font-size: 14px;">Kpay ACCOUNT</b><br>
+                    <b id="pay-type" style="color: #94a3b8; font-size: 14px;">Kpay Account</b><br>
                     <div style="display: flex; align-items: center; justify-content: center; margin: 10px 0;">
                         <span id="pay-num" style="font-size:24px; font-weight: bold; letter-spacing: 1px;">09775394979</span>
                         <button class="copy-btn" onclick="copyNum(event)"><i class="fas fa-copy"></i> Copy</button>
