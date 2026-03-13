@@ -227,7 +227,8 @@ HTML_CODE = '''
 </div>
 
 <script>
-    const games = %s;
+    // 💡 အဓိက ပြင်ဆင်ထားသော နေရာ: %s အစား JSON_DATA_HERE ကို သုံးထားသည်
+    const games = JSON_DATA_HERE;
     let currentUser = localStorage.getItem('user');
     let sel_srv, sel_pkg, sel_prc;
 
@@ -341,13 +342,21 @@ HTML_CODE = '''
 
         const r = await fetch(`/api/top10?user=${currentUser}`);
         const data = await r.json();
-        document.getElementById('top-list').innerHTML = data.top10.map((u, i) => `
-            <div style="background:#1e293b;padding:15px;margin-bottom:10px;border-radius:12px;display:flex;justify-content:space-between;">
-                <span>#${i+1} ${u._id}</span><b>${u.totalSpent.toLocaleString()} Ks</b>
-            </div>`).join('') + `
+        
+        // 💡 Top 10 စာရင်းအတွက် Layout အသစ်
+        let topHTML = data.top10.map((u, i) => `
+            <div style="background:#1e293b;padding:15px;margin-bottom:10px;border-radius:12px;display:flex;justify-content:space-between;border-left:5px solid ${i===0?'#fbbf24':i===1?'#94a3b8':i===2?'#b45309':'#334155'};">
+                <span><b>#${i+1}</b> ${u._id}</span>
+                <b style="color:#fbbf24;">${u.totalSpent.toLocaleString()} Ks</b>
+            </div>`).join('');
+            
+        if(data.top10.length === 0) topHTML = "<p style='text-align:center; color:#94a3b8;'>No top users yet.</p>";
+
+        document.getElementById('top-list').innerHTML = topHTML + `
             <div class="my-rank-card">
-                <p>MY RANK: #${data.userRank}</p>
-                <h3>${data.userSpent.toLocaleString()} Ks</h3>
+                <p style="margin:0; font-size:12px; font-weight:bold;">YOUR CURRENT RANK</p>
+                <h3 style="margin:5px 0;">#${data.userRank}</h3>
+                <p style="margin:0; font-size:14px;">Total Spent: <b>${data.userSpent.toLocaleString()} Ks</b></p>
             </div>`;
     }
 
@@ -361,11 +370,20 @@ HTML_CODE = '''
 
         const r = await fetch('/api/history');
         const data = await r.json();
-        document.getElementById('hist-list').innerHTML = data.filter(o => o.tg_user === currentUser).map(o => `
-            <div style="background:#1e293b;padding:15px;margin-bottom:10px;border-radius:12px;border-left:5px solid #fbbf24;">
-                <b>${o.pkg}</b> - <span style="color:#fbbf24">${o.status}</span><br>
-                <small style="color:#94a3b8">${o.date}</small>
-            </div>`).join('') || "No history";
+        
+        const myHist = data.filter(o => o.tg_user === currentUser);
+        document.getElementById('hist-list').innerHTML = myHist.map(o => {
+            let statusColor = o.status === 'Completed' ? '#10b981' : (o.status === 'Rejected' ? '#ef4444' : '#fbbf24');
+            return `
+            <div style="background:#1e293b;padding:15px;margin-bottom:10px;border-radius:12px;border-left:5px solid ${statusColor};">
+                <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                    <b>${o.pkg}</b>
+                    <span style="color:${statusColor}; font-weight:bold; font-size:14px;">${o.status}</span>
+                </div>
+                <div style="color:#94a3b8; font-size:12px;">ID: ${o.uid} | Price: ${o.price.toLocaleString()} Ks</div>
+                <div style="color:#64748b; font-size:11px; margin-top:5px; text-align:right;">${o.date}</div>
+            </div>`
+        }).join('') || "<p style='text-align:center; color:#94a3b8;'>No order history found.</p>";
     }
 </script>
         
@@ -374,7 +392,6 @@ HTML_CODE = '''
             💬
         </a>
 
-        <script id="games-json" type="application/json">JSON_DATA_HERE</script>
     </body>
 </html>
 '''
@@ -465,12 +482,6 @@ def telegram_webhook():
             "caption": new_caption, "parse_mode": "HTML"
         })
     return "OK", 200
-
-@app.route('/api/history')
-def history():
-    hist = list(orders_col.find().sort("_id", -1).limit(30))
-    for h in hist: h['_id'] = str(h['_id'])
-    return jsonify(hist)
 
 @app.route('/api/top10')
 def top10():
