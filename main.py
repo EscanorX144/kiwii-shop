@@ -374,5 +374,11 @@ def top10():
     user_spent = next((u['totalSpent'] for u in all_ranks if u['_id'] == current_user), 0)
     return jsonify({"top10": all_ranks[:10], "userRank": user_rank, "userSpent": user_spent})
 
+@app.route('/admin/users')
+def view_users():
+    # Database ထဲက user အားလုံးကို ဆွဲထုတ်ခြင်း
+    all_users = list(users_col.find({}, {"_id": 0})) 
+    return jsonify(all_users)
+    
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)
