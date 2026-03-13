@@ -108,17 +108,18 @@ HTML_CODE = '''
     .auth-btn { width:100%; padding:16px; background:#fbbf24; border:none; border-radius:12px; font-weight:bold; color:black; cursor:pointer; }
     .auth-toggle { margin-top:20px; color:#94a3b8; font-size:14px; cursor:pointer; text-decoration: underline; }
     .user-banner { background:#1e293b; padding:12px 20px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #334155; }
-    .game-grid { display:grid; grid-template-columns:1fr 1fr; gap:15px; padding:20px; }
-    
-    .game-card {
-        background: none;
-        border: none;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        cursor: pointer;
-        transition: 0.3s;
+    /* Line 57 ကနေ စပြီး အစားထိုးရန် */
+    .pkg-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:15px 0; }
+    .pkg-card { 
+        background:#1e293b; border:1px solid #334155; padding:15px 10px; 
+        border-radius:16px; text-align:center; cursor:pointer; 
+        display:flex; flex-direction:column; align-items:center; min-height:120px;
     }
+    .pkg-card.selected { border:2px solid #fbbf24; background:#1e3a8a; }
+    .pkg-dia-img { width:48px; height:48px; object-fit:contain; margin-top:10px; }
+    .pkg-info { margin-top:auto; width:100%; }
+    .pkg-d-text { font-size:13px; color:white; font-weight:bold; display:block; margin-bottom:2px; }
+    .pkg-p-text { font-size:14px; color:#fbbf24; font-weight:bold; }
 
     .game-card .img-box {
         width: 100%;
@@ -288,12 +289,28 @@ HTML_CODE = '''
         renderP(g.cat_order[0], document.querySelector('.tab-btn.active'));
     }
 
+    // Line 115 ဝန်းကျင်က getDiaImg နဲ့ renderP နေရာမှာ အစားထိုးရန်
+    function getPkgImg(text) {
+        let num = parseInt(text);
+        if (text.includes("Weekly")) return "/static/weekly_pass.png";
+        if (text.includes("Twilight")) return "/static/twilight.png";
+        if (num <= 50) return "/static/dia1.png";
+        if (num <= 300) return "/static/dia2.png";
+        return "/static/dia3.png";
+    }
+
     function renderP(cat, btn) {
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         const pkgs = games.find(i => i.id === sel_srv).cats[cat];
-        document.getElementById('p-list').innerHTML = pkgs.map(p => 
-            `<div class="pkg-card" onclick="selP(this, '${p.d}', '${p.p}')"><span>${p.d}</span><br><b>${p.p} Ks</b></div>`).join('');
+        document.getElementById('p-list').innerHTML = pkgs.map(p => `
+            <div class="pkg-card" onclick="selP(this, '${p.d}', '${p.p}')">
+                <img src="${getPkgImg(p.d)}" class="pkg-dia-img">
+                <div class="pkg-info">
+                    <span class="pkg-d-text">${p.d}</span>
+                    <span class="pkg-p-text">${p.p} Ks</span>
+                </div>
+            </div>`).join('');
     }
 
     function selP(el, d, p) {
