@@ -3,7 +3,6 @@ from flask import Flask, render_template_string, request, jsonify
 from datetime import datetime, timedelta, timezone
 from pymongo import MongoClient
 from bson.objectid import ObjectId
-from bson.objectid import ObjectId
 
 app = Flask(__name__)
 
@@ -17,7 +16,6 @@ BOT_TOKEN = "8089066962:AAFOHBGeuDF7E3YgeJ3mUu000sQNJ4uJVok"
 CHAT_ID = "7089720301"
 CS_TELEGRAM = "https://t.me/Bby_kiwii7"
 
-# Admin Usernames (Top List ထဲ မထည့်မည့်သူများ)
 ADMIN_USERNAMES = ["@Escanor_XX", "@Escanor_X", "@Bby_kiwii7"]
 
 GAMES_DATA = [
@@ -37,31 +35,20 @@ HTML_CODE = '''
     body { background:#0f172a; color:white; font-family:sans-serif; margin:0; padding-bottom:80px; }
     #main-container { max-width:500px; margin:auto; }
     .header-logo { text-align:center; padding:25px 0; color:#fbbf24; font-size:26px; font-weight:bold; }
-    
-    .game-grid {
-        display:grid; grid-template-columns:1fr 1fr; gap:15px; padding:20px;
-        background: url('/static/hero.webp') no-repeat center center; background-size: cover;
-        border-radius: 15px; margin: 10px;
-    }
+    .game-grid { display:grid; grid-template-columns:1fr 1fr; gap:15px; padding:20px; border-radius: 15px; margin: 10px; }
     .game-card { background:rgba(30, 41, 59, 0.85); border-radius:15px; padding:25px 15px; text-align:center; border:1px solid #334155; cursor:pointer; }
-    
     .pay-icons { display:flex; gap:12px; justify-content:center; margin-bottom:12px; }
     .pay-icons img { width:45px; height:45px; border-radius:10px; border:1px solid #444; }
-    
     .nav-bar { position:fixed; bottom:0; width:100%; max-width:500px; background:#1e293b; display:flex; padding:12px 0; border-top:1px solid #334155; z-index:1000; }
     .nav-item { flex:1; text-align:center; color:#94a3b8; cursor:pointer; font-size:12px; }
     .nav-item.active { color:#fbbf24; }
-    
     .pkg-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:15px 0; }
     .pkg-card { background:#1e293b; border:1px solid #334155; padding:15px; border-radius:12px; text-align:center; cursor:pointer; }
     .pkg-card.selected { border:2px solid #fbbf24; background:#1e3a8a; }
-    
     .buy-btn { width:100%; padding:16px; background:#fbbf24; border:none; border-radius:12px; font-weight:bold; color:black; cursor:pointer; font-size:16px; }
     input { width:100%; padding:14px; margin:8px 0; border-radius:10px; background:#1e293b; color:white; border:1px solid #334155; box-sizing:border-box; }
-
     .rank-item { display:flex; align-items:center; background:#1e293b; padding:15px; margin-bottom:10px; border-radius:12px; border:1px solid #334155; }
     .rank-num { width:35px; height:35px; background:#fbbf24; color:black; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:bold; margin-right:15px; }
-    
     #my-rank-banner { background:#fbbf24; color:black; padding:15px; border-radius:12px; margin-bottom:20px; text-align:center; font-weight:bold; box-shadow: 0 0 10px #fbbf24; }
 </style>
 </head><body>
@@ -70,12 +57,10 @@ HTML_CODE = '''
         <div class="header-logo">KIWII GAME STORE</div>
         <div class="game-grid" id="g-list"></div>
     </div>
-
     <div id="o-sec" style="display:none; padding:15px;">
         <button onclick="goH()" style="background:none;color:white;border:1px solid #334155;padding:8px 15px;border-radius:8px;margin-bottom:15px;">← Back</button>
         <h2 id="g-title" style="color:#fbbf24;"></h2>
         <div id="p-list" class="pkg-grid"></div>
-        
         <div style="background:#1e293b; padding:20px; border-radius:15px; border:1px solid #fbbf24; text-align:center; margin-bottom:15px;">
             <div class="pay-icons">
                 <img src="/static/kpay.jpg"> <img src="/static/wave.jpg"> <img src="/static/ayapay.jpg">
@@ -83,7 +68,6 @@ HTML_CODE = '''
             <b style="color:#fbbf24; font-size:22px;">09775394979</b><br>
             <small>Thansin Kyaw (Kpay/Wave)</small>
         </div>
-
         <form id="orderForm" onsubmit="handleOrder(event)">
             <input type="tel" id="uid" placeholder="Game ID" required>
             <input type="tel" id="zid" placeholder="Zone ID" required>
@@ -91,31 +75,26 @@ HTML_CODE = '''
             <button type="submit" class="buy-btn" id="submitBtn">PLACE ORDER</button>
         </form>
     </div>
-
     <div id="top-sec" style="display:none; padding:15px;">
         <h3 style="color:#fbbf24; text-align:center;">🏆 TOP 10 USERS</h3>
         <div id="my-rank-banner" style="display:none;"></div>
         <div id="top-list"></div>
     </div>
-
     <div id="hist-sec" style="display:none; padding:15px;">
         <h3 style="color:#fbbf24;">History</h3>
         <div id="hist-list"></div>
     </div>
 </div>
-
 <div class="nav-bar">
     <div class="nav-item active" id="nav-home" onclick="goH()"><i class="fas fa-home"></i><br>Home</div>
     <div class="nav-item" id="nav-hist" onclick="showH()"><i class="fas fa-history"></i><br>History</div>
     <div class="nav-item" id="nav-top" onclick="showTop()"><i class="fas fa-trophy"></i><br>Top 10</div>
     <div class="nav-item" onclick="window.open('{{ cs_link }}')"><i class="fas fa-headset"></i><br>CS</div>
 </div>
-
 <script>
 let sel_srv='', sel_pkg='', sel_prc='';
 const games = {{ games | tojson }};
 const CURRENT_LOGIN_USER = "@Bby_kiwii7"; 
-
 function init() {
     document.getElementById('g-list').innerHTML = games.map(g => `
         <div class="game-card" onclick="selG(${g.id})">
@@ -124,7 +103,6 @@ function init() {
         </div>`).join('');
 }
 init();
-
 function selG(id) {
     const g = games.find(i => i.id === id); sel_srv = g.name;
     document.getElementById('h-sec').style.display='none'; 
@@ -134,7 +112,6 @@ function selG(id) {
     document.getElementById('g-title').innerText = g.name;
     renderP(id, g.cat_order[0]);
 }
-
 function renderP(id, cat) {
     const pkgs = games.find(i=>i.id===id).cats[cat];
     document.getElementById('p-list').innerHTML = pkgs.map(p=>`
@@ -142,33 +119,27 @@ function renderP(id, cat) {
             <span>${p.d}</span><br><b style="color:#fbbf24;">${p.p} Ks</b>
         </div>`).join('');
 }
-
 function selP(el, d, p) {
     document.querySelectorAll('.pkg-card').forEach(c=>c.classList.remove('selected'));
     el.classList.add('selected'); sel_pkg=d; sel_prc=p;
 }
-
 async function handleOrder(e) {
     e.preventDefault();
     if(!sel_pkg) return alert("Package ရွေးပေးပါ။");
-    
     const fd = new FormData();
     fd.append('tg_user', CURRENT_LOGIN_USER);
     fd.append('uid', document.getElementById('uid').value);
     fd.append('zid', document.getElementById('zid').value);
     fd.append('server', sel_srv); fd.append('pkg', sel_pkg);
     fd.append('price', sel_prc); fd.append('photo', document.getElementById('photo').files[0]);
-
     const r = await fetch('/order', { method: 'POST', body: fd });
     if(await r.text() === "Success") { alert("Order Successful!"); location.reload(); }
     else { alert("Order Failed. Please try again."); }
 }
-
 async function showTop() {
     document.getElementById('h-sec').style.display='none'; document.getElementById('o-sec').style.display='none';
     document.getElementById('hist-sec').style.display='none'; document.getElementById('top-sec').style.display='block';
     updateNav('nav-top');
-    
     const myRankRes = await fetch(`/api/my_rank?user=${CURRENT_LOGIN_USER}`);
     const myRankData = await myRankRes.json();
     const banner = document.getElementById('my-rank-banner');
@@ -176,7 +147,6 @@ async function showTop() {
         banner.style.display = 'block';
         banner.innerHTML = `👤 Your Rank: #${myRankData.rank}<br><small>Total Spent: ${myRankData.total.toLocaleString()} Ks</small>`;
     } else { banner.style.display = 'none'; }
-
     const r = await fetch('/api/top10');
     const data = await r.json();
     document.getElementById('top-list').innerHTML = data.map((u, i) => `
@@ -186,7 +156,6 @@ async function showTop() {
             <div style="color:#fbbf24; font-weight:bold;">${u.totalSpent.toLocaleString()} Ks</div>
         </div>`).join('') || "<p style='text-align:center;'>No Data Yet</p>";
 }
-
 async function showH() {
     document.getElementById('h-sec').style.display='none'; document.getElementById('o-sec').style.display='none';
     document.getElementById('top-sec').style.display='none'; document.getElementById('hist-sec').style.display='block';
@@ -198,7 +167,6 @@ async function showH() {
             <b>${o.pkg}</b> - ${o.price} Ks<br><small>${o.status} | ${o.date}</small>
         </div>`).join('') || "No history";
 }
-
 function goH() { location.reload(); }
 function updateNav(id) { 
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -230,12 +198,9 @@ def order():
         }).inserted_id
         
         keyboard = {"inline_keyboard": [[{"text": "Done ✅", "callback_data": f"done_{oid}"}, {"text": "Reject ❌", "callback_data": f"reject_{oid}"}]]}
-        
-        # HTML Format ကို ပြောင်းလိုက်ပါမယ် (ပိုစိတ်ချရပါတယ်)
         msg = f"<b>⚠️ New Order!</b>\n\n<b>👤 User:</b> {tg_user}\n<b>🆔 ID:</b> <code>{uid}</code> ({zid})\n<b>📦 Package:</b> {pkg}\n<b>💰 Price:</b> {price} Ks"
         
         url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto"
-        # Chat ID ကို ကိန်းဂဏန်း (Integer) အဖြစ် ပြောင်းပေးလိုက်ပါ
         payload = {
             "chat_id": int(CHAT_ID), 
             "caption": msg,
@@ -246,16 +211,14 @@ def order():
         if photo:
             files = {"photo": photo}
             r = requests.post(url, data=payload, files=files)
-            r.raise_for_status() # Error တက်ရင် သိရအောင်
         else:
             send_msg_url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
             r = requests.post(send_msg_url, data={"chat_id": int(CHAT_ID), "text": msg, "parse_mode": "HTML", "reply_markup": json.dumps(keyboard)})
-            r.raise_for_status()
-
+        
+        r.raise_for_status()
         return "Success"
-
-        except Exception as e:
-        print(f"Telegram Error Detail: {str(e)}")
+    except Exception as e:
+        print(f"Telegram Error: {str(e)}")
         return "Error"
 
 @app.route('/webhook', methods=['POST'])
@@ -264,73 +227,39 @@ def webhook():
         data = request.json
         if not data or "callback_query" not in data:
             return "OK", 200
-
-        callback = data["callback_query"]
-        action_data = callback["data"]
-        chat_id = callback["message"]["chat"]["id"]
-        message_id = callback["message"]["message_id"]
-
-        if "_" not in action_data:
-            return "OK", 200
+        callback = data["callback_query"]; action_data = callback["data"]
+        chat_id = callback["message"]["chat"]["id"]; message_id = callback["message"]["message_id"]
+        if "_" not in action_data: return "OK", 200
             
         action, oid = action_data.split("_")
         new_status = "Completed" if action == "done" else "Rejected"
-
-        # Database Update
-        from bson.objectid import ObjectId
         orders_col.update_one({"_id": ObjectId(oid)}, {"$set": {"status": new_status}})
 
-        # Telegram Message Update
         current_caption = callback["message"].get("caption", "")
         base_caption = current_caption.split("\n\n📢 Status:")[0]
         updated_text = f"{base_caption}\n\n📢 Status: <b>{new_status}</b>"
 
         requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/editMessageCaption", 
-                      data={
-                          "chat_id": chat_id, 
-                          "message_id": message_id, 
-                          "caption": updated_text, 
-                          "parse_mode": "HTML"
-                      })
-
+                      data={"chat_id": chat_id, "message_id": message_id, "caption": updated_text, "parse_mode": "HTML"})
         requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/answerCallbackQuery", 
                       data={"callback_query_id": callback["id"], "text": f"Order {new_status}!"})
-
         return "OK", 200
-
     except Exception as e:
-        print(f"Webhook Error Detail: {str(e)}")
+        print(f"Webhook Error: {str(e)}")
         return "OK", 200
-
-if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000)
-
-    except Exception as e:
-        print(f"Telegram Error Detail: {str(e)}")
-        return "Error"
 
 @app.route('/api/top10')
 def get_top10():
-    pipeline = [
-        {"$match": {"tg_user": {"$nin": ADMIN_USERNAMES}}},
-        {"$group": {"_id": "$tg_user", "totalSpent": {"$sum": "$price"}}},
-        {"$sort": {"totalSpent": -1}},
-        {"$limit": 10}
-    ]
+    pipeline = [{"$match": {"tg_user": {"$nin": ADMIN_USERNAMES}}}, {"$group": {"_id": "$tg_user", "totalSpent": {"$sum": "$price"}}}, {"$sort": {"totalSpent": -1}}, {"$limit": 10}]
     return jsonify(list(orders_col.aggregate(pipeline)))
 
 @app.route('/api/my_rank')
 def get_my_rank():
     user = request.args.get('user')
-    pipeline = [
-        {"$match": {"tg_user": {"$nin": ADMIN_USERNAMES}}},
-        {"$group": {"_id": "$tg_user", "totalSpent": {"$sum": "$price"}}},
-        {"$sort": {"totalSpent": -1}}
-    ]
+    pipeline = [{"$match": {"tg_user": {"$nin": ADMIN_USERNAMES}}}, {"$group": {"_id": "$tg_user", "totalSpent": {"$sum": "$price"}}}, {"$sort": {"totalSpent": -1}}]
     all_users = list(orders_col.aggregate(pipeline))
     for i, u in enumerate(all_users):
-        if u['_id'] == user:
-            return jsonify({"rank": i+1, "total": u['totalSpent']})
+        if u['_id'] == user: return jsonify({"rank": i+1, "total": u['totalSpent']})
     return jsonify({})
 
 @app.route('/api/history')
@@ -341,4 +270,5 @@ def get_history():
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)
-    
+
+
