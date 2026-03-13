@@ -390,6 +390,13 @@ def order():
 </html>
 '''
 
+# --- 🚀 BACKEND ---
+
+@app.route('/')
+def index():
+    # JSON_DATA_HERE နေရာမှာ ဂိမ်းဒေတာတွေ အစားထိုးပြီး Website ကို ပြသခြင်း
+    return render_template_string(HTML_CODE.replace("JSON_DATA_HERE", json.dumps(GAMES_DATA)))
+
 @app.route('/api/auth', methods=['POST'])
 def auth():
     try:
@@ -417,7 +424,8 @@ def order():
         pkg = request.form.get('pkg')
         srv = request.form.get('srv')
         photo = request.files.get('photo')
-        price = int(request.form.get('price', '0').replace(',', ''))
+        price_raw = request.form.get('price', '0').replace(',', '')
+        price = int(price_raw)
 
         order_date = datetime.now(timezone(timedelta(hours=6, minutes=30))).strftime("%d/%m/%Y %I:%M %p")
         
@@ -439,22 +447,15 @@ def order():
         )
 
         reply_markup = {
-            "inline_keyboard": [
-                [
-                    {"text": "✅ Done", "callback_data": f"st_Completed_{str(oid)}"},
-                    {"text": "❌ Reject", "callback_data": f"st_Rejected_{str(oid)}"}
-                ]
-            ]
+            "inline_keyboard": [[
+                {"text": "✅ Done", "callback_data": f"st_Completed_{str(oid)}"},
+                {"text": "❌ Reject", "callback_data": f"st_Rejected_{str(oid)}"}
+            ]]
         }
 
         requests.post(
             f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto",
-            data={
-                "chat_id": CHAT_ID,
-                "caption": msg,
-                "parse_mode": "HTML",
-                "reply_markup": json.dumps(reply_markup)
-            },
+            data={"chat_id": CHAT_ID, "caption": msg, "parse_mode": "HTML", "reply_markup": json.dumps(reply_markup)},
             files={"photo": photo}
         )
         return "Success"
@@ -507,7 +508,14 @@ def view_users():
     if not auth or not (auth.username == "admin" and auth.password == "Kiwii123"):
         return make_response('Verify!', 401, {'WWW-Authenticate': 'Basic realm="Login Required"'})
     all_users = list(users_col.find({}, {"_id": 0}))
-    return jsonify(all_users)
+    
+    # Admin Table မျက်နှာပြင်ပြသရန်
+    html_table = "<h2>Registered Users</h2><table border='1'><tr><th>User</th><th>Pass</th></tr>"
+    for u in all_users:
+        html_table += f"<tr><td>{u.get('user')}</td><td>{u.get('pass')}</td></tr>"
+    html_table += "</table>"
+    return html_table
 
 if __name__ == "__main__":
+    # Render အတွက် port 5000 ဖြင့် run ခြင်း
     app.run(host="0.0.0.0", port=5000)
