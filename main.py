@@ -1,5 +1,5 @@
 import os, requests, json
-from flask import Flask, render_template_string, request, jsonify
+from flask import Flask, render_template_string, request, jsonify, make_response
 from datetime import datetime, timedelta, timezone
 from pymongo import MongoClient
 from bson.objectid import ObjectId
@@ -392,12 +392,75 @@ def top10():
 
 @app.route('/admin/users')
 def view_users():
+    # --- 🔐 PASSWORD PROTECTION (Admin Login) ---
+    auth = request.authorization
+    if not auth or not (auth.username == "admin" and auth.password == "Kiwii123"):
+        return make_response(
+            'Could not verify your login!', 401,
+            {'WWW-Authenticate': 'Basic realm="Login Required"'}
+        )
+    # --------------------------------------------
+
     try:
-        # Database ထဲက user အားလုံးကို ရှာပြီး list ပြောင်းလိုက်တာပါ
-        all_users = list(users_col.find({}, {"_id": 0})) 
-        return jsonify(all_users)
+        # Database မှ User အားလုံးကို ယူခြင်း
+        all_users = list(users_col.find({}, {"_id": 0}))
+        
+        # HTML Design & Table Structure
+        html_table = '''
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Admin - User List</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <style>
+                body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0f172a; color: white; padding: 20px; }
+                .container { max-width: 800px; margin: auto; }
+                h2 { color: #fbbf24; text-align: center; margin-bottom: 20px; }
+                .table-container { overflow-x: auto; background: #1e293b; border-radius: 12px; padding: 10px; border: 1px solid #334155; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+                table { width: 100%; border-collapse: collapse; }
+                th, td { padding: 14px; text-align: left; border-bottom: 1px solid #334155; }
+                th { background-color: #fbbf24; color: #0f172a; text-transform: uppercase; font-size: 13px; font-weight: bold; }
+                tr:hover { background: #1e293b; filter: brightness(1.2); }
+                .back-btn { display: inline-block; margin-bottom: 15px; color: #fbbf24; text-decoration: none; border: 1px solid #fbbf24; padding: 8px 16px; border-radius: 8px; font-size: 14px; transition: 0.3s; }
+                .back-btn:hover { background: #fbbf24; color: black; }
+                .no-data { text-align: center; padding: 20px; color: #94a3b8; }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <a href="/" class="back-btn">← Back to Shop</a>
+                <h2>👥 Registered Users List</h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Username (Telegram)</th>
+                                <th>Password</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+        '''
+        
+        if not all_users:
+            html_table += '<tr><td colspan="2" class="no-data">No users registered yet.</td></tr>'
+        else:
+            for u in all_users:
+                # မတူညီတဲ့ field name တွေရှိနိုင်လို့ အကုန်စစ်ပြီးပြပေးခြင်း
+                uname = u.get('user') or u.get('name') or u.get('tg_user') or "N/A"
+                upsw = u.get('pass') or u.get('pw') or u.get('password') or "N/A"
+                html_table += f"<tr><td><b>{uname}</b></td><td><code>{upsw}</code></td></tr>"
+            
+        html_table += '''
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </body>
+        </html>
+        '''
+        return html_table
     except Exception as e:
-        return f"Error: {str(e)}", 500
+        return f"Admin Panel Error: {str(e)}", 500
     
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)
