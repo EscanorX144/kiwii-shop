@@ -124,6 +124,42 @@ HTML_CODE = '''
     .nav-item { flex:1; text-align:center; color:#94a3b8; cursor:pointer; font-size:12px; }
     .nav-item.active { color:#fbbf24; font-weight:bold; }
     .my-rank-card { margin: 15px auto; width: calc(100%% - 30px); padding: 15px; background: linear-gradient(135deg, #fbbf24, #f59e0b); border-radius: 12px; color: black; text-align: center; }
+    /* Floating CS Button Design */
+.cs-float {
+    position: fixed;
+    bottom: 80px; /* Navigation bar ရဲ့ အပေါ်မှာ ရှိနေအောင် */
+    right: 20px;
+    background: #fbbf24;
+    color: #0f172a;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4);
+    z-index: 1000;
+    text-decoration: none;
+    transition: transform 0.3s ease;
+}
+
+.cs-float:hover {
+    transform: scale(1.1);
+    background: #f59e0b;
+}
+
+.cs-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: red;
+    color: white;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 10px;
+    font-weight: bold;
+}
 </style>
 </head><body>
 <div id="main-container">
@@ -332,7 +368,13 @@ HTML_CODE = '''
             </div>`).join('') || "No history";
     }
 </script>
-</body></html>
+        <a href="https://t.me/Bby_kiwii7" target="_blank" class="cs-float">
+            <span class="cs-badge">Online</span>
+            💬
+        </a>
+
+    </body>
+</html>
 ''' % json.dumps(GAMES_DATA)
 
 # --- 🚀 BACKEND ---
