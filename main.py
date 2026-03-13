@@ -214,8 +214,8 @@ HTML_CODE = '''
                 <div class="glow-note">⚠️ Note - Payment သာရေးပါ</div>
             </div>
             <form id="orderForm" onsubmit="handleOrder(event)">
-                <input type="text" id="uid" placeholder="Game ID" required class="auth-input">
-                <input type="text" id="zid" placeholder="Zone ID" required class="auth-input">
+                <input type="number" id="uid" placeholder="Game ID" required class="auth-input" inputmode="numeric">
+                <input type="number" id="zid" placeholder="server ID" required class="auth-input" inputmode="numeric">
                 <input type="file" id="photo" required accept="image/*" class="auth-input">
                 <button type="submit" class="buy-btn" id="submitBtn">PLACE ORDER</button>
             </form>
