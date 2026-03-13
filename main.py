@@ -113,39 +113,42 @@ HTML_CODE = '''
     .pkg-card { background:#1e293b; border:1px solid #334155; padding:15px; border-radius:12px; text-align:center; cursor:pointer; }
     .pkg-card.selected { border:2px solid #fbbf24; background:#1e3a8a; }
     
-    /* --- Modern Payment UI --- */
-    .pay-box { background: #1e293b; padding: 25px 20px; border-radius: 20px; border: 1.5px solid #fbbf24; text-align: center; margin-bottom: 20px; position: relative; overflow: hidden; }
-    .pay-icons { display: flex; justify-content: center; gap: 20px; margin-bottom: 20px; }
-    .pay-icons img { width: 60px; height: 60px; border-radius: 12px; cursor: pointer; border: 3px solid transparent; transition: all 0.3s ease; opacity: 0.5; }
-    .pay-icons img.active { border-color: #fbbf24; transform: scale(1.1); opacity: 1; box-shadow: 0 0 15px rgba(251, 191, 36, 0.4); }
+    /* --- Improved Payment UI --- */
+    .pay-box { background: #1e293b; padding: 20px; border-radius: 20px; border: 1.5px solid #fbbf24; text-align: center; margin-bottom: 20px; }
+    .pay-icons { display: flex; justify-content: center; gap: 15px; margin-bottom: 15px; }
+    .pay-icons img { width: 55px; height: 55px; border-radius: 12px; cursor: pointer; border: 2px solid transparent; transition: all 0.3s ease; opacity: 0.6; }
+    .pay-icons img.active { border-color: #fbbf24; transform: scale(1.05); opacity: 1; box-shadow: 0 0 12px rgba(251, 191, 36, 0.3); }
     
-    .pay-info { margin: 15px 0; }
-    #pay-type { color: #fbbf24; font-size: 15px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
-    #pay-num { font-size: 20px; font-weight: 800; color: #fff; margin: 5px 0; display: block; }
-    .pay-name { color: #cbd5e1; font-size: 16px; font-weight: 500; }
+    .pay-info { margin: 10px 0; }
+    #pay-type { color: #fbbf24; font-size: 13px; font-weight: bold; text-transform: uppercase; margin-bottom: 4px; }
     
-    .copy-btn { background: #fbbf24; color: #000; border: none; padding: 6px 15px; border-radius: 8px; font-size: 13px; font-weight: bold; cursor: pointer; margin-left: 8px; vertical-align: middle; transition: 0.2s; }
+    /* Number and Copy Button Inline */
+    .num-row { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 4px; }
+    #pay-num { font-size: 20px; font-weight: 800; color: #fff; }
+    .copy-btn { background: #fbbf24; color: #000; border: none; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; transition: 0.2s; }
     .copy-btn:active { transform: scale(0.9); }
+    
+    .pay-name { color: #cbd5e1; font-size: 15px; font-weight: 500; }
     
     .note-box { 
         background: rgba(239, 68, 68, 0.1); 
         border: 2px solid #ef4444; 
         color: #ef4444; 
-        padding: 12px; 
+        padding: 10px; 
         border-radius: 12px; 
         font-weight: bold; 
-        font-size: 16px;
-        margin-top: 20px;
+        font-size: 15px;
+        margin-top: 15px;
         animation: blink-glow 1.5s infinite;
     }
     @keyframes blink-glow {
-        0% { box-shadow: 0 0 5px #ef4444; opacity: 1; border-color: #ef4444; }
-        50% { box-shadow: 0 0 20px #ef4444; opacity: 0.8; border-color: #fca5a5; }
-        100% { box-shadow: 0 0 5px #ef4444; opacity: 1; border-color: #ef4444; }
+        0% { box-shadow: 0 0 5px #ef4444; opacity: 1; }
+        50% { box-shadow: 0 0 15px #ef4444; opacity: 0.8; }
+        100% { box-shadow: 0 0 5px #ef4444; opacity: 1; }
     }
 
-    input, select { width:100%; padding:14px; margin:8px 0; border-radius:10px; background:#1e293b; color:white; border:1px solid #334155; box-sizing:border-box; font-size: 15px; }
-    .buy-btn { width:100%; padding:16px; background:#fbbf24; border:none; border-radius:12px; font-weight:bold; color:black; cursor:pointer; margin-top:10px; font-size: 16px; }
+    input { width:100%; padding:14px; margin:8px 0; border-radius:10px; background:#1e293b; color:white; border:1px solid #334155; box-sizing:border-box; }
+    .buy-btn { width:100%; padding:16px; background:#fbbf24; border:none; border-radius:12px; font-weight:bold; color:black; cursor:pointer; margin-top:10px; }
     .nav-bar { position:fixed; bottom:0; width:100%; max-width:500px; background:#1e293b; display:flex; padding:12px 0; border-top:1px solid #334155; z-index:1000; }
     .nav-item { flex:1; text-align:center; color:#94a3b8; cursor:pointer; font-size:12px; }
     .nav-item.active { color:#fbbf24; }
@@ -171,7 +174,10 @@ HTML_CODE = '''
             </div>
             <div class="pay-info">
                 <div id="pay-type">KPAY ACCOUNT</div>
-                <span id="pay-num">09775394979</span> <button class="copy-btn" onclick="copyNum()">COPY</button>
+                <div class="num-row">
+                    <span id="pay-num">09775394979</span>
+                    <button class="copy-btn" onclick="copyNum()">COPY</button>
+                </div>
                 <div class="pay-name">Name - Thansin Kyaw</div>
             </div>
             <div class="note-box">Note - Payment သာရေးပါ</div>
@@ -249,7 +255,7 @@ function copyNum() {
     const num = document.getElementById('pay-num').innerText;
     navigator.clipboard.writeText(num).then(() => {
         const btn = document.querySelector('.copy-btn');
-        btn.innerText = "COPIED!";
+        btn.innerText = "COPIED";
         btn.style.background = "#22c55e";
         setTimeout(() => { 
             btn.innerText = "COPY"; 
@@ -309,7 +315,7 @@ function goH() { location.reload(); }
 </script></body></html>
 '''
 
-# --- 🚀 BACKEND ---
+    # --- 🚀 BACKEND ---
 @app.route('/')
 def index():
     return render_template_string(HTML_CODE, games=GAMES_DATA, cs_link=CS_TELEGRAM)
