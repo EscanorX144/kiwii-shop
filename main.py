@@ -178,7 +178,8 @@ def order():
             "date": datetime.now(timezone(timedelta(hours=6, minutes=30))).strftime("%d/%m/%Y %I:%M %p")
         }).inserted_id
         
-        base_url = "https://kiwii-game-shop.onrender.com"
+        # သင့်ရဲ့ Link အမှန်ကို ဒီမှာ ထည့်ပေးထားပါတယ်
+        base_url = "https://kiwiigameshop.onrender.com"
         keyboard = {
             "inline_keyboard": [[
                 {"text": "Done ✅", "url": f"{base_url}/admin/status/done/{oid}"},
@@ -198,7 +199,6 @@ def order():
     except Exception as e:
         return str(e), 500
 
-# ဒီနေရာမှာ methods=['GET'] ထည့်လိုက်တာက Browser ကနေ ခေါ်ယူမှုကို ခွင့်ပြုပေးလိုက်တာပါ
 @app.route('/admin/status/<action>/<oid>', methods=['GET', 'POST'])
 def update_status(action, oid):
     try:
@@ -206,7 +206,7 @@ def update_status(action, oid):
         orders_col.update_one({"_id": ObjectId(oid)}, {"$set": {"status": new_status}})
         return f"<html><body style='background:#0f172a;color:white;text-align:center;padding-top:50px;font-family:sans-serif;'><h1>Order {new_status} Successfully!</h1><p>You can close this tab now.</p></body></html>"
     except Exception as e:
-        return str(e), 500
+        return f"Error: {str(e)}", 500
 
 @app.route('/api/history')
 def history():
@@ -221,3 +221,4 @@ def top10():
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)
+    
