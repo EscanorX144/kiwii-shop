@@ -368,33 +368,7 @@ HTML_CODE = '''
             </div>`).join('') || "No history";
     }
 </script>
-        <a href="https://t.me/Bby_kiwii7" target="_blank" class="cs-float">
-            <span class="cs-badge">Online</span>
-            💬
-        </a>
-
-    </body>
-</html>
-'''
-
-# --- 🚀 BACKEND ---
-
-@app.route('/')
-def index():
-    return render_template_string(HTML_CODE)
-
-@app.route('/api/auth', methods=['POST'])
-def auth():
-    data = request.json
-    utype, user, psw = data['type'], data['user'], data['pass']
-    if utype == 'register':
-        if users_col.find_one({"user": user}): return jsonify({"success": False, "msg": "User exists"})
-        users_col.insert_one({"user": user, "pass": psw})
-        return jsonify({"success": True})
-    else:
-        u = users_col.find_one({"user": user, "pass": psw})
-        return jsonify({"success": True if u else False, "msg": "Invalid Login"})
-
+        
 @app.route('/order', methods=['POST'])
 def order():
     try:
@@ -406,7 +380,39 @@ def order():
         photo = request.files.get('photo')
         price = int(request.form.get('price', '0').replace(',', ''))
 
-        order_date = datetime.now(timezone(timedelta(hours=6, minutes=30))).strftime("%d/%m/%Y %I:%M %p")
+        order_date = datetime.now(timezone(timedelta(ho<a href="https://t.me/Bby_kiwii7" target="_blank" class="cs-float">
+            <span class="cs-badge">Online</span>
+            💬
+        </a>
+
+        <script id="games-json" type="application/json">JSON_DATA_HERE</script>
+    </body>
+</html>
+'''
+
+# --- 🚀 BACKEND ---
+
+@app.route('/')
+def index():
+    return render_template_string(HTML_CODE.replace("JSON_DATA_HERE", json.dumps(GAMES_DATA)))
+
+@app.route('/api/auth', methods=['POST'])
+def auth():
+    try:
+        data = request.json
+        utype, user, psw = data['type'], data['user'], data['pass']
+        if utype == 'register':
+            if users_col.find_one({"user": user}): 
+                return jsonify({"success": False, "msg": "User already exists!"})
+            users_col.insert_one({"user": user, "pass": psw})
+            return jsonify({"success": True})
+        else:
+            u = users_col.find_one({"user": user, "pass": psw})
+            if u:
+                return jsonify({"success": True})
+            return jsonify({"success": False, "msg": "Invalid Username or Password!"})
+    except Exception as e:
+        return jsonify({"success": False, "msg": str(e)})urs=6, minutes=30))).strftime("%d/%m/%Y %I:%M %p")
         
         # Database ထဲသို့ သိမ်းဆည်းခြင်း (Default status: Pending)
         oid = orders_col.insert_one({
