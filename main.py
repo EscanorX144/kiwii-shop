@@ -113,7 +113,6 @@ HTML_CODE = '''
     .pkg-card { background:#1e293b; border:1px solid #334155; padding:15px; border-radius:12px; text-align:center; cursor:pointer; }
     .pkg-card.selected { border:2px solid #fbbf24; background:#1e3a8a; }
     
-    /* --- Improved Payment UI --- */
     .pay-box { background: #1e293b; padding: 20px; border-radius: 20px; border: 1.5px solid #fbbf24; text-align: center; margin-bottom: 20px; }
     .pay-icons { display: flex; justify-content: center; gap: 15px; margin-bottom: 15px; }
     .pay-icons img { width: 55px; height: 55px; border-radius: 12px; cursor: pointer; border: 2px solid transparent; transition: all 0.3s ease; opacity: 0.6; }
@@ -122,7 +121,6 @@ HTML_CODE = '''
     .pay-info { margin: 10px 0; }
     #pay-type { color: #fbbf24; font-size: 13px; font-weight: bold; text-transform: uppercase; margin-bottom: 4px; }
     
-    /* Number and Copy Button Inline */
     .num-row { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 4px; }
     #pay-num { font-size: 20px; font-weight: 800; color: #fff; }
     .copy-btn { background: #fbbf24; color: #000; border: none; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; transition: 0.2s; }
@@ -130,28 +128,13 @@ HTML_CODE = '''
     
     .pay-name { color: #cbd5e1; font-size: 15px; font-weight: 500; }
     
-    .note-box { 
-        background: rgba(239, 68, 68, 0.1); 
-        border: 2px solid #ef4444; 
-        color: #ef4444; 
-        padding: 10px; 
-        border-radius: 12px; 
-        font-weight: bold; 
-        font-size: 15px;
-        margin-top: 15px;
-        animation: blink-glow 1.5s infinite;
-    }
-    @keyframes blink-glow {
-        0% { box-shadow: 0 0 5px #ef4444; opacity: 1; }
-        50% { box-shadow: 0 0 15px #ef4444; opacity: 0.8; }
-        100% { box-shadow: 0 0 5px #ef4444; opacity: 1; }
-    }
+    .note-box { background: rgba(239, 68, 68, 0.1); border: 2px solid #ef4444; color: #ef4444; padding: 10px; border-radius: 12px; font-weight: bold; font-size: 15px; margin-top: 15px; animation: blink-glow 1.5s infinite; }
+    @keyframes blink-glow { 0% { box-shadow: 0 0 5px #ef4444; opacity: 1; } 50% { box-shadow: 0 0 15px #ef4444; opacity: 0.8; } 100% { box-shadow: 0 0 5px #ef4444; opacity: 1; } }
 
     input { width:100%; padding:14px; margin:8px 0; border-radius:10px; background:#1e293b; color:white; border:1px solid #334155; box-sizing:border-box; }
     .buy-btn { width:100%; padding:16px; background:#fbbf24; border:none; border-radius:12px; font-weight:bold; color:black; cursor:pointer; margin-top:10px; }
     .nav-bar { position:fixed; bottom:0; width:100%; max-width:500px; background:#1e293b; display:flex; padding:12px 0; border-top:1px solid #334155; z-index:1000; }
-    .nav-item { flex:1; text-align:center; color:#94a3b8; cursor:pointer; font-size:12px; }
-    .nav-item.active { color:#fbbf24; }
+    .nav-item { flex:1; text-align:center; color:#94a3b8; cursor:pointer; font-size:12px; transition: 0.3s; }
     .nav-item.active { color: #fbbf24 !important; font-weight: bold; }
 </style>
 </head><body>
@@ -185,8 +168,8 @@ HTML_CODE = '''
         </div>
 
         <form id="orderForm" onsubmit="handleOrder(event)">
-            <input type="tel" id="uid" placeholder="Game ID" required>
-            <input type="tel" id="zid" placeholder="Zone ID" required>
+            <input type="text" id="uid" placeholder="Game ID" required>
+            <input type="text" id="zid" placeholder="Zone ID" required>
             <input type="file" id="photo" required accept="image/*">
             <button type="submit" class="buy-btn" id="submitBtn">PLACE ORDER</button>
         </form>
@@ -261,12 +244,8 @@ function copyNum() {
     const num = document.getElementById('pay-num').innerText;
     navigator.clipboard.writeText(num).then(() => {
         const btn = document.querySelector('.copy-btn');
-        btn.innerText = "COPIED";
-        btn.style.background = "#22c55e";
-        setTimeout(() => { 
-            btn.innerText = "COPY"; 
-            btn.style.background = "#fbbf24";
-        }, 2000);
+        btn.innerText = "COPIED"; btn.style.background = "#22c55e";
+        setTimeout(() => { btn.innerText = "COPY"; btn.style.background = "#fbbf24"; }, 2000);
     });
 }
 
@@ -275,6 +254,7 @@ async function handleOrder(e) {
     if(!sel_pkg) return alert("Package ရွေးပေးပါ။");
     const btn = document.getElementById('submitBtn');
     btn.innerText = "SENDING..."; btn.disabled = true;
+    
     const fd = new FormData();
     fd.append('tg_user', "@Bby_kiwii7");
     fd.append('uid', document.getElementById('uid').value);
@@ -287,8 +267,7 @@ async function handleOrder(e) {
     try {
         const r = await fetch('/order', { method: 'POST', body: fd });
         if(await r.text() === "Success") {
-            alert("Order Successful!");
-            location.reload();
+            alert("Order Successful!"); location.reload();
         } else { alert("Order Failed."); }
     } catch(err) { alert("Error: " + err); }
     btn.innerText = "PLACE ORDER"; btn.disabled = false;
@@ -303,8 +282,11 @@ function goH() {
 }
 
 async function showTop() {
-    document.getElementById('h-sec').style.display='none'; document.getElementById('o-sec').style.display='none';
-    document.getElementById('hist-sec').style.display='none'; document.getElementById('top-sec').style.display='block';
+    document.getElementById('h-sec').style.display='none';
+    document.getElementById('o-sec').style.display='none';
+    document.getElementById('hist-sec').style.display='none';
+    document.getElementById('top-sec').style.display='block';
+    updateNav('nav-top');
     const r = await fetch('/api/top10');
     const data = await r.json();
     document.getElementById('top-list').innerHTML = data.map((u, i) => `
@@ -314,6 +296,7 @@ async function showTop() {
             <div style="color:#fbbf24;font-weight:bold;">${u.totalSpent.toLocaleString()} Ks</div>
         </div>`).join('') || "No data";
 }
+
 async function showH() {
     document.getElementById('h-sec').style.display='none'; 
     document.getElementById('o-sec').style.display='none';
@@ -342,7 +325,7 @@ async function showH() {
 </script></body></html>
 '''
 
-    # --- 🚀 BACKEND ---
+# --- 🚀 BACKEND ---
 @app.route('/')
 def index():
     return render_template_string(HTML_CODE, games=GAMES_DATA, cs_link=CS_TELEGRAM)
@@ -352,13 +335,19 @@ def order():
     try:
         tg_user = request.form.get('tg_user')
         uid = request.form.get('uid'); zid = request.form.get('zid')
-        price_str = request.form.get('price', '0').replace(' Ks', '').replace(',', '')
-        price = int(price_str)
-        pkg = request.form.get('pkg'); 
+        pkg = request.form.get('pkg')
+        srv = request.form.get('server')
         photo = request.files.get('photo')
         
+        # Price ကို စနစ်တကျ ပြောင်းလဲခြင်း
+        raw_price = request.form.get('price', '0')
+        price_str = str(raw_price).replace(' Ks', '').replace(',', '').strip()
+        price = int(price_str) if price_str.isdigit() else 0
+
+        # Database ထဲသို့ "srv" ပါ ထည့်သွင်းခြင်း
         oid = orders_col.insert_one({
-            "tg_user": tg_user, "uid": uid, "zone": zid, "pkg": pkg, "price": price, "status": "Pending", 
+            "tg_user": tg_user, "uid": uid, "zone": zid, "pkg": pkg, "srv": srv, 
+            "price": price, "status": "Pending", 
             "date": datetime.now(timezone(timedelta(hours=6, minutes=30))).strftime("%d/%m/%Y %I:%M %p")
         }).inserted_id
         
@@ -404,3 +393,4 @@ def top10():
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)
+    
