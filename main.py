@@ -108,7 +108,33 @@ HTML_CODE = '''
     .auth-toggle { margin-top:20px; color:#94a3b8; font-size:14px; cursor:pointer; text-decoration: underline; }
     .user-banner { background:#1e293b; padding:12px 20px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #334155; }
     .game-grid { display:grid; grid-template-columns:1fr 1fr; gap:15px; padding:20px; }
-    .game-card { background:rgba(30, 41, 59, 0.85); border-radius:15px; padding:20px; text-align:center; border:1px solid #334155; cursor:pointer; }
+    
+    /* Server Card Design Updated */
+    .game-card {
+        background: #1e293b;
+        border-radius: 12px;
+        display: flex;
+        flex-direction: column; /* အပေါ်အောက် ထားရန် */
+        align-items: center;
+        cursor: pointer;
+        transition: 0.3s;
+        overflow: hidden;
+        border: 1px solid #334155;
+    }
+    .game-card:hover { transform: translateY(-5px); border-color: #fbbf24; }
+    
+    .game-card img {
+        width: 100%;
+        height: 120px; /* ပုံအမြင့် - ညီလိုသလို ညှိနိုင်ပါတယ် */
+        object-fit: cover;
+    }
+    .game-card b {
+        padding: 12px 5px;
+        text-align: center;
+        font-size: 14px;
+        color: #fff;
+    }
+
     .cat-tabs { display:flex; gap:10px; overflow-x:auto; padding:10px 0; margin-bottom:15px; scrollbar-width: none; }
     .tab-btn { background:#1e293b; border:1px solid #334155; color:#94a3b8; padding:10px 15px; border-radius:10px; white-space:nowrap; cursor:pointer; font-size:14px; }
     .tab-btn.active { background:#fbbf24; color:black; font-weight:bold; }
@@ -117,22 +143,16 @@ HTML_CODE = '''
     .pkg-card.selected { border:2px solid #fbbf24; background:#1e3a8a; }
     .pay-box { background: #1e293b; padding: 20px; border-radius: 20px; border: 1.5px solid #fbbf24; text-align: center; margin-bottom: 20px; }
     .pay-icons { display: flex; justify-content: center; gap: 15px; margin-bottom: 15px; }
-    .pay-icons img { width: 55px; height: 55px; border-radius: 12px; cursor: pointer; opacity: 0.6; }
-    .pay-icons img.active { border: 2px solid #fbbf24; opacity: 1; transform: scale(1.1); }
+    .pay-icons img { width: 55px; height: 55px; border-radius: 12px; cursor: pointer; opacity: 0.5; transition: 0.3s; margin: 0 5px; border: 2px solid transparent; }
+    .pay-icons img.active { opacity: 1; transform: scale(1.1); border-color: #fbbf24; box-shadow: 0 0 10px rgba(251, 191, 36, 0.5); }
     .buy-btn { width:100%; padding:16px; background:#fbbf24; border:none; border-radius:12px; font-weight:bold; color:black; cursor:pointer; margin-top:10px; }
     .nav-bar { position:fixed; bottom:0; width:100%; max-width:500px; background:#1e293b; display:flex; padding:12px 0; border-top:1px solid #334155; z-index:1000; }
     .nav-item { flex:1; text-align:center; color:#94a3b8; cursor:pointer; font-size:12px; }
     .nav-item.active { color:#fbbf24; font-weight:bold; }
     .my-rank-card { margin: 15px auto; width: calc(100% - 30px); padding: 15px; background: linear-gradient(135deg, #fbbf24, #f59e0b); border-radius: 12px; color: black; text-align: center; }
-    /* Floating CS Button Design */
     .cs-float { position: fixed; bottom: 80px; right: 20px; background: #fbbf24; color: #0f172a; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4); z-index: 1000; text-decoration: none; transition: transform 0.3s ease; }
-    .cs-float:hover { transform: scale(1.1); background: #f59e0b; }
     .cs-badge { position: absolute; top: -5px; right: -5px; background: red; color: white; font-size: 10px; padding: 2px 6px; border-radius: 10px; font-weight: bold; }
-    /* Payment Section New Design */
-    .pay-icons img { width: 55px; height: 55px; border-radius: 12px; cursor: pointer; opacity: 0.5; transition: 0.3s; margin: 0 5px; border: 2px solid transparent; }
-    .pay-icons img.active { opacity: 1; transform: scale(1.1); border-color: #fbbf24; box-shadow: 0 0 10px rgba(251, 191, 36, 0.5); }
     .copy-btn { background: #334155; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 12px; margin-left: 10px; transition: 0.2s; }
-    .copy-btn:hover { background: #fbbf24; color: black; }
     .glow-note { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid #ef4444; padding: 8px 15px; border-radius: 8px; font-weight: bold; font-size: 14px; margin-top: 15px; display: inline-block; animation: glowPulse 1.5s infinite alternate; }
     @keyframes glowPulse { from { box-shadow: 0 0 5px rgba(239, 68, 68, 0.2); } to { box-shadow: 0 0 15px rgba(239, 68, 68, 0.8); } }
 </style>
@@ -187,7 +207,6 @@ HTML_CODE = '''
                 </div>
                 <div class="glow-note">⚠️ Note - Payment သာရေးပါ</div>
             </div>
-            
             <form id="orderForm" onsubmit="handleOrder(event)">
                 <input type="text" id="uid" placeholder="Game ID" required class="auth-input">
                 <input type="text" id="zid" placeholder="Zone ID" required class="auth-input">
@@ -238,15 +257,15 @@ HTML_CODE = '''
         const res = await r.json();
         if(res.success) { localStorage.setItem('user', user); location.reload(); }
         else alert(res.msg);
-    }
+    }            
 
     function logout() { localStorage.removeItem('user'); location.reload(); }
 
     function init() {
         document.getElementById('g-list').innerHTML = games.map(g => `
             <div class="game-card" onclick="selG(${g.id})">
-                <img src="${g.img}" width="65" style="border-radius:12px;"><br>
-                <b style="display:block;margin-top:12px;">${g.name}</b>
+                <img src="${g.img}">
+                <b>${g.name}</b>
             </div>`).join('');
     }
 
@@ -307,7 +326,7 @@ HTML_CODE = '''
         fd.append('tg_user', currentUser);
         fd.append('uid', document.getElementById('uid').value);
         fd.append('zid', document.getElementById('zid').value);
-        fd.append('server', games.find(i => i.id === sel_srv).name);
+        fd.append('srv', games.find(i => i.id === sel_srv).name);
         fd.append('pkg', sel_pkg);
         fd.append('price', sel_prc);
         fd.append('photo', document.getElementById('photo').files[0]);
@@ -318,7 +337,7 @@ HTML_CODE = '''
             else { alert("Failed"); btn.innerText = "PLACE ORDER"; btn.disabled = false; }
         } catch(err) { alert("Error"); btn.innerText = "PLACE ORDER"; btn.disabled = false; }
     }
-
+    
     function goH() {
         document.getElementById('h-sec').style.display='block';
         document.getElementById('o-sec').style.display='none';
@@ -363,8 +382,8 @@ HTML_CODE = '''
         document.getElementById('top-sec').style.display='none';
         document.getElementById('hist-sec').style.display='block';
         document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-        document.getElementById('nav-hist').classList.add('active');
-
+ 
+       document.getElementById('nav-hist').classList.add('active');
         try {
             const r = await fetch('/api/history');
             const data = await r.json();
