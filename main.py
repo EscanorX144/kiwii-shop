@@ -161,7 +161,7 @@ HTML_CODE = '''
     font-size: 14px;
 }
 
-        /* Personal Rank Style */
+            /* Personal Rank Style */
     .my-rank-card {
         margin: 15px auto; 
         width: calc(100% - 30px); 
@@ -174,7 +174,7 @@ HTML_CODE = '''
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); 
         border: 1px solid rgba(255, 255, 255, 0.3);
     }
-    
+
 </style>
 </head><body>
 <div id="main-container">
