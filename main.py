@@ -121,26 +121,34 @@ HTML_CODE = '''
     .pkg-d-text { font-size:13px; color:white; font-weight:bold; display:block; margin-bottom:2px; }
     .pkg-p-text { font-size:14px; color:#fbbf24; font-weight:bold; }
 
-    .game-card .img-box {
-        width: 100%;
-        aspect-ratio: 1 / 1;
-        border-radius: 15px;
-        overflow: hidden;
-        border: 1px solid #334155;
-        margin-bottom: 8px;
-        background: #1e293b;
+    /* Home Screen Server Grid ကို ၂ ခုစီ ပြန်ပြင်ခြင်း */
+    .game-grid { 
+        display: grid; 
+        grid-template-columns: 1fr 1fr; /* ဘေးတိုက် ၂ ခုစီ ပြပေးမှာပါ */
+        gap: 15px; 
+        padding: 20px; 
     }
 
-    .game-card img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
-    }
-    .game-card b {
-        font-size: 13px;
-        color: #fbbf24;
+    .game-card {
+        background: #1e293b;
+        border-radius: 15px;
+        padding: 10px;
         text-align: center;
+        border: 1px solid #334155;
+    }
+
+    .game-card .img-box { 
+        width: 100%; 
+        aspect-ratio: 1/1; /* ပုံကို စတုရန်းကွက် ဖြစ်စေပါတယ် */
+        border-radius: 12px; 
+        overflow: hidden; 
+        margin-bottom: 8px; 
+    }
+
+    .game-card img { 
+        width: 100%; 
+        height: 100%; 
+        object-fit: cover; 
     }
 
     .cat-tabs { display:flex; gap:10px; overflow-x:auto; padding:10px 0; margin-bottom:15px; scrollbar-width: none; }
