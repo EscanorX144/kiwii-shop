@@ -49,7 +49,6 @@ HTML_CODE = '''
     input { width:100%; padding:14px; margin:8px 0; border-radius:10px; background:#1e293b; color:white; border:1px solid #334155; box-sizing:border-box; }
     .rank-item { display:flex; align-items:center; background:#1e293b; padding:15px; margin-bottom:10px; border-radius:12px; border:1px solid #334155; }
     .rank-num { width:35px; height:35px; background:#fbbf24; color:black; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:bold; margin-right:15px; }
-    #my-rank-banner { background:#fbbf24; color:black; padding:15px; border-radius:12px; margin-bottom:20px; text-align:center; font-weight:bold; box-shadow: 0 0 10px #fbbf24; }
 </style>
 </head><body>
 <div id="main-container">
@@ -77,7 +76,6 @@ HTML_CODE = '''
     </div>
     <div id="top-sec" style="display:none; padding:15px;">
         <h3 style="color:#fbbf24; text-align:center;">🏆 TOP 10 USERS</h3>
-        <div id="my-rank-banner" style="display:none;"></div>
         <div id="top-list"></div>
     </div>
     <div id="hist-sec" style="display:none; padding:15px;">
@@ -134,19 +132,11 @@ async function handleOrder(e) {
     fd.append('price', sel_prc); fd.append('photo', document.getElementById('photo').files[0]);
     const r = await fetch('/order', { method: 'POST', body: fd });
     if(await r.text() === "Success") { alert("Order Successful!"); location.reload(); }
-    else { alert("Order Failed. Please try again."); }
+    else { alert("Order Failed."); }
 }
 async function showTop() {
     document.getElementById('h-sec').style.display='none'; document.getElementById('o-sec').style.display='none';
     document.getElementById('hist-sec').style.display='none'; document.getElementById('top-sec').style.display='block';
-    updateNav('nav-top');
-    const myRankRes = await fetch(`/api/my_rank?user=${CURRENT_LOGIN_USER}`);
-    const myRankData = await myRankRes.json();
-    const banner = document.getElementById('my-rank-banner');
-    if(myRankData.rank) {
-        banner.style.display = 'block';
-        banner.innerHTML = `👤 Your Rank: #${myRankData.rank}<br><small>Total Spent: ${myRankData.total.toLocaleString()} Ks</small>`;
-    } else { banner.style.display = 'none'; }
     const r = await fetch('/api/top10');
     const data = await r.json();
     document.getElementById('top-list').innerHTML = data.map((u, i) => `
@@ -154,12 +144,11 @@ async function showTop() {
             <div class="rank-num">${i+1}</div>
             <div style="flex:1;"><b>${u._id}</b></div>
             <div style="color:#fbbf24; font-weight:bold;">${u.totalSpent.toLocaleString()} Ks</div>
-        </div>`).join('') || "<p style='text-align:center;'>No Data Yet</p>";
+        </div>`).join('') || "No data";
 }
 async function showH() {
     document.getElementById('h-sec').style.display='none'; document.getElementById('o-sec').style.display='none';
     document.getElementById('top-sec').style.display='none'; document.getElementById('hist-sec').style.display='block';
-    updateNav('nav-hist');
     const r = await fetch('/api/history');
     const data = await r.json();
     document.getElementById('hist-list').innerHTML = data.map(o => `
@@ -168,107 +157,69 @@ async function showH() {
         </div>`).join('') || "No history";
 }
 function goH() { location.reload(); }
-function updateNav(id) { 
-    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-}
 </script></body></html>
 '''
 
-# --- 🚀 BACKEND ---
 @app.route('/')
 def index():
     return render_template_string(HTML_CODE, games=GAMES_DATA, cs_link=CS_TELEGRAM)
-    
+
 @app.route('/order', methods=['POST'])
 def order():
     try:
         tg_user = request.form.get('tg_user')
-        uid = request.form.get('uid')
-        zid = request.form.get('zid')
-        price_str = request.form.get('price', '0').replace(' Ks', '').replace(',', '')
-        price = int(price_str)
-        photo = request.files.get('photo')
-        pkg = request.form.get('pkg')
+        uid = request.form.get('uid'); zid = request.form.get('zid')
+        price = int(request.form.get('price', '0').replace(' Ks', '').replace(',', ''))
+        pkg = request.form.get('pkg'); photo = request.files.get('photo')
         
         oid = orders_col.insert_one({
-            "tg_user": tg_user, "uid": uid, "zone": zid, 
-            "pkg": pkg, "price": price, "status": "Pending", 
+            "tg_user": tg_user, "uid": uid, "zone": zid, "pkg": pkg, "price": price, "status": "Pending", 
             "date": datetime.now(timezone(timedelta(hours=6, minutes=30))).strftime("%d/%m/%Y %I:%M %p")
         }).inserted_id
         
         keyboard = {"inline_keyboard": [[{"text": "Done ✅", "callback_data": f"done_{oid}"}, {"text": "Reject ❌", "callback_data": f"reject_{oid}"}]]}
         msg = f"<b>⚠️ New Order!</b>\n\n<b>👤 User:</b> {tg_user}\n<b>🆔 ID:</b> <code>{uid}</code> ({zid})\n<b>📦 Package:</b> {pkg}\n<b>💰 Price:</b> {price} Ks"
         
-        url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto"
-        payload = {
-            "chat_id": int(CHAT_ID), 
-            "caption": msg,
-            "parse_mode": "HTML",
-            "reply_markup": json.dumps(keyboard)
-        }
-        
         if photo:
-            files = {"photo": photo}
-            r = requests.post(url, data=payload, files=files)
+            requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto", data={"chat_id": CHAT_ID, "caption": msg, "parse_mode": "HTML", "reply_markup": json.dumps(keyboard)}, files={"photo": photo})
         else:
-            send_msg_url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
-            r = requests.post(send_msg_url, data={"chat_id": int(CHAT_ID), "text": msg, "parse_mode": "HTML", "reply_markup": json.dumps(keyboard)})
-        
-        r.raise_for_status()
+            requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage", data={"chat_id": CHAT_ID, "text": msg, "parse_mode": "HTML", "reply_markup": json.dumps(keyboard)})
         return "Success"
     except Exception as e:
-        print(f"Telegram Error: {str(e)}")
-        return "Error"
+        return str(e), 500
 
 @app.route('/webhook', methods=['POST'])
 def webhook():
     try:
         data = request.json
-        if not data or "callback_query" not in data:
-            return "OK", 200
-        callback = data["callback_query"]; action_data = callback["data"]
-        chat_id = callback["message"]["chat"]["id"]; message_id = callback["message"]["message_id"]
-        if "_" not in action_data: return "OK", 200
-            
+        if not data or "callback_query" not in data: return "OK", 200
+        cb = data["callback_query"]; action_data = cb["data"]
+        chat_id = cb["message"]["chat"]["id"]; msg_id = cb["message"]["message_id"]
+        
         action, oid = action_data.split("_")
         new_status = "Completed" if action == "done" else "Rejected"
+        
         orders_col.update_one({"_id": ObjectId(oid)}, {"$set": {"status": new_status}})
-
-        current_caption = callback["message"].get("caption", "")
-        base_caption = current_caption.split("\n\n📢 Status:")[0]
-        updated_text = f"{base_caption}\n\n📢 Status: <b>{new_status}</b>"
-
-        requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/editMessageCaption", 
-                      data={"chat_id": chat_id, "message_id": message_id, "caption": updated_text, "parse_mode": "HTML"})
-        requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/answerCallbackQuery", 
-                      data={"callback_query_id": callback["id"], "text": f"Order {new_status}!"})
+        
+        cap = cb["message"].get("caption", cb["message"].get("text", ""))
+        new_cap = cap.split("\n\n📢 Status:")[0] + f"\n\n📢 Status: <b>{new_status}</b>"
+        
+        requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/editMessageCaption", data={"chat_id": chat_id, "message_id": msg_id, "caption": new_cap, "parse_mode": "HTML"})
+        requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/answerCallbackQuery", data={"callback_query_id": cb["id"], "text": f"Order {new_status}!"})
         return "OK", 200
     except Exception as e:
-        print(f"Webhook Error: {str(e)}")
         return "OK", 200
 
 @app.route('/api/top10')
-def get_top10():
-    pipeline = [{"$match": {"tg_user": {"$nin": ADMIN_USERNAMES}}}, {"$group": {"_id": "$tg_user", "totalSpent": {"$sum": "$price"}}}, {"$sort": {"totalSpent": -1}}, {"$limit": 10}]
-    return jsonify(list(orders_col.aggregate(pipeline)))
-
-@app.route('/api/my_rank')
-def get_my_rank():
-    user = request.args.get('user')
-    pipeline = [{"$match": {"tg_user": {"$nin": ADMIN_USERNAMES}}}, {"$group": {"_id": "$tg_user", "totalSpent": {"$sum": "$price"}}}, {"$sort": {"totalSpent": -1}}]
-    all_users = list(orders_col.aggregate(pipeline))
-    for i, u in enumerate(all_users):
-        if u['_id'] == user: return jsonify({"rank": i+1, "total": u['totalSpent']})
-    return jsonify({})
+def top10():
+    return jsonify(list(orders_col.aggregate([{"$match": {"tg_user": {"$nin": ADMIN_USERNAMES}}}, {"$group": {"_id": "$tg_user", "totalSpent": {"$sum": "$price"}}}, {"$sort": {"totalSpent": -1}}, {"$limit": 10}])))
 
 @app.route('/api/history')
-def get_history():
+def history():
     hist = list(orders_col.find().sort("_id", -1).limit(10))
     for h in hist: h['_id'] = str(h['_id'])
     return jsonify(hist)
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)
-
-
+        
