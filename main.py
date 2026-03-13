@@ -354,130 +354,98 @@ def auth():
         return jsonify({"success": True if u else False, "msg": "Invalid Login"})
 
 @app.route('/order', methods=['POST'])
-@app.route('/order', methods=['POST'])
 def order():
     try:
         tg_user = request.form.get('tg_user')
         uid = request.form.get('uid')
         zid = request.form.get('zid')
         pkg = request.form.get('pkg')
-        srv = request.form.get('server')
+        srv = request.form.get('srv')
         photo = request.files.get('photo')
-        
-        raw_price = request.form.get('price', '0')
-        price_str = str(raw_price).replace(' Ks', '').replace(',', '').strip()
-        price = int(price_str) if price_str.isdigit() else 0
-        
-        order_date = datetime.now(timezone(timedelta(hours=6, minutes=30))).strftime("%d/%m/%Y %I:%M %p")
+        price = int(request.form.get('price', '0').replace(',', ''))
 
+        order_date = datetime.now(timezone(timedelta(hours=6, minutes=30))).strftime("%d/%m/%Y %I:%M %p")
+        
+        # Database ထဲသို့ သိမ်းဆည်းခြင်း (Default status: Pending)
         oid = orders_col.insert_one({
-            "tg_user": tg_user, "uid": uid, "zone": zid, "pkg": pkg, "srv": srv, 
+            "tg_user": tg_user, "uid": uid, "zone": zid, "pkg": pkg, "srv": srv,
             "price": price, "status": "Pending", "date": order_date
         }).inserted_id
-        
-        base_url = "https://kiwiigameshop.onrender.com"
-        keyboard = {"inline_keyboard": [[
-            {"text": "Done ✅", "url": f"{base_url}/admin/status/done/{oid}"},
-            {"text": "Reject ❌", "url": f"{base_url}/admin/status/reject/{oid}"}
-        ]]}
 
+        # --- 📝 Bot သို့ ပို့မည့် Message Format ---
         msg = (
-            f"<b>🔔 New Order!</b>\\n"
-            f"━━━━━━━━━━━━━━━\\n"
-            f"<b>👤 User:</b> {tg_user}\\n"
-            f"<b>🌍 Server:</b> {srv}\\n"
-            f"<b>🆔 ID:</b> {uid} ({zid})\\n"
-            f"<b>📦 Pkg:</b> {pkg}\\n"
-            f"<b>💰 Price:</b> {price} Ks\\n"
-            f"<b>📅 Date:</b> {order_date}"
+            "🔔 <b>New Order Received!</b>\n"
+            "━━━━━━━━━━━━━━━━━━\n"
+            f"👤 <b>User:</b> <code>{tg_user}</code>\n"
+            f"🌍 <b>Server:</b> <code>{srv}</code>\n"
+            f"🆔 <b>Game ID:</b> <code>{uid} ({zid})</code>\n"
+            f"📦 <b>Package:</b> <code>{pkg}</code>\n"
+            f"💰 <b>Price:</b> <b>{price} Ks</b>\n"
+            "━━━━━━━━━━━━━━━━━━\n"
+            "⚡ <b>Action:</b>"
         )
+
+        # ✅ Done နှင့် ❌ Reject ခလုတ်များ
+        reply_markup = {
+            "inline_keyboard": [
+                [
+                    {"text": "✅ Done", "callback_data": f"st_Completed_{str(oid)}"},
+                    {"text": "❌ Reject", "callback_data": f"st_Rejected_{str(oid)}"}
+                ]
+            ]
+        }
+
+        requests.post(
+            f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto",
+            data={
+                "chat_id": CHAT_ID,
+                "caption": msg,
+                "parse_mode": "HTML",
+                "reply_markup": json.dumps(reply_markup)
+            },
+            files={"photo": photo}
+        )
+        return "Success"
+    except Exception as e:
+        return f"Error: {str(e)}", 500
+
+# --- 🛰 Telegram Webhook for Status Update ---
+@app.route('/webhook/telegram', methods=['POST'])
+def telegram_webhook():
+    data = request.json
+    if "callback_query" in data:
+        cb = data["callback_query"]
+        action_data = cb["data"] # st_Status_ID
         
+        _, new_status, order_id = action_data.split("_")
+        
+        # Database တွင် status ပြောင်းခြင်း
+        orders_col.update_one({"_id": ObjectId(order_id)}, {"$set": {"status": new_status}})
+        
+        # Bot ထဲက စာသားကို Update လုပ်ခြင်း
+        new_caption = cb["message"]["caption"] + f"\n\n📢 <b>Status: {new_status}</b>"
+        requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/editMessageCaption", json={
+            "chat_id": CHAT_ID, "message_id": cb["message"]["message_id"],
+            "caption": new_caption, "parse_mode": "HTML"
+        })
+        requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/answerCallbackQuery", json={"callback_query_id": cb["id"], "text": f"Order {new_status}!"})
+    return "OK", 200
+
 @app.route('/api/history')
 def history():
     hist = list(orders_col.find().sort("_id", -1).limit(30))
     for h in hist: h['_id'] = str(h['_id'])
     return jsonify(hist)
 
-@app.route('/api/top10')
-def top10():
-    current_user = request.args.get('user')
-    pipeline = [{"$match": {"status": "Completed"}},{"$group": {"_id": "$tg_user", "totalSpent": {"$sum": "$price"}}}, {"$sort": {"totalSpent": -1}}]
-    all_ranks = list(orders_col.aggregate(pipeline))
-    user_rank = next((i+1 for i, u in enumerate(all_ranks) if u['_id'] == current_user), "N/A")
-    user_spent = next((u['totalSpent'] for u in all_ranks if u['_id'] == current_user), 0)
-    return jsonify({"top10": all_ranks[:10], "userRank": user_rank, "userSpent": user_spent})
-
 @app.route('/admin/users')
 def view_users():
-    # --- 🔐 PASSWORD PROTECTION (Admin Login) ---
     auth = request.authorization
     if not auth or not (auth.username == "admin" and auth.password == "Kiwii123"):
-        return make_response(
-            'Could not verify your login!', 401,
-            {'WWW-Authenticate': 'Basic realm="Login Required"'}
-        )
-    # --------------------------------------------
-
-    try:
-        # Database မှ User အားလုံးကို ယူခြင်း
-        all_users = list(users_col.find({}, {"_id": 0}))
-        
-        # HTML Design & Table Structure
-        html_table = '''
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <title>Admin - User List</title>
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <style>
-                body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0f172a; color: white; padding: 20px; }
-                .container { max-width: 800px; margin: auto; }
-                h2 { color: #fbbf24; text-align: center; margin-bottom: 20px; }
-                .table-container { overflow-x: auto; background: #1e293b; border-radius: 12px; padding: 10px; border: 1px solid #334155; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
-                table { width: 100%; border-collapse: collapse; }
-                th, td { padding: 14px; text-align: left; border-bottom: 1px solid #334155; }
-                th { background-color: #fbbf24; color: #0f172a; text-transform: uppercase; font-size: 13px; font-weight: bold; }
-                tr:hover { background: #1e293b; filter: brightness(1.2); }
-                .back-btn { display: inline-block; margin-bottom: 15px; color: #fbbf24; text-decoration: none; border: 1px solid #fbbf24; padding: 8px 16px; border-radius: 8px; font-size: 14px; transition: 0.3s; }
-                .back-btn:hover { background: #fbbf24; color: black; }
-                .no-data { text-align: center; padding: 20px; color: #94a3b8; }
-            </style>
-        </head>
-        <body>
-            <div class="container">
-                <a href="/" class="back-btn">← Back to Shop</a>
-                <h2>👥 Registered Users List</h2>
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Username (Telegram)</th>
-                                <th>Password</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-        '''
-        
-        if not all_users:
-            html_table += '<tr><td colspan="2" class="no-data">No users registered yet.</td></tr>'
-        else:
-            for u in all_users:
-                # မတူညီတဲ့ field name တွေရှိနိုင်လို့ အကုန်စစ်ပြီးပြပေးခြင်း
-                uname = u.get('user') or u.get('name') or u.get('tg_user') or "N/A"
-                upsw = u.get('pass') or u.get('pw') or u.get('password') or "N/A"
-                html_table += f"<tr><td><b>{uname}</b></td><td><code>{upsw}</code></td></tr>"
-            
-        html_table += '''
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </body>
-        </html>
-        '''
-        return html_table
-    except Exception as e:
-        return f"Admin Panel Error: {str(e)}", 500
+        return make_response('Verify!', 401, {'WWW-Authenticate': 'Basic realm="Login Required"'})
     
+    all_users = list(users_col.find({}, {"_id": 0}))
+    # (ယခင်ပေးထားသော HTML Table Code ကို ဒီနေရာတွင် ဆက်သုံးနိုင်သည်)
+    return jsonify(all_users)
+
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host="0.0.0.0", port=5000)
