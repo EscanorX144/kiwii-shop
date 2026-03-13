@@ -124,6 +124,7 @@ HTML_CODE = '''
     .nav-item { flex:1; text-align:center; color:#94a3b8; cursor:pointer; font-size:12px; }
     .nav-item.active { color:#fbbf24; font-weight:bold; }
     .my-rank-card { margin: 15px auto; width: calc(100% - 30px); padding: 15px; background: linear-gradient(135deg, #fbbf24, #f59e0b); border-radius: 12px; color: black; text-align: center; }
+    
     /* Floating CS Button Design */
     .cs-float { position: fixed; bottom: 80px; right: 20px; background: #fbbf24; color: #0f172a; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4); z-index: 1000; text-decoration: none; transition: transform 0.3s ease; }
     .cs-float:hover { transform: scale(1.1); background: #f59e0b; }
@@ -195,7 +196,6 @@ HTML_CODE = '''
 </div>
 
 <script>
-    // 💡 အဓိက ပြင်ဆင်ထားသော နေရာ: %s အစား JSON_DATA_HERE ကို သုံးထားသည်
     const games = JSON_DATA_HERE;
     let currentUser = localStorage.getItem('user');
     let sel_srv, sel_pkg, sel_prc;
@@ -308,24 +308,25 @@ HTML_CODE = '''
         document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
         document.getElementById('nav-top').classList.add('active');
 
-        const r = await fetch(`/api/top10?user=${currentUser}`);
-        const data = await r.json();
-        
-        // 💡 Top 10 စာရင်းအတွက် Layout အသစ်
-        let topHTML = data.top10.map((u, i) => `
-            <div style="background:#1e293b;padding:15px;margin-bottom:10px;border-radius:12px;display:flex;justify-content:space-between;border-left:5px solid ${i===0?'#fbbf24':i===1?'#94a3b8':i===2?'#b45309':'#334155'};">
-                <span><b>#${i+1}</b> ${u._id}</span>
-                <b style="color:#fbbf24;">${u.totalSpent.toLocaleString()} Ks</b>
-            </div>`).join('');
+        try {
+            const r = await fetch(`/api/top10?user=${currentUser}`);
+            const data = await r.json();
             
-        if(data.top10.length === 0) topHTML = "<p style='text-align:center; color:#94a3b8;'>No top users yet.</p>";
+            let topHTML = data.top10.map((u, i) => `
+                <div style="background:#1e293b;padding:15px;margin-bottom:10px;border-radius:12px;display:flex;justify-content:space-between;border-left:5px solid ${i===0?'#fbbf24':i===1?'#94a3b8':i===2?'#b45309':'#334155'};">
+                    <span><b>#${i+1}</b> ${u._id}</span>
+                    <b style="color:#fbbf24;">${u.totalSpent.toLocaleString()} Ks</b>
+                </div>`).join('');
+                
+            if(data.top10.length === 0) topHTML = "<p style='text-align:center; color:#94a3b8;'>No top users yet.</p>";
 
-        document.getElementById('top-list').innerHTML = topHTML + `
-            <div class="my-rank-card">
-                <p style="margin:0; font-size:12px; font-weight:bold;">YOUR CURRENT RANK</p>
-                <h3 style="margin:5px 0;">#${data.userRank}</h3>
-                <p style="margin:0; font-size:14px;">Total Spent: <b>${data.userSpent.toLocaleString()} Ks</b></p>
-            </div>`;
+            document.getElementById('top-list').innerHTML = topHTML + `
+                <div class="my-rank-card">
+                    <p style="margin:0; font-size:12px; font-weight:bold;">YOUR CURRENT RANK</p>
+                    <h3 style="margin:5px 0;">#${data.userRank}</h3>
+                    <p style="margin:0; font-size:14px;">Total Spent: <b>${data.userSpent.toLocaleString()} Ks</b></p>
+                </div>`;
+        } catch(e) { console.error(e); }
     }
 
     async function showH() {
@@ -364,13 +365,14 @@ HTML_CODE = '''
             document.getElementById('hist-list').innerHTML = "<p style='text-align:center; color:#ef4444;'>Failed to load history.</p>";
         }
     }
-        
-<a href="https://t.me/Bby_kiwii7" target="_blank" class="cs-float">
-            <span class="cs-badge">Online</span>
-            💬
-        </a>
+</script>
 
-    </body>
+<a href="https://t.me/Bby_kiwii7" target="_blank" class="cs-float">
+    <span class="cs-badge">Online</span>
+    💬
+</a>
+
+</body>
 </html>
 '''
 
@@ -378,7 +380,6 @@ HTML_CODE = '''
 
 @app.route('/')
 def index():
-    # JSON_DATA_HERE နေရာမှာ ဂိမ်းဒေတာတွေ အစားထိုးပြီး Website ကို ပြသခြင်း
     return render_template_string(HTML_CODE.replace("JSON_DATA_HERE", json.dumps(GAMES_DATA)))
 
 @app.route('/api/auth', methods=['POST'])
@@ -461,6 +462,12 @@ def telegram_webhook():
         })
     return "OK", 200
 
+@app.route('/api/history')
+def history():
+    hist = list(orders_col.find().sort("_id", -1).limit(30))
+    for h in hist: h['_id'] = str(h['_id'])
+    return jsonify(hist)
+
 @app.route('/api/top10')
 def top10():
     try:
@@ -470,28 +477,4 @@ def top10():
             {"$group": {"_id": "$tg_user", "totalSpent": {"$sum": "$price"}}},
             {"$sort": {"totalSpent": -1}}, {"$limit": 10}
         ]
-        all_ranks = list(orders_col.aggregate(pipeline))
-        user_rank, user_spent = "N/A", 0
-        for i, u in enumerate(all_ranks):
-            if u['_id'] == current_user:
-                user_rank, user_spent = i + 1, u['totalSpent']
-                break
-        return jsonify({"top10": all_ranks, "userRank": user_rank, "userSpent": user_spent})
-    except:
-        return jsonify({"top10": [], "userRank": "N/A", "userSpent": 0})
-
-@app.route('/admin/users')
-def view_users():
-    auth = request.authorization
-    if not auth or not (auth.username == "admin" and auth.password == "Kiwii123"):
-        return make_response('Verify!', 401, {'WWW-Authenticate': 'Basic realm="Login Required"'})
-    all_users = list(users_col.find({}, {"_id": 0}))
-    
-    html_table = "<h2>Registered Users</h2><table border='1'><tr><th>User</th><th>Pass</th></tr>"
-    for u in all_users:
-        html_table += f"<tr><td>{u.get('user')}</td><td>{u.get('pass')}</td></tr>"
-    html_table += "</table>"
-    return html_table
-
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+        all_ranks = list(orders_col.aggregate
