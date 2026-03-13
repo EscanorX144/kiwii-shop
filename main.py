@@ -109,30 +109,35 @@ HTML_CODE = '''
     .user-banner { background:#1e293b; padding:12px 20px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #334155; }
     .game-grid { display:grid; grid-template-columns:1fr 1fr; gap:15px; padding:20px; }
     
-    /* Server Card Design Updated */
     .game-card {
-        background: #1e293b;
-        border-radius: 12px;
+        background: none;
+        border: none;
         display: flex;
-        flex-direction: column; /* အပေါ်အောက် ထားရန် */
+        flex-direction: column;
         align-items: center;
         cursor: pointer;
         transition: 0.3s;
+    }
+
+    .game-card .img-box {
+        width: 100%;
+        height: 110px;
+        border-radius: 15px;
         overflow: hidden;
         border: 1px solid #334155;
+        margin-bottom: 8px;
     }
-    .game-card:hover { transform: translateY(-5px); border-color: #fbbf24; }
-    
+
     .game-card img {
         width: 100%;
-        height: 120px; /* ပုံအမြင့် - ညီလိုသလို ညှိနိုင်ပါတယ် */
+        height: 100%;
         object-fit: cover;
     }
+
     .game-card b {
-        padding: 12px 5px;
+        font-size: 13px;
+        color: #fbbf24;
         text-align: center;
-        font-size: 14px;
-        color: #fff;
     }
 
     .cat-tabs { display:flex; gap:10px; overflow-x:auto; padding:10px 0; margin-bottom:15px; scrollbar-width: none; }
@@ -264,7 +269,9 @@ HTML_CODE = '''
     function init() {
         document.getElementById('g-list').innerHTML = games.map(g => `
             <div class="game-card" onclick="selG(${g.id})">
-                <img src="${g.img}">
+                <div class="img-box">
+                    <img src="${g.img}">
+                </div>
                 <b>${g.name}</b>
             </div>`).join('');
     }
