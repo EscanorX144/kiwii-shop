@@ -152,6 +152,7 @@ HTML_CODE = '''
     .nav-bar { position:fixed; bottom:0; width:100%; max-width:500px; background:#1e293b; display:flex; padding:12px 0; border-top:1px solid #334155; z-index:1000; }
     .nav-item { flex:1; text-align:center; color:#94a3b8; cursor:pointer; font-size:12px; }
     .nav-item.active { color:#fbbf24; }
+    .nav-item.active { color: #fbbf24 !important; font-weight: bold; }
 </style>
 </head><body>
 <div id="main-container">
@@ -251,6 +252,11 @@ function setPay(imgEl, num, type) {
     document.getElementById('pay-type').innerText = type + " ACCOUNT";
 }
 
+function updateNav(activeId) {
+    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+    document.getElementById(activeId).classList.add('active');
+}
+
 function copyNum() {
     const num = document.getElementById('pay-num').innerText;
     navigator.clipboard.writeText(num).then(() => {
@@ -288,6 +294,14 @@ async function handleOrder(e) {
     btn.innerText = "PLACE ORDER"; btn.disabled = false;
 }
 
+function goH() {
+    document.getElementById('h-sec').style.display='block';
+    document.getElementById('o-sec').style.display='none';
+    document.getElementById('top-sec').style.display='none';
+    document.getElementById('hist-sec').style.display='none';
+    updateNav('nav-home');
+}
+
 async function showTop() {
     document.getElementById('h-sec').style.display='none'; document.getElementById('o-sec').style.display='none';
     document.getElementById('hist-sec').style.display='none'; document.getElementById('top-sec').style.display='block';
@@ -300,22 +314,18 @@ async function showTop() {
             <div style="color:#fbbf24;font-weight:bold;">${u.totalSpent.toLocaleString()} Ks</div>
         </div>`).join('') || "No data";
 }
-
 async function showH() {
     document.getElementById('h-sec').style.display='none'; 
     document.getElementById('o-sec').style.display='none';
     document.getElementById('top-sec').style.display='none'; 
     document.getElementById('hist-sec').style.display='block';
-    
+    updateNav('nav-hist');
     const r = await fetch('/api/history');
     const data = await r.json();
-    
     document.getElementById('hist-list').innerHTML = data.map(o => {
-        // Status အလိုက် အရောင်သတ်မှတ်ခြင်း
-        let statusColor = '#fbbf24'; // Default အဝါ (Pending)
-        if (o.status === 'Completed') statusColor = '#22c55e'; // အစိမ်း
-        if (o.status === 'Rejected') statusColor = '#ef4444';  // အနီ
-
+        let statusColor = '#fbbf24'; 
+        if (o.status === 'Completed') statusColor = '#22c55e';
+        if (o.status === 'Rejected') statusColor = '#ef4444';
         return `
             <div style="background:#1e293b; padding:15px; margin-bottom:10px; border-radius:12px; border-left:5px solid ${statusColor};">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -327,9 +337,8 @@ async function showH() {
                     <small style="color:#94a3b8;">${o.date}</small>
                 </div>
             </div>`;
-    }).join('') || '<div style="text-align:center; padding:20px; color:#94a3b8;">No history found.</div>';
+    }).join('') || "No history";
 }
-function goH() { location.reload(); }
 </script></body></html>
 '''
 
@@ -345,7 +354,7 @@ def order():
         uid = request.form.get('uid'); zid = request.form.get('zid')
         price_str = request.form.get('price', '0').replace(' Ks', '').replace(',', '')
         price = int(price_str)
-        pkg = request.form.get('pkg'); srv = request.form.get('server')
+        pkg = request.form.get('pkg'); 
         photo = request.files.get('photo')
         
         oid = orders_col.insert_one({
