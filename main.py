@@ -124,11 +124,17 @@ HTML_CODE = '''
     .nav-item { flex:1; text-align:center; color:#94a3b8; cursor:pointer; font-size:12px; }
     .nav-item.active { color:#fbbf24; font-weight:bold; }
     .my-rank-card { margin: 15px auto; width: calc(100% - 30px); padding: 15px; background: linear-gradient(135deg, #fbbf24, #f59e0b); border-radius: 12px; color: black; text-align: center; }
-    
     /* Floating CS Button Design */
     .cs-float { position: fixed; bottom: 80px; right: 20px; background: #fbbf24; color: #0f172a; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4); z-index: 1000; text-decoration: none; transition: transform 0.3s ease; }
     .cs-float:hover { transform: scale(1.1); background: #f59e0b; }
     .cs-badge { position: absolute; top: -5px; right: -5px; background: red; color: white; font-size: 10px; padding: 2px 6px; border-radius: 10px; font-weight: bold; }
+    /* Payment Section New Design */
+    .pay-icons img { width: 55px; height: 55px; border-radius: 12px; cursor: pointer; opacity: 0.5; transition: 0.3s; margin: 0 5px; border: 2px solid transparent; }
+    .pay-icons img.active { opacity: 1; transform: scale(1.1); border-color: #fbbf24; box-shadow: 0 0 10px rgba(251, 191, 36, 0.5); }
+    .copy-btn { background: #334155; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 12px; margin-left: 10px; transition: 0.2s; }
+    .copy-btn:hover { background: #fbbf24; color: black; }
+    .glow-note { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid #ef4444; padding: 8px 15px; border-radius: 8px; font-weight: bold; font-size: 14px; margin-top: 15px; display: inline-block; animation: glowPulse 1.5s infinite alternate; }
+    @keyframes glowPulse { from { box-shadow: 0 0 5px rgba(239, 68, 68, 0.2); } to { box-shadow: 0 0 15px rgba(239, 68, 68, 0.8); } }
 </style>
 </head><body>
 <div id="main-container">
@@ -167,16 +173,21 @@ HTML_CODE = '''
             
             <div class="pay-box">
                 <div class="pay-icons">
-                    <img src="/static/kpay.jpg" class="active" onclick="setPay(this, '09775394979', 'Kpay')">
-                    <img src="/static/wave.jpg" onclick="setPay(this, '09775394979', 'Wave')">
+                    <img src="/static/kpay.jpg" class="active" onclick="setPay(this, '09775394979', 'Kpay', 'Thansin Kyaw')">
+                    <img src="/static/wave.jpg" onclick="setPay(this, '09775394979', 'WavePay', 'Thansin Kyaw')">
+                    <img src="/static/ayapay.jpg" onclick="setPay(this, '09775394979', 'AYA Pay', 'Thansin Kyaw')">
                 </div>
-                <div style="margin-top:10px;">
-                    <b id="pay-type">KPAY ACCOUNT</b><br>
-                    <span id="pay-num" style="font-size:20px;">09775394979</span><br>
-                    <b style="color: #fbbf24;">Name - Thansin Kyaw</b>
+                <div style="margin-top:15px;">
+                    <b id="pay-type" style="color: #94a3b8; font-size: 14px;">Kpay ACCOUNT</b><br>
+                    <div style="display: flex; align-items: center; justify-content: center; margin: 10px 0;">
+                        <span id="pay-num" style="font-size:24px; font-weight: bold; letter-spacing: 1px;">09775394979</span>
+                        <button class="copy-btn" onclick="copyNum(event)"><i class="fas fa-copy"></i> Copy</button>
+                    </div>
+                    <b style="color: #fbbf24; font-size: 15px;" id="pay-name">Name - Thansin Kyaw</b>
                 </div>
+                <div class="glow-note">⚠️ Note - Payment သာရေးပါ</div>
             </div>
-
+            
             <form id="orderForm" onsubmit="handleOrder(event)">
                 <input type="text" id="uid" placeholder="Game ID" required class="auth-input">
                 <input type="text" id="zid" placeholder="Zone ID" required class="auth-input">
@@ -262,11 +273,28 @@ HTML_CODE = '''
         el.classList.add('selected'); sel_pkg=d; sel_prc=p;
     }
 
-    function setPay(img, num, type) {
+    function setPay(img, num, type, name) {
         document.querySelectorAll('.pay-icons img').forEach(i => i.classList.remove('active'));
         img.classList.add('active');
         document.getElementById('pay-num').innerText = num;
         document.getElementById('pay-type').innerText = type + " ACCOUNT";
+        document.getElementById('pay-name').innerText = "Name - " + name;
+    }
+
+    function copyNum(e) {
+        e.preventDefault();
+        const numToCopy = document.getElementById('pay-num').innerText;
+        navigator.clipboard.writeText(numToCopy).then(() => {
+            const btn = e.target.closest('button');
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+            btn.style.background = '#10b981';
+            btn.style.color = 'white';
+            setTimeout(() => {
+                btn.innerHTML = originalHTML;
+                btn.style.background = '#334155';
+            }, 2000);
+        });
     }
 
     async function handleOrder(e) {
