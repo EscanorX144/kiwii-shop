@@ -133,6 +133,33 @@ HTML_CODE = '''
     .nav-bar { position:fixed; bottom:0; width:100%; max-width:500px; background:#1e293b; display:flex; padding:12px 0; border-top:1px solid #334155; z-index:1000; }
     .nav-item { flex:1; text-align:center; color:#94a3b8; cursor:pointer; font-size:12px; }
     .nav-item.active { color:#fbbf24; font-weight:bold; }
+.glow-note {
+    color: #ff4444;
+    font-weight: bold;
+    text-align: center;
+    margin: 10px 0;
+    padding: 10px;
+    border: 1.5px solid #ff4444;
+    border-radius: 12px;
+    background: rgba(239, 68, 68, 0.1);
+    animation: blink 1.5s infinite;
+}
+@keyframes blink { 
+    0% { box-shadow: 0 0 5px #ff4444; opacity: 1; } 
+    50% { box-shadow: 0 0 20px #ff4444; opacity: 0.7; } 
+    100% { box-shadow: 0 0 5px #ff4444; opacity: 1; } 
+}
+.my-rank-status {
+    background: #1e293b;
+    border: 1px solid #fbbf24;
+    padding: 15px;
+    margin-top: 15px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+}
 
     /* Personal Rank Style */
     .my-rank-card { margin-top:20px; padding:15px; background:linear-gradient(135deg, #fbbf24, #f59e0b); color:black; border-radius:12px; text-align:center; box-shadow: 0 4px 15px rgba(251, 191, 36, 0.3); }
@@ -176,15 +203,17 @@ HTML_CODE = '''
             <div id="p-list" class="pkg-grid"></div>
 
             <div class="pay-box">
-                <div class="pay-icons">
-                    <img src="/static/kpay.jpg" class="active" onclick="setPay(this, '09775394979', 'Kpay')">
-                    <img src="/static/wave.jpg" onclick="setPay(this, '09775394979', 'Wave')">
-                </div>
-                <div style="margin-top:10px;">
-                    <b id="pay-type">KPAY ACCOUNT</b><br>
-                    <span id="pay-num" style="font-size:20px;">09775394979</span>
-                </div>
-            </div>
+    <div class="pay-icons">
+        <img src="/static/kpay.jpg" class="active" onclick="setPay(this, '09775394979', 'Kpay')">
+        <img src="/static/wave.jpg" onclick="setPay(this, '09775394979', 'Wave')">
+        <img src="/static/ayapay.jpg" onclick="setPay(this, '09775394979', 'Aya')">
+    </div>
+    <div style="margin-top:10px;">
+        <b id="pay-type">KPAY ACCOUNT</b><br>
+        <span id="pay-num" style="font-size:20px;">09775394979</span><br>
+        <b style="color: #fbbf24;">Name - Thansin Kyaw</b> </div>
+    <div class="glow-note">Note - Payment သာရေးပါ</div>
+</div>
 
             <form id="orderForm" onsubmit="handleOrder(event)">
                 <input type="text" id="uid" placeholder="Game ID" required class="auth-input">
@@ -228,21 +257,33 @@ function toggleAuth() {
 }
 
 async function handleAuth(type) {
-    const user = document.getElementById(type==='login'?'l-user':'r-user').value.trim();
-    const pass = document.getElementById(type==='login'?'l-pass':'r-pass').value;
-    if(!user || !pass) return alert("Please fill all fields");
-    if(!user.startsWith('@')) return alert("Username must start with @");
+    const user = document.getElementById(type === 'login' ? 'l-user' : 'r-user').value.trim();
+    const pass = document.getElementById(type === 'login' ? 'l-pass' : 'r-pass').value;
 
+    // အချက်အလက် ပြည့်စုံမှု ရှိ၊ မရှိ စစ်ဆေးခြင်း
+    if (!user || !pass) return alert("Please fill all fields");
+    if (!user.startsWith('@')) return alert("Username must start with @");
+
+    // Register ဖြစ်ပါက Password နှစ်ခု တူ၊ မတူ စစ်ဆေးခြင်း
+    if (type === 'register') {
+        const p2 = document.getElementById('r-pass2').value;
+        if (pass !== p2) return alert("Passwords များ မတူညီပါ!");
+    }
+
+    // Server ဆီသို့ ပို့ဆောင်ခြင်း
     const r = await fetch('/api/auth', {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({type, user, pass})
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type, user, pass })
     });
+
     const res = await r.json();
-    if(res.success) {
+    if (res.success) {
         localStorage.setItem('user', user);
         location.reload();
-    } else { alert(res.msg); }
+    } else {
+        alert(res.msg);
+    }
 }
 
 function logout() {
@@ -295,25 +336,51 @@ function updateNav(id) {
 
 async function handleOrder(e) {
     e.preventDefault();
-    if(!sel_pkg) return alert("Package ရွေးပေးပါ။");
-    const btn = document.getElementById('submitBtn');
-    btn.innerText = "SENDING..."; btn.disabled = true;
     
+    // ၁။ Package ရွေးမရွေး အရင်စစ်မယ်
+    if(!sel_pkg) return alert("Package ရွေးပေးပါ။");
+
+    // ၂။ Game ID နှင့် Zone ID တန်ဖိုးများကို ယူမယ်
+    const uid = document.getElementById('uid').value;
+    const zid = document.getElementById('zid').value;
+    const photoInput = document.getElementById('photo');
+
+    // ၃။ Customer ကို အချက်အလက်များ အတည်ပြုခိုင်းမယ် (Confirmation Box)
+    const confirmMsg = `အတည်ပြုပေးပါ\n\nGame ID: ${uid}\nZone ID: ${zid}\nPackage: ${sel_pkg}\nPrice: ${sel_prc} Ks`;
+    if(!confirm(confirmMsg)) return;
+
+    // ၄။ အတည်ပြုပြီးမှ ခလုတ်ကို ပိတ်ပြီး စာသားပြောင်းမယ်
+    const btn = document.getElementById('submitBtn');
+    btn.innerText = "SENDING...";
+    btn.disabled = true;
+
+    // ၅။ Data များ စုစည်းပြီး Server ဆီ ပို့မယ်
     const fd = new FormData();
     fd.append('tg_user', currentUser);
-    fd.append('uid', document.getElementById('uid').value);
-    fd.append('zid', document.getElementById('zid').value);
-    fd.append('server', games.find(i=>i.id===sel_srv).name);
+    fd.append('uid', uid);
+    fd.append('zid', zid);
+    fd.append('server', games.find(i => i.id === sel_srv).name);
     fd.append('pkg', sel_pkg);
     fd.append('price', sel_prc);
-    fd.append('photo', document.getElementById('photo').files[0]);
+    fd.append('photo', photoInput.files[0]);
 
     try {
         const r = await fetch('/order', { method: 'POST', body: fd });
-        if(await r.text() === "Success") { alert("Order Successful!"); location.reload(); }
-        else { alert("Order Failed."); }
-    } catch(err) { alert("Error"); }
-    btn.innerText = "PLACE ORDER"; btn.disabled = false;
+        const resText = await r.text();
+        
+        if(resText === "Success") {
+            alert("Order Success!");
+            location.reload();
+        } else {
+            alert("Order Failed: " + resText);
+            btn.innerText = "PLACE ORDER";
+            btn.disabled = false;
+        }
+    } catch(err) {
+        alert("Error: " + err.message);
+        btn.innerText = "PLACE ORDER";
+        btn.disabled = false;
+    }
 }
 
 function goH() {
