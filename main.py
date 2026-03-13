@@ -305,7 +305,7 @@ HTML_CODE = '''
         document.querySelectorAll('.pay-icons img').forEach(i => i.classList.remove('active'));
         img.classList.add('active');
         document.getElementById('pay-num').innerText = num;
-        document.getElementById('pay-type').innerText = type + " ACCOUNT";
+        document.getElementById('pay-type').innerText = type + " Account";
         document.getElementById('pay-name').innerText = "Name - " + name;
     }
 
