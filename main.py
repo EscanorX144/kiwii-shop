@@ -298,13 +298,14 @@ HTML_CODE = '''
     }
 
     function getPkgImg(text) {
-        // Diamond ပမာဏကနေ ကိန်းဂဏန်းသီးသန့် ထုတ်ယူတာပါ (ဥပမာ "11 💎" ဆိုရင် "11" ပဲယူမယ်)
+        // ဂဏန်းသီးသန့် ထုတ်ယူခြင်း (ဥပမာ "11 💎" -> "11")
         let num = text.replace(/[^0-9]/g, ''); 
         
-        if (text.includes("Weekly")) return "/static/weekly_pass.png";
-        if (text.includes("Twilight")) return "/static/twilight.png";
+        // Weekly Pass အတွက် ပုံအသစ်ကို ချိတ်ခြင်း
+        if (text.toLowerCase().includes("weekly")) return "/static/weeklypass.png";
+        if (text.toLowerCase().includes("twilight")) return "/static/twilight.png";
         
-        // dia11.png, dia22.png စသဖြင့် ပုံစံမျိုးနဲ့ ခေါ်ပေးမှာပါ
+        // ကျန်တဲ့ Diamond တွေအတွက် (ဥပမာ dia11.png, dia22.png)
         return `/static/dia${num}.png`;
     }
 
