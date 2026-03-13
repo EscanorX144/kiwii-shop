@@ -123,7 +123,6 @@ HTML_CODE = '''
     .nav-item { flex:1; text-align:center; color:#94a3b8; cursor:pointer; font-size:12px; }
     .nav-item.active { color:#fbbf24; font-weight:bold; }
     .my-rank-card { margin: 15px auto; width: calc(100%% - 30px); padding: 15px; background: linear-gradient(135deg, #fbbf24, #f59e0b); border-radius: 12px; color: black; text-align: center; }
-    @keyframes blink { 0%% { opacity: 1; } 50%% { opacity: 0.7; } 100%% { opacity: 1; } }
 </style>
 </head><body>
 <div id="main-container">
@@ -181,6 +180,7 @@ HTML_CODE = '''
         </div>
         <div id="top-sec" style="display:none; padding:15px;"><h3>🏆 TOP 10 USERS</h3><div id="top-list"></div></div>
         <div id="hist-sec" style="display:none; padding:15px;"><h3>History</h3><div id="hist-list"></div></div>
+        
         <div class="nav-bar">
             <div class="nav-item active" id="nav-home" onclick="goH()"><i class="fas fa-home"></i><br>Home</div>
             <div class="nav-item" id="nav-hist" onclick="showH()"><i class="fas fa-history"></i><br>History</div>
@@ -266,6 +266,9 @@ HTML_CODE = '''
     async function handleOrder(e) {
         e.preventDefault();
         if(!sel_pkg) return alert("Please select a package");
+        const btn = document.getElementById('submitBtn');
+        btn.innerText = "Processing..."; btn.disabled = true;
+
         const fd = new FormData();
         fd.append('tg_user', currentUser);
         fd.append('uid', document.getElementById('uid').value);
@@ -278,8 +281,8 @@ HTML_CODE = '''
         try {
             const r = await fetch('/order', { method:'POST', body:fd });
             if(await r.text() === "Success") { alert("Order Success!"); location.reload(); }
-            else { alert("Failed"); }
-        } catch(err) { alert("Error"); }
+            else { alert("Failed"); btn.innerText = "PLACE ORDER"; btn.disabled = false; }
+        } catch(err) { alert("Error"); btn.innerText = "PLACE ORDER"; btn.disabled = false; }
     }
 
     function goH() {
@@ -287,11 +290,18 @@ HTML_CODE = '''
         document.getElementById('o-sec').style.display='none';
         document.getElementById('top-sec').style.display='none';
         document.getElementById('hist-sec').style.display='none';
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        document.getElementById('nav-home').classList.add('active');
     }
 
     async function showTop() {
         document.getElementById('h-sec').style.display='none';
+        document.getElementById('o-sec').style.display='none';
+        document.getElementById('hist-sec').style.display='none';
         document.getElementById('top-sec').style.display='block';
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        document.getElementById('nav-top').classList.add('active');
+
         const r = await fetch(`/api/top10?user=${currentUser}`);
         const data = await r.json();
         document.getElementById('top-list').innerHTML = data.top10.map((u, i) => `
@@ -306,13 +316,18 @@ HTML_CODE = '''
 
     async function showH() {
         document.getElementById('h-sec').style.display='none';
+        document.getElementById('o-sec').style.display='none';
+        document.getElementById('top-sec').style.display='none';
         document.getElementById('hist-sec').style.display='block';
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        document.getElementById('nav-hist').classList.add('active');
+
         const r = await fetch('/api/history');
         const data = await r.json();
         document.getElementById('hist-list').innerHTML = data.filter(o => o.tg_user === currentUser).map(o => `
-            <div style="background:#1e293b;padding:15px;margin-bottom:10px;border-radius:12px;">
+            <div style="background:#1e293b;padding:15px;margin-bottom:10px;border-radius:12px;border-left:5px solid #fbbf24;">
                 <b>${o.pkg}</b> - <span style="color:#fbbf24">${o.status}</span><br>
-                <small>${o.date}</small>
+                <small style="color:#94a3b8">${o.date}</small>
             </div>`).join('') || "No history";
     }
 </script>
@@ -373,8 +388,6 @@ def top10():
     user_rank = next((i+1 for i, u in enumerate(all_ranks) if u['_id'] == current_user), "N/A")
     user_spent = next((u['totalSpent'] for u in all_ranks if u['_id'] == current_user), 0)
     return jsonify({"top10": all_ranks[:10], "userRank": user_rank, "userSpent": user_spent})
-
-# --- အောက်က ကုဒ်ကို if __name__ == "__main__": ရဲ့ အပေါ်မှာပဲ ထည့်ပါ ---
 
 @app.route('/admin/users')
 def view_users():
