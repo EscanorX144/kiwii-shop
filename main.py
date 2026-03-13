@@ -11,7 +11,7 @@ MONGO_URI = "mongodb+srv://EscanorX:Conti144@cluster0.m2mtomm.mongodb.net/?retry
 client = MongoClient(MONGO_URI)
 db = client['kiwii_game_shop']
 orders_col = db['orders']
-users_col = db['users']   # <--- ဒီစာကြောင်းကို အသစ်ထည့်ပေးပါ
+users_col = db['users']
 
 BOT_TOKEN = "8424534925:AAGyfQ3q5TBPo5ggHt2OBktgGqMHOKMWSqU"
 CHAT_ID = "-1003801691345"
@@ -55,7 +55,7 @@ GAMES_DATA = [
         "cats": {
             "Singapore Dia": [{"d": "14 💎", "p": "1100"}, {"d": "42 💎", "p": "3200"}, {"d": "56 💎", "p": "4350"}, {"d": "70 💎", "p": "5100"}, {"d": "140 💎", "p": "10200"}, {"d": "210 💎", "p": "15100"}, {"d": "284 💎", "p": "20200"}, {"d": "355 💎", "p": "25200"}, {"d": "429 💎", "p": "30300"}, {"d": "583 💎", "p": "41200"}, {"d": "716 💎", "p": "50200"}, {"d": "870 💎", "p": "61400"}, {"d": "1145 💎", "p": "80500"}, {"d": "1446 💎", "p": "100500"}, {"d": "2162 💎", "p": "150500"}, {"d": "2976 💎", "p": "201000"}, {"d": "3606 💎", "p": "223000"}, {"d": "6012 💎", "p": "371000"}, {"d": "7502 💎", "p": "503500"}],
             "Weekly Pass": [
-                {"d": "Weekly Pass 1X", "p": "8700"}, {"d": "Weekly Pass 2X", "p": "17400"}, {"d": "Weekly Pass 3X", "p": "26100"}, {"d": "Weekly Pass 4X", "p": "34800"}, {"d": "Weekly Pass 5X", "p": "43500"}, {"d": "Weekly Pass 6X", "p": "52200"}, {"d": "Weekly Pass 7X", "p": "60900"}, {"d": "Weekly Pass 8X", "p": "69600"}, {"d": "Weekly Pass 9X", "p": "78300"}, {"d": "Weekly Pass 10X", "p": "87000"}
+                {"d": "Weekly Pass 1X", "p": "8700"}, {"d": "Weekly Pass 2X", "p": "17400"}, {"d": "Weekly Pass 3X", "p": "26100"}, {"d": "Weekly Pass 4X", "p": "34800"}, {"d": "Weekly Pass 5X", "p": "43500"}, {"d": "Weekly Pass 6X", "p": "52200"}, {"d": "Weekly Pass 7X", "60900"}, {"d": "Weekly Pass 8X", "p": "69600"}, {"d": "Weekly Pass 9X", "p": "78300"}, {"d": "Weekly Pass 10X", "p": "87000"}
             ],
             "2X Dia": [{"d": "50+ 💎", "p": "4250"}, {"d": "150+ 💎", "p": "12200"}, {"d": "250+ 💎", "p": "20200"}, {"d": "500+ 💎", "p": "40600"}],
             "Bundle Pack": [{"d": "Weekly Elite", "p": "4250"}, {"d": "Monthly Epic", "p": "20000"}]
@@ -98,6 +98,7 @@ HTML_CODE = '''
 <!DOCTYPE html><html><head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <style>
     body { background:#0f172a; color:white; font-family:sans-serif; margin:0; padding-bottom:80px; }
     #main-container { max-width:500px; margin:auto; }
@@ -121,18 +122,18 @@ HTML_CODE = '''
 
     .game-card .img-box {
         width: 100%;
-        aspect-ratio: 1 / 1; /* ဒါက Box ကို လေးထောင့်စပ်စပ် ကွက်တိဖြစ်စေပါတယ် */
+        aspect-ratio: 1 / 1;
         border-radius: 15px;
         overflow: hidden;
         border: 1px solid #334155;
         margin-bottom: 8px;
-        background: #1e293b; /* ပုံမပေါ်ခင်မှာ နောက်ခံပြထားဖို့ */
+        background: #1e293b;
     }
 
     .game-card img {
         width: 100%;
         height: 100%;
-        object-fit: cover; /* ဒါက ပုံကို Box ထဲမှာ အပြည့်ဖြစ်အောင် ဆွဲဆန့်ညှိပေးတာပါ */
+        object-fit: cover;
         display: block;
     }
     .game-card b {
@@ -324,7 +325,7 @@ HTML_CODE = '''
         });
     }
 
-    async function handleOrder(e) {
+ async function handleOrder(e) {
         e.preventDefault();
         if(!sel_pkg) return alert("Please select a package");
         const btn = document.getElementById('submitBtn');
@@ -341,11 +342,42 @@ HTML_CODE = '''
 
         try {
             const r = await fetch('/order', { method:'POST', body:fd });
-            if(await r.text() === "Success") { alert("Order Success!"); location.reload(); }
-            else { alert("Failed"); btn.innerText = "PLACE ORDER"; btn.disabled = false; }
-        } catch(err) { alert("Error"); btn.innerText = "PLACE ORDER"; btn.disabled = false; }
+            if(await r.text() === "Success") {
+                Swal.fire({
+                    title: 'Order Success!',
+                    text: 'သင်၏အော်ဒါတင်ခြင်း အောင်မြင်ပါသည်။ ခဏစောင့်ပေးပါခင်ဗျာ။',
+                    icon: 'success',
+                    confirmButtonColor: '#fbbf24',
+                    confirmButtonText: 'OK',
+                    background: '#1e293b',
+                    color: '#fff'
+                }).then(() => {
+                    location.reload();
+                });
+            } else {
+                Swal.fire({
+                    title: 'Failed!',
+                    text: 'အော်ဒါတင်ခြင်း မအောင်မြင်ပါ။ ပြန်လည်ကြိုးစားပေးပါ။',
+                    icon: 'error',
+                    confirmButtonColor: '#ef4444',
+                    background: '#1e293b',
+                    color: '#fff'
+                });
+                btn.innerText = "PLACE ORDER"; btn.disabled = false;
+            }
+        } catch(err) {
+            Swal.fire({
+                title: 'Error!',
+                text: 'စနစ်ချို့ယွင်းချက် ဖြစ်ပေါ်နေပါသည်။',
+                icon: 'error',
+                confirmButtonColor: '#ef4444',
+                background: '#1e293b',
+                color: '#fff'
+            });
+            btn.innerText = "PLACE ORDER"; btn.disabled = false;
+        }
     }
-    
+
     function goH() {
         document.getElementById('h-sec').style.display='block';
         document.getElementById('o-sec').style.display='none';
@@ -390,12 +422,11 @@ HTML_CODE = '''
         document.getElementById('top-sec').style.display='none';
         document.getElementById('hist-sec').style.display='block';
         document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
- 
-       document.getElementById('nav-hist').classList.add('active');
+        document.getElementById('nav-hist').classList.add('active');
+
         try {
             const r = await fetch('/api/history');
             const data = await r.json();
-            
             const myHist = data.filter(o => o.tg_user === currentUser);
             
             if (myHist.length === 0) {
@@ -491,8 +522,8 @@ def order():
                 {"text": "✅ Done", "callback_data": f"st_Completed_{str(oid)}"},
                 {"text": "❌ Reject", "callback_data": f"st_Rejected_{str(oid)}"}
             ]]
-        }
-
+            }
+        
         requests.post(
             f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto",
             data={"chat_id": CHAT_ID, "caption": msg, "parse_mode": "HTML", "reply_markup": json.dumps(reply_markup)},
