@@ -121,19 +121,20 @@ HTML_CODE = '''
 
     .game-card .img-box {
         width: 100%;
-        height: 110px;
+        aspect-ratio: 1 / 1; /* ဒါက Box ကို လေးထောင့်စပ်စပ် ကွက်တိဖြစ်စေပါတယ် */
         border-radius: 15px;
         overflow: hidden;
         border: 1px solid #334155;
         margin-bottom: 8px;
+        background: #1e293b; /* ပုံမပေါ်ခင်မှာ နောက်ခံပြထားဖို့ */
     }
 
     .game-card img {
         width: 100%;
         height: 100%;
-        object-fit: cover;
+        object-fit: cover; /* ဒါက ပုံကို Box ထဲမှာ အပြည့်ဖြစ်အောင် ဆွဲဆန့်ညှိပေးတာပါ */
+        display: block;
     }
-
     .game-card b {
         font-size: 13px;
         color: #fbbf24;
