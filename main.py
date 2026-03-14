@@ -685,9 +685,9 @@ def order():
 
         reply_markup = {"inline_keyboard": [
             [{"text": "✅ အောင်မြင်ပါသည် (Done)", "callback_data": f"st_Completed_None_{str(oid)}"}],
-            [{"text": "❌ Cancel (ID မှားနေ၍)", "callback_data": f"st_Cancelled_WrongID_{str(oid)}"}],
-            [{"text": "❌ Cancel (ပြေစာ/ငွေလွှဲ မှားယွင်း၍)", "callback_data": f"st_Cancelled_BadReceipt_{str(oid)}"}],
-            [{"text": "❌ Cancel (အခြားအကြောင်းရင်း)", "callback_data": f"st_Cancelled_Other_{str(oid)}"}]
+            [{"text": "❌ Cancel (ID မှား)", "callback_data": f"st_Cancelled_WrongID_{str(oid)}"}],
+            [{"text": "❌ Cancel (ငွေမပြည့်)", "callback_data": f"st_Cancelled_BadReceipt_{str(oid)}"}],
+            [{"text": "❌ Cancel (ငွေလွှဲပြေစာမှား)", "callback_data": f"st_Cancelled_Other_{str(oid)}"}]
         ]}
         
         # စာနှင့် ပုံကို တစ်စောင်တည်း ပေါင်း၍ ပို့ခြင်း (Send Photo with Caption)
@@ -732,9 +732,9 @@ def telegram_webhook():
                     if reason_code == "WrongID":
                         cancel_reason = "Game ID (သို့) Zone ID မှားယွင်းနေပါသည်။"
                     elif reason_code == "BadReceipt":
-                        cancel_reason = "ငွေလွှဲပြေစာ မှားယွင်းနေခြင်း (သို့) ကျသင့်ငွေ မပြည့်ခြင်းကြောင့် ဖြစ်ပါသည်။"
+                        cancel_reason = "ကျသင့်ငွေ မပြည့်ခြင်းကြောင့် ဖြစ်ပါသည်။"
                     else:
-                        cancel_reason = "အချက်အလက် မှားယွင်းနေသဖြင့် ပယ်ဖျက်လိုက်ပါသည်။"
+                        cancel_reason = "ငွေလွှဲပြေစာ မှားယွင်းနေသဖြင့် ပယ်ဖျက်လိုက်ပါသည်။"
 
                 # 💾 Database Update လုပ်ခြင်း
                 update_data = {"status": status}
