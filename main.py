@@ -553,9 +553,36 @@ def auth():
 @app.route('/order', methods=['POST'])
 def order():
     try:
-        tg_user, uid, zid, pkg, srv = request.form.get('tg_user'), request.form.get('uid'), request.form.get('zid'), request.form.get('pkg'), request.form.get('srv')
+        tg_user = request.form.get('tg_user')
+        uid = request.form.get('uid')
+        zid = request.form.get('zid')
+        pkg = request.form.get('pkg')
+        srv = request.form.get('srv')
         photo = request.files.get('photo')
-        price = int(request.form.get('price', '0').replace(',', ''))
+        
+        # --- 🛡️ SECURITY PATCH: ဈေးနှုန်းကို Backend မှ တိုက်စစ်ခြင်း ---
+        actual_price = None
+        
+        # GAMES_DATA ထဲတွင် Server နှင့် Package နာမည်ကို လိုက်ရှာပြီး ဈေးနှုန်းအစစ်ကို ဆွဲထုတ်ပါမည်
+        for server in GAMES_DATA:
+            if server['name'] == srv:
+                for cat_items in server['cats'].values():
+                    for item in cat_items:
+                        if item['d'] == pkg:
+                            actual_price = int(item['p'])
+                            break
+                    if actual_price is not None:
+                        break
+            if actual_price is not None:
+                break
+        
+        # အကယ်၍ မသမာသူက Package နာမည်ကိုပါ ထပ်ခိုးပြင်လာခဲ့လျှင် Order ကို လုံးဝ ပယ်ချပါမည်
+        if actual_price is None:
+            return "❌ Error: Invalid Server or Package!", 400
+        
+        # အစစ်အမှန် ဈေးနှုန်းကိုသာ အသုံးပြုပါမည်
+        price = actual_price 
+        # ----------------------------------------------------------------
         
         order_date = datetime.now(timezone(timedelta(hours=6, minutes=30))).strftime("%d/%m/%Y %I:%M %p")
         oid = orders_col.insert_one({"tg_user": tg_user, "uid": uid, "zone": zid, "pkg": pkg, "srv": srv, "price": price, "status": "Pending", "date": order_date}).inserted_id
@@ -565,6 +592,7 @@ def order():
 👤 <b>Buyer:</b> {tg_user}
 🌍 <b>Server:</b> {srv}
 🆔 <b>Game ID:</b> <code>{uid} ({zid})</code>
+
 💎 <b>Package:</b> {pkg}
 💰 <b>Price:</b> {price:,} Ks
 ━━━━━━━━━━━━━━━
