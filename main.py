@@ -3,6 +3,7 @@ from flask import Flask, render_template_string, request, jsonify, make_response
 from datetime import datetime, timedelta, timezone
 from pymongo import MongoClient
 from bson.objectid import ObjectId
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 
@@ -540,16 +541,27 @@ def auth():
     try:
         data = request.json
         utype, user, psw = data['type'], data['user'], data['pass']
+        
         if utype == 'register':
-            if users_col.find_one({"user": user}): return jsonify({"success": False, "msg": "User already exists!"})
-            users_col.insert_one({"user": user, "pass": psw})
+            if users_col.find_one({"user": user}): 
+                return jsonify({"success": False, "msg": "User already exists!"})
+            
+            # 🛡️ Password ကို စာဝှက် (Hash) ပြောင်းပြီးမှ သိမ်းပါမည်
+            hashed_pw = generate_password_hash(psw)
+            users_col.insert_one({"user": user, "pass": hashed_pw})
             return jsonify({"success": True})
+            
         else:
-            u = users_col.find_one({"user": user, "pass": psw})
-            if u: return jsonify({"success": True})
+            u = users_col.find_one({"user": user})
+            # 🛡️ Database ထဲက Hash နဲ့ User ရိုက်ထည့်တာ ကိုက်/မကိုက် စစ်ပါမည်
+            if u and check_password_hash(u['pass'], psw):
+                return jsonify({"success": True})
+                
             return jsonify({"success": False, "msg": "Invalid Login!"})
-    except Exception as e: return jsonify({"success": False, "msg": str(e)})
-
+            
+    except Exception as e: 
+        return jsonify({"success": False, "msg": str(e)})
+        
 @app.route('/order', methods=['POST'])
 def order():
     try:
