@@ -562,7 +562,7 @@ HTML_CODE = '''
                         cancelMsg = `
                         <div style="background: rgba(239, 68, 68, 0.1); border-left: 4px solid #ef4444; padding: 10px; margin-top: 12px; border-radius: 4px; font-size: 13px; color: #fca5a5;">
                             ⚠️ <b>ပယ်ဖျက်လိုက်ပါသည်:</b> ${reasonTxt} <br><br>
-                            <i>ကျေးဇူးပြု၍ သေချာပြန်စစ်ပြီး Order အသစ် ထပ်တင်ပေးပါ။ (ငွေလွှဲပြဿနာဖြစ်ပါက Page သို့ ဆက်သွယ်မေးမြန်းနိုင်ပါသည်)</i>
+                            <i>ကျေးဇူးပြု၍ သေချာပြန်စစ်ပြီး Order အသစ် ထပ်တင်ပေးပါ။ (ငွေလွှဲပြဿနာဖြစ်ပါက @Bby_kiwii7 သို့ ဆက်သွယ်မေးမြန်းနိုင်ပါသည်)</i>
                         </div>`;
                     }
 
