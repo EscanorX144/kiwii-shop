@@ -709,52 +709,66 @@ def order():
 
 @app.route('/webhook/telegram', methods=['POST'])
 def telegram_webhook():
-    data = request.json
-    if "callback_query" in data:
-        cb = data["callback_query"]
-        call_data = cb["data"]
-        
-        if call_data.startswith('st_'):
-            parts = call_data.split('_')
-            status = parts[1]
-            reason_code = parts[2]
-            oid = parts[3]
-            
-            # 🔴 အကြောင်းရင်း (Reason) ကို မြန်မာစာဖြင့် ပြောင်းလဲသတ်မှတ်ခြင်း
-            cancel_reason = ""
-            if status == 'Cancelled':
-                if reason_code == "WrongID":
-                    cancel_reason = "Game ID (သို့) Zone ID မှားယွင်းနေပါသည်။"
-                elif reason_code == "BadReceipt":
-                    cancel_reason = "ငွေလွှဲပြေစာ မှားယွင်းနေခြင်း (သို့) ကျသင့်ငွေ မပြည့်ခြင်းကြောင့် ဖြစ်ပါသည်။"
-                else:
-                    cancel_reason = "အချက်အလက် မှားယွင်းနေသဖြင့် ပယ်ဖျက်လိုက်ပါသည်။"
+    try:
+        import requests
+        from bson.objectid import ObjectId
 
-            # Database ထဲတွင် Status နှင့် Reason ကို သိမ်းမည်
-            update_data = {"status": status}
-            if status == 'Cancelled':
-                update_data["reason"] = cancel_reason
-
-            order = orders_col.find_one_and_update(
-                {"_id": ObjectId(oid)}, 
-                {"$set": update_data},
-                return_document=True
-            )
+        data = request.json
+        if "callback_query" in data:
+            cb = data["callback_query"]
+            call_data = cb.get("data", "")
             
-            # Telegram Group ထဲက စာကိုပါ Update လုပ်ရန်
-            msg_id = cb["message"]["message_id"]
-            chat_id = cb["message"]["chat"]["id"]
-            status_icon = '✅' if status == 'Completed' else '❌'
-            caption = f"<b>🛍️ ORDER UPDATE</b>\n━━━━━━━━━━━━━━━\nOrder ID: {oid}\n{status_icon} Status: <b>{status}</b>"
-            if status == 'Cancelled':
-                caption += f"\n⚠️ Reason: {cancel_reason}"
+            # ခလုတ် Data ဖမ်းယူခြင်း
+            if call_data.startswith('st_'):
+                parts = call_data.split('_')
+                status = parts[1]
+                # ခလုတ်အဟောင်းနဲ့ အသစ် ရောနှိပ်မိရင်တောင် Error မတက်အောင် ကာကွယ်ထားပါသည်
+                reason_code = parts[2] if len(parts) > 2 else ""
+                oid = parts[3] if len(parts) > 3 else (parts[2] if len(parts) > 2 else "")
                 
-            requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/editMessageCaption", 
-                json={'chat_id': chat_id, 'message_id': msg_id, 'caption': caption, 'parse_mode': 'HTML'})
-            
-            # ခလုတ်နှိပ်ကြောင်း Telegram ကို အကြောင်းပြန်ရန်
-            requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/answerCallbackQuery", 
-                json={'callback_query_id': cb['id'], 'text': f'Order {status} updated!'})
+                # 🔴 အကြောင်းရင်း (Reason) ပြင်ဆင်ခြင်း
+                cancel_reason = ""
+                if status == 'Cancelled':
+                    if reason_code == "WrongID":
+                        cancel_reason = "Game ID (သို့) Zone ID မှားယွင်းနေပါသည်။"
+                    elif reason_code == "BadReceipt":
+                        cancel_reason = "ငွေလွှဲပြေစာ မှားယွင်းနေခြင်း (သို့) ကျသင့်ငွေ မပြည့်ခြင်းကြောင့် ဖြစ်ပါသည်။"
+                    else:
+                        cancel_reason = "အချက်အလက် မှားယွင်းနေသဖြင့် ပယ်ဖျက်လိုက်ပါသည်။"
+
+                # 💾 Database Update လုပ်ခြင်း
+                update_data = {"status": status}
+                if status == 'Cancelled':
+                    update_data["reason"] = cancel_reason
+
+                # Database တွင် Status သွားပြောင်းပါမည်
+                orders_col.update_one({"_id": ObjectId(oid)}, {"$set": update_data})
+                
+                # 📩 Telegram Group ထဲက စာကို Update လုပ်ခြင်း
+                msg_id = cb["message"]["message_id"]
+                chat_id = cb["message"]["chat"]["id"]
+                status_icon = '✅' if status == 'Completed' else '❌'
+                
+                caption = f"<b>🛍️ ORDER UPDATE</b>\n━━━━━━━━━━━━━━━\nOrder ID: {oid}\n{status_icon} Status: <b>{status}</b>"
+                if status == 'Cancelled':
+                    caption += f"\n⚠️ Reason: {cancel_reason}"
+                    
+                requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/editMessageCaption", 
+                    json={'chat_id': chat_id, 'message_id': msg_id, 'caption': caption, 'parse_mode': 'HTML'})
+                
+                # ✅ ခလုတ်နှိပ်ကြောင်း Telegram ကို အကြောင်းပြန်ခြင်း (Loading ရပ်သွားရန်)
+                requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/answerCallbackQuery", 
+                    json={'callback_query_id': cb['id'], 'text': f'Order {status} updated!'})
+                
+        return "OK", 200
+        
+    except Exception as e:
+        # 🔴 Error တက်ပါက Render သွားစစ်စရာမလိုဘဲ Telegram Group ထဲသို့ Error Message ပို့ပေးမည့်စနစ်
+        import traceback, requests
+        error_details = traceback.format_exc()
+        error_msg = f"⚠️ <b>Webhook Error တက်နေပါသည်</b> ⚠️\n\n<pre>{error_details[-500:]}</pre>"
+        requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage", json={'chat_id': CHAT_ID, 'text': error_msg, 'parse_mode': 'HTML'})
+        return "Error", 500
 
 @app.route('/api/history')
 def history():
