@@ -100,7 +100,14 @@ HTML_CODE = '''
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <style>
-    body { background:#0f172a; color:white; font-family:sans-serif; margin:0; padding-bottom:80px; }
+    body {
+        background: radial-gradient(circle at top, #1e293b 0%, #020617 80%);
+        background-attachment: fixed;
+        color: white;
+        margin: 0;
+        padding-bottom: 70px;
+        font-family: Arial, sans-serif;
+    }
     #main-container { max-width:500px; margin:auto; }
     .header-logo { 
         text-align: center; 
