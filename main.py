@@ -551,12 +551,34 @@ HTML_CODE = '''
             const data = await r.json();
             const myHist = data.filter(o => o.tg_user === currentUser);
             document.getElementById('hist-list').innerHTML = myHist.map(o => {
-                let statusColor = o.status === 'Completed' ? '#10b981' : (o.status === 'Rejected' ? '#ef4444' : '#fbbf24');
-                return `
-                <div style="background:#1e293b;padding:15px;margin-bottom:10px;border-radius:12px;border-left:5px solid ${statusColor};">
-                    <div style="display:flex; justify-content:space-between;"><b>${o.pkg}</b><span style="color:${statusColor}; font-weight:bold;">${o.status}</span></div>
-                    <div style="color:#94a3b8; font-size:12px;">ID: ${o.uid} | Price: ${o.price.toLocaleString()} Ks</div>
-                </div>`
+                // Status အရ အရောင်နှင့် Icon သတ်မှတ်ခြင်း (Rejected အစား Cancelled သို့ ပြောင်းထားပါသည်)
+                    let statusColor = o.status === 'Completed' ? '#10b981' : (o.status === 'Cancelled' ? '#ef4444' : '#fbbf24');
+                    let stIcon = o.status === 'Completed' ? '✅' : (o.status === 'Cancelled' ? '❌' : '⏳');
+                    
+                    // 🔴 Cancel ဖြစ်ပါက Admin ရွေးချယ်ခဲ့သည့် အကြောင်းပြချက်ကို ပြသမည်
+                    let cancelMsg = '';
+                    if (o.status === 'Cancelled') {
+                        let reasonTxt = o.reason ? o.reason : "အချက်အလက် မှားယွင်းနေသဖြင့် ပယ်ဖျက်လိုက်ပါသည်။";
+                        cancelMsg = `
+                        <div style="background: rgba(239, 68, 68, 0.1); border-left: 4px solid #ef4444; padding: 10px; margin-top: 12px; border-radius: 4px; font-size: 13px; color: #fca5a5;">
+                            ⚠️ <b>ပယ်ဖျက်လိုက်ပါသည်:</b> ${reasonTxt} <br><br>
+                            <i>ကျေးဇူးပြု၍ သေချာပြန်စစ်ပြီး Order အသစ် ထပ်တင်ပေးပါ။ (ငွေလွှဲပြဿနာဖြစ်ပါက Page သို့ ဆက်သွယ်မေးမြန်းနိုင်ပါသည်)</i>
+                        </div>`;
+                    }
+
+                    // 📦 Box Design အသစ် (Cancel Message နှင့် Icon ပါဝင်ပြီးသား)
+                    return `
+                    <div style="background:#1e293b;padding:15px;margin-bottom:10px;border-radius:12px;border-left:5px solid ${statusColor};">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <b>💎 ${o.pkg}</b>
+                            <span style="color:${statusColor}; font-weight:bold;">${stIcon} ${o.status}</span>
+                        </div>
+                        <div style="color:#94a3b8; font-size:12px; margin-top:5px;">
+                            ID: ${o.uid} | Price: ${parseInt(o.price).toLocaleString()} Ks
+                        </div>
+                        ${cancelMsg}
+                    </div>
+                    `;
             }).join('');
         } catch (error) { document.getElementById('hist-list').innerHTML = "Failed to load history."; }
     }
@@ -661,7 +683,13 @@ def order():
 ━━━━━━━━━━━━━━━
 ⏳ <b>Status:</b> Pending"""
 
-        reply_markup = {"inline_keyboard": [[{"text": "✅ Done", "callback_data": f"st_Completed_{str(oid)}"}, {"text": "❌ Cancel", "callback_data": f"st_Cancelled_{str(oid)}"}]]}
+        # 🔴 အကြောင်းရင်း ရွေးချယ်နိုင်သော ခလုတ်များ
+        reply_markup = {"inline_keyboard": [
+            [{"text": "✅ အောင်မြင်ပါသည် (Done)", "callback_data": f"st_Completed_None_{str(order_id)}"}],
+            [{"text": "❌ Cancel (ID မှားနေ၍)", "callback_data": f"st_Cancelled_WrongID_{str(order_id)}"}],
+            [{"text": "❌ Cancel (ပြေစာ/ငွေလွှဲ မှားယွင်း၍)", "callback_data": f"st_Cancelled_BadReceipt_{str(order_id)}"}],
+            [{"text": "❌ Cancel (အခြားအကြောင်းရင်း)", "callback_data": f"st_Cancelled_Other_{str(order_id)}"}]
+        ]}
         
         payload = {
             'chat_id': CHAT_ID, 
@@ -682,10 +710,49 @@ def telegram_webhook():
     data = request.json
     if "callback_query" in data:
         cb = data["callback_query"]
-        _, new_status, order_id = cb["data"].split("_")
-        orders_col.update_one({"_id": ObjectId(order_id)}, {"$set": {"status": new_status}})
-        requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/editMessageCaption", json={"chat_id": CHAT_ID, "message_id": cb["message"]["message_id"], "caption": cb["message"]["caption"] + f"\n📢 <b>Status: {new_status}</b>", "parse_mode": "HTML"})
-    return "OK", 200
+        call_data = cb["data"]
+        
+        if call_data.startswith('st_'):
+            parts = call_data.split('_')
+            status = parts[1]
+            reason_code = parts[2]
+            oid = parts[3]
+            
+            # 🔴 အကြောင်းရင်း (Reason) ကို မြန်မာစာဖြင့် ပြောင်းလဲသတ်မှတ်ခြင်း
+            cancel_reason = ""
+            if status == 'Cancelled':
+                if reason_code == "WrongID":
+                    cancel_reason = "Game ID (သို့) Zone ID မှားယွင်းနေပါသည်။"
+                elif reason_code == "BadReceipt":
+                    cancel_reason = "ငွေလွှဲပြေစာ မှားယွင်းနေခြင်း (သို့) ကျသင့်ငွေ မပြည့်ခြင်းကြောင့် ဖြစ်ပါသည်။"
+                else:
+                    cancel_reason = "အချက်အလက် မှားယွင်းနေသဖြင့် ပယ်ဖျက်လိုက်ပါသည်။"
+
+            # Database ထဲတွင် Status နှင့် Reason ကို သိမ်းမည်
+            update_data = {"status": status}
+            if status == 'Cancelled':
+                update_data["reason"] = cancel_reason
+
+            order = orders_col.find_one_and_update(
+                {"_id": ObjectId(oid)}, 
+                {"$set": update_data},
+                return_document=True
+            )
+            
+            # Telegram Group ထဲက စာကိုပါ Update လုပ်ရန်
+            msg_id = cb["message"]["message_id"]
+            chat_id = cb["message"]["chat"]["id"]
+            status_icon = '✅' if status == 'Completed' else '❌'
+            caption = f"<b>🛍️ ORDER UPDATE</b>\n━━━━━━━━━━━━━━━\nOrder ID: {oid}\n{status_icon} Status: <b>{status}</b>"
+            if status == 'Cancelled':
+                caption += f"\n⚠️ Reason: {cancel_reason}"
+                
+            requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/editMessageCaption", 
+                json={'chat_id': chat_id, 'message_id': msg_id, 'caption': caption, 'parse_mode': 'HTML'})
+            
+            # ခလုတ်နှိပ်ကြောင်း Telegram ကို အကြောင်းပြန်ရန်
+            requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/answerCallbackQuery", 
+                json={'callback_query_id': cb['id'], 'text': f'Order {status} updated!'})
 
 @app.route('/api/history')
 def history():
