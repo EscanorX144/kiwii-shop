@@ -683,12 +683,11 @@ def order():
 ━━━━━━━━━━━━━━━
 ⏳ <b>Status:</b> Pending"""
 
-        # 🔴 အကြောင်းရင်း ရွေးချယ်နိုင်သော ခလုတ်များ
         reply_markup = {"inline_keyboard": [
-            [{"text": "✅ အောင်မြင်ပါသည် (Done)", "callback_data": f"st_Completed_None_{str(order_id)}"}],
-            [{"text": "❌ Cancel (ID မှားနေ၍)", "callback_data": f"st_Cancelled_WrongID_{str(order_id)}"}],
-            [{"text": "❌ Cancel (ပြေစာ/ငွေလွှဲ မှားယွင်း၍)", "callback_data": f"st_Cancelled_BadReceipt_{str(order_id)}"}],
-            [{"text": "❌ Cancel (အခြားအကြောင်းရင်း)", "callback_data": f"st_Cancelled_Other_{str(order_id)}"}]
+            [{"text": "✅ အောင်မြင်ပါသည် (Done)", "callback_data": f"st_Completed_None_{str(oid)}"}],
+            [{"text": "❌ Cancel (ID မှားနေ၍)", "callback_data": f"st_Cancelled_WrongID_{str(oid)}"}],
+            [{"text": "❌ Cancel (ပြေစာ/ငွေလွှဲ မှားယွင်း၍)", "callback_data": f"st_Cancelled_BadReceipt_{str(oid)}"}],
+            [{"text": "❌ Cancel (အခြားအကြောင်းရင်း)", "callback_data": f"st_Cancelled_Other_{str(oid)}"}]
         ]}
         
         payload = {
