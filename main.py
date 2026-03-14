@@ -178,6 +178,39 @@ HTML_CODE = '''
     .copy-btn { background: #334155; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 12px; margin-left: 10px; transition: 0.2s; }
     .glow-note { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid #ef4444; padding: 8px 15px; border-radius: 8px; font-weight: bold; font-size: 14px; margin-top: 15px; display: inline-block; animation: glowPulse 1.5s infinite alternate; }
     @keyframes glowPulse { from { box-shadow: 0 0 5px rgba(239, 68, 68, 0.2); } to { box-shadow: 0 0 15px rgba(239, 68, 68, 0.8); } }
+    /* Professional Logout Button */
+    .logout-btn {
+        background-color: rgba(239, 68, 68, 0.1); /* အနီရောင်ဖျော့ဖျော့ နောက်ခံ */
+        color: #ef4444; 
+        border: 1px solid #ef4444;
+        padding: 6px 14px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: bold;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.3s ease;
+    }
+    .logout-btn:hover {
+        background-color: #ef4444;
+        color: white;
+        box-shadow: 0 0 10px rgba(239, 68, 68, 0.5); /* လက်တင်ရင် လင်းလာမည့် Effect */
+    }
+    
+    /* User Profile Icon လေးပိုလှအောင် */
+    .user-profile {
+        display: flex; 
+        align-items: center; 
+        gap: 10px;
+    }
+    .user-icon {
+        background: #334155; 
+        padding: 6px 10px; 
+        border-radius: 50%; 
+        color: #fbbf24;
+    }
 </style>
 </head><body>
 <div id="main-container">
@@ -201,8 +234,13 @@ HTML_CODE = '''
 
     <div id="app-sec" style="display:none;">
         <div class="user-banner">
-            <span>👤 <b id="display-user"></b></span>
-            <span onclick="logout()" style="color:#ef4444; font-weight:bold; cursor:pointer;">LOGOUT <i class="fas fa-sign-out-alt"></i></span>
+            <span class="user-profile">
+                <div class="user-icon"><i class="fas fa-user"></i></div>
+                <b id="display-user" style="font-size: 15px;"></b>
+            </span>
+            <button class="logout-btn" onclick="logout()">
+                LOGOUT <i class="fas fa-sign-out-alt"></i>
+            </button>
         </div>
         <div id="h-sec">
             <div class="header-logo">KIWII GAME STORE</div>
