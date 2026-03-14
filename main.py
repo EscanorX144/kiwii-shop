@@ -261,8 +261,8 @@ HTML_CODE = '''
             <input type="password" id="reg-repass" placeholder="Retype Password" style="width: 100%; padding: 14px; margin-bottom: 25px; border-radius: 8px; border: none; background: #020617; color: white; box-sizing: border-box; font-size: 15px;">
             <button onclick="auth('register')" style="width: 100%; padding: 14px; border-radius: 8px; background: linear-gradient(135deg, #22c55e, #16a34a); color: white; border: none; font-weight: bold; cursor: pointer; font-size: 16px; text-transform: uppercase;">Create Account</button>
         </div>
-        <p style="text-align: center; margin-top: 20px; font-size: 14px;"><a href="#" onclick="toggleAuth('register')" style="color: #94a3b8; text-decoration: none;">Don't have an account? <span style="color: #c084fc;">Sign Up</span></a></p>
-    </div>
+        <p style="text-align: center; margin-top: 20px; font-size: 14px;"><a href="#" onclick="toggleAuth('login')" style="color: #94a3b8; text-decoration: none;">Already have an account? <span style="color: #4ade80;">Login</span></a></p>
+        </div>>
 
     <div id="app-sec" style="display:none;">
         <div class="user-banner">
