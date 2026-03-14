@@ -690,14 +690,17 @@ def order():
             [{"text": "❌ Cancel (အခြားအကြောင်းရင်း)", "callback_data": f"st_Cancelled_Other_{str(oid)}"}]
         ]}
         
-        payload = {
-            'chat_id': CHAT_ID, 
-            'caption': msg_caption, 
-            'parse_mode': 'HTML', 
-            'reply_markup': json.dumps(reply_markup)
-        }
-        
-        requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto", data=payload, files={'photo': photo})
+        # စာနှင့် ပုံကို တစ်စောင်တည်း ပေါင်း၍ ပို့ခြင်း (Send Photo with Caption)
+        requests.post(
+            f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto", 
+            data={
+                'chat_id': CHAT_ID, 
+                'caption': msg_caption, 
+                'parse_mode': 'HTML',
+                'reply_markup': json.dumps(reply_markup)
+            }, 
+            files={'photo': photo}
+        )
         
         return "Success"
         
