@@ -540,10 +540,11 @@ def order():
         tg_user, uid, zid, pkg, srv = request.form.get('tg_user'), request.form.get('uid'), request.form.get('zid'), request.form.get('pkg'), request.form.get('srv')
         photo = request.files.get('photo')
         price = int(request.form.get('price', '0').replace(',', ''))
+        
         order_date = datetime.now(timezone(timedelta(hours=6, minutes=30))).strftime("%d/%m/%Y %I:%M %p")
         oid = orders_col.insert_one({"tg_user": tg_user, "uid": uid, "zone": zid, "pkg": pkg, "srv": srv, "price": price, "status": "Pending", "date": order_date}).inserted_id
-        # Variables တွေက သင့် code ထဲက နာမည်တွေနဲ့ အနည်းငယ်ကွဲနိုင်ပါတယ်၊ ပြန်ညှိပေးပါ။
-msg_caption = f"""<b>🛍️ NEW ORDER RECEIVED</b>
+        
+        msg_caption = f"""<b>🛍️ NEW ORDER RECEIVED</b>
 ━━━━━━━━━━━━━━━
 👤 <b>Buyer:</b> {tg_user}
 🌍 <b>Server:</b> {srv}
@@ -556,15 +557,19 @@ msg_caption = f"""<b>🛍️ NEW ORDER RECEIVED</b>
 
         reply_markup = {"inline_keyboard": [[{"text": "✅ Done", "callback_data": f"st_Completed_{str(oid)}"}, {"text": "❌ Cancel", "callback_data": f"st_Cancelled_{str(oid)}"}]]}
         
-        # Telegram ကို ပုံရော၊ စာရော၊ ခလုတ်ပါ အမှားကင်းကင်း ပို့မည့်နည်းလမ်း
         payload = {
             'chat_id': CHAT_ID, 
             'caption': msg_caption, 
             'parse_mode': 'HTML', 
-            'reply_markup': json.dumps(reply_markup) # ခလုတ်တွေကို json.dumps ဖြင့် ပြောင်းပေးရပါမယ်
+            'reply_markup': json.dumps(reply_markup)
         }
+        
         requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto", data=payload, files={'photo': photo})
-except Exception as e: return str(e), 500
+        
+        return "Success"
+        
+    except Exception as e: 
+        return str(e), 500
 
 @app.route('/webhook/telegram', methods=['POST'])
 def telegram_webhook():
