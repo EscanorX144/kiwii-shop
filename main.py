@@ -102,7 +102,19 @@ HTML_CODE = '''
 <style>
     body { background:#0f172a; color:white; font-family:sans-serif; margin:0; padding-bottom:80px; }
     #main-container { max-width:500px; margin:auto; }
-    .header-logo { text-align:center; padding:25px 0; color:#fbbf24; font-size:26px; font-weight:bold; }
+    .header-logo { 
+        text-align: center; 
+        padding: 28px 0 20px; 
+        font-size: 28px; 
+        font-weight: 900; 
+        letter-spacing: 2px; /* စာလုံးလေးတွေကို နည်းနည်းခွာလိုက်ပါတယ် */
+        text-transform: uppercase;
+        
+        /* ရွှေရောင်ကို ပိုပြီး ကြွလာအောင်လုပ်ခြင်း */
+        color: #fbbf24; 
+        text-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5), /* အောက်ခံအမည်းရိပ် */
+                     0px 0px 15px rgba(251, 191, 36, 0.4); /* ရွှေရောင် Glow အလင်းရောင် */
+    }
     .auth-box { padding: 40px 20px; text-align: center; }
     .auth-input { width:100%; padding:15px; margin:10px 0; border-radius:12px; background:#1e293b; color:white; border:1px solid #334155; box-sizing:border-box; }
     .auth-btn { width:100%; padding:16px; background:#fbbf24; border:none; border-radius:12px; font-weight:bold; color:black; cursor:pointer; }
