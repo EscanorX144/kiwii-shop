@@ -101,12 +101,15 @@ HTML_CODE = '''
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <style>
     body {
-        background: radial-gradient(circle at top, #1e293b 0%, #020617 80%);
+        background-color: #0f172a; 
+        background-image: 
+            radial-gradient(circle at 0% 0%, rgba(30, 58, 138, 0.4) 0px, transparent 60%),
+            radial-gradient(circle at 100% 100%, rgba(88, 28, 135, 0.3) 0px, transparent 60%);
         background-attachment: fixed;
         color: white;
         margin: 0;
         padding-bottom: 70px;
-        font-family: Arial, sans-serif;
+        font-family: 'Arial', sans-serif;
     }
     #main-container { max-width:500px; margin:auto; }
     .header-logo { 
