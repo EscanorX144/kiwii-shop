@@ -101,10 +101,14 @@ HTML_CODE = '''
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <style>
     body {
-        background-color: #0f172a; 
-        background-image: 
-            radial-gradient(circle at 0% 0%, rgba(30, 58, 138, 0.4) 0px, transparent 60%),
-            radial-gradient(circle at 100% 100%, rgba(88, 28, 135, 0.3) 0px, transparent 60%);
+        background-color: #0f172a;
+        background-image: repeating-linear-gradient(
+            45deg,
+            rgba(255, 255, 255, 0.02) 0px,
+            rgba(255, 255, 255, 0.02) 2px,
+            transparent 2px,
+            transparent 12px
+        );
         background-attachment: fixed;
         color: white;
         margin: 0;
