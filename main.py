@@ -8,14 +8,14 @@ app = Flask(__name__)
 
 # --- ⚙️ SECURE CONFIGURATION ---
 # Database URL ကို Code ထဲမှာ မထားတော့ဘဲ Render ကနေ လှမ်းယူပါမည်
-MONGO_URI = os.environ.get("MONGO_URI", "သင့်ရဲ့_MongoDB_URL_ကို_Render_Environment_မှာ_ထည့်ပါ")
+MONGO_URI = os.environ.get("MONGO_URI", "mongodb+srv://EscanorX:Conti144@cluster0.m2mtomm.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
 client = MongoClient(MONGO_URI)
 db = client['kiwii_game_shop']
 orders_col = db['orders']
 users_col = db['users']
 
 # Telegram Tokens များကိုလည်း Render ကနေပဲ လှမ်းယူပါမည်
-BOT_TOKEN = os.environ.get("BOT_TOKEN", "သင့်ရဲ့_Bot_Token_ကို_Render_Environment_မှာ_ထည့်ပါ")
+BOT_TOKEN = os.environ.get("BOT_TOKEN", "8424534925:AAGyfQ3q5TBPo5ggHt2OBktgGqMHOKMWSqU")
 CHAT_ID = os.environ.get("CHAT_ID", "-1003801691345") # Group ID ကိုတော့ ဒီတိုင်းထားခဲ့လို့ ရပါတယ်
 CS_TELEGRAM = "https://t.me/Bby_kiwii7"
 ADMIN_USERNAMES = ["@Escanor_XX", "@Escanor_X", "@Bby_kiwii7"]
