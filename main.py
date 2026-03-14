@@ -549,7 +549,6 @@ def order():
 👤 <b>Buyer:</b> {tg_user}
 🌍 <b>Server:</b> {srv}
 🆔 <b>Game ID:</b> <code>{uid} ({zid})</code>
-
 💎 <b>Package:</b> {pkg}
 💰 <b>Price:</b> {price:,} Ks
 ━━━━━━━━━━━━━━━
