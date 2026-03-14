@@ -243,8 +243,8 @@ HTML_CODE = '''
 </style>
 </head><body>
 <div id="main-container">
-    <div id="auth-sec" style="max-width: 380px; margin: 60px auto; background: rgba(15, 23, 42, 0.9); padding: 30px; border-radius: 15px; border: 1px solid rgba(147, 51, 234, 0.3); box-shadow: 0 0 20px rgba(147, 51, 234, 0.1);">
-        
+    <div id="auth-sec" style="max-width: 380px; width: 90%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(15, 23, 42, 0.9); padding: 30px; border-radius: 15px; border: 1px solid rgba(147, 51, 234, 0.3); box-shadow: 0 0 20px rgba(147, 51, 234, 0.1); box-sizing: border-box;">
+    
         <div id="login-box">
             <h2 style="text-align: center; color: #c084fc; margin-top: 0; margin-bottom: 25px; text-transform: uppercase; font-weight: 800;">LOGIN</h2>
             <input type="text" id="log-user" placeholder="Telegram Username (e.g., @Bby_kiwii7)" style="width: 100%; padding: 14px; margin-bottom: 15px; border-radius: 8px; border: none; background: #020617; color: white; box-sizing: border-box; font-size: 15px;">
