@@ -364,7 +364,7 @@ HTML_CODE = '''
                 const res = await fetch('/api/auth', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ type: type, user: user, pass: pass }) // Backend က Name မတောင်းလို့ ၃ ခုပဲ လှမ်းပို့ပါတယ်
+                    body: JSON.stringify({ type: type, user: user, pass: pass }) 
                 });
                 const data = await res.json();
                 
@@ -373,20 +373,18 @@ HTML_CODE = '''
                         alert("✅ အကောင့်ဖွင့်ခြင်း အောင်မြင်ပါသည်! ကျေးဇူးပြု၍ Login ဝင်ပါ။");
                         toggleAuth('login');
                     } else {
-                        currentUser = user;
-                        document.getElementById('auth-sec').style.display = 'none';
-                        document.getElementById('top-sec').style.display = 'block';
-                        document.getElementById('h-sec').style.display = 'block';
-                        showM(); // မူလ Home Page သို့ သွားရန်
+                        // 🔴 ဤနေရာတွင် မူလ Code အတိုင်း Page ကို အောင်မြင်စွာ Refresh လုပ်ပေးပါမည်
+                        localStorage.setItem('user', user); 
+                        location.reload(); 
                     }
                 } else {
                     alert("❌ Error: " + data.msg);
                 }
             } catch (error) {
-                alert("❌ Server နှင့် ချိတ်ဆက်၍ မရပါ။");
+                console.error(error);
+                alert("❌ System Error: ကျေးဇူးပြု၍ ခဏစောင့်ပြီး ပြန်စမ်းကြည့်ပါ။");
             }
         }
-
     function logout() { localStorage.removeItem('user'); location.reload(); }
 
     function init() {
