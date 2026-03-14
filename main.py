@@ -243,22 +243,26 @@ HTML_CODE = '''
 </style>
 </head><body>
 <div id="main-container">
-    <div id="auth-sec" class="auth-box">
-        <div class="header-logo">KIWII GAME STORE</div>
-        <div id="login-form">
-            <h2>LOGIN</h2>
-            <input type="text" id="l-user" class="auth-input" placeholder="Telegram Username (Eg.. @Bby_kiwii7)">
-            <input type="password" id="l-pass" class="auth-input" placeholder="Password">
-            <button class="auth-btn" onclick="handleAuth('login')">LOGIN</button>
-            <div class="auth-toggle" onclick="toggleAuth()">No account? Register here</div>
+    <div id="auth-sec" style="max-width: 380px; margin: 60px auto; background: rgba(15, 23, 42, 0.9); padding: 30px; border-radius: 15px; border: 1px solid rgba(147, 51, 234, 0.3); box-shadow: 0 0 20px rgba(147, 51, 234, 0.1);">
+        
+        <div id="login-box">
+            <h2 style="text-align: center; color: #c084fc; margin-top: 0; margin-bottom: 25px; text-transform: uppercase; font-weight: 800;">LOGIN</h2>
+            <input type="text" id="log-user" placeholder="Telegram Username (e.g., @Bby_kiwii7)" style="width: 100%; padding: 14px; margin-bottom: 15px; border-radius: 8px; border: none; background: #020617; color: white; box-sizing: border-box; font-size: 15px;">
+            <input type="password" id="log-pass" placeholder="Password" style="width: 100%; padding: 14px; margin-bottom: 25px; border-radius: 8px; border: none; background: #020617; color: white; box-sizing: border-box; font-size: 15px;">
+            <button onclick="auth('login')" style="width: 100%; padding: 14px; border-radius: 8px; background: linear-gradient(135deg, #a855f7, #7e22ce); color: white; border: none; font-weight: bold; cursor: pointer; font-size: 16px; text-transform: uppercase;">Login</button>
+            <p style="text-align: center; margin-top: 20px; font-size: 14px;"><a href="#" onclick="toggleAuth('register')" style="color: #94a3b8; text-decoration: none;">New player? <span style="color: #c084fc;">Sign Up</span></a></p>
         </div>
-        <div id="reg-form" style="display:none;">
-            <h2>REGISTER</h2>
-            <input type="text" id="r-user" class="auth-input" placeholder="Telegram Username (Eg.. @Bby_kiwii7)">
-            <input type="password" id="r-pass" class="auth-input" placeholder="Create Password">
-            <button class="auth-btn" onclick="handleAuth('register')">CREATE ACCOUNT</button>
-            <div class="auth-toggle" onclick="toggleAuth()">Already have an account? Login</div>
+
+        <div id="reg-box" style="display: none;">
+            <h2 style="text-align: center; color: #4ade80; margin-top: 0; margin-bottom: 25px; text-transform: uppercase; font-weight: 800;">SIGN UP</h2>
+            <input type="text" id="reg-name" placeholder="Name" style="width: 100%; padding: 14px; margin-bottom: 15px; border-radius: 8px; border: none; background: #020617; color: white; box-sizing: border-box; font-size: 15px;">
+            <input type="text" id="reg-user" placeholder="Telegram Username (e.g., @Bby_kiwii7)" style="width: 100%; padding: 14px; margin-bottom: 15px; border-radius: 8px; border: none; background: #020617; color: white; box-sizing: border-box; font-size: 15px;">
+            <input type="password" id="reg-pass" placeholder="Password" style="width: 100%; padding: 14px; margin-bottom: 15px; border-radius: 8px; border: none; background: #020617; color: white; box-sizing: border-box; font-size: 15px;">
+            <input type="password" id="reg-repass" placeholder="Retype Password" style="width: 100%; padding: 14px; margin-bottom: 25px; border-radius: 8px; border: none; background: #020617; color: white; box-sizing: border-box; font-size: 15px;">
+            <button onclick="auth('register')" style="width: 100%; padding: 14px; border-radius: 8px; background: linear-gradient(135deg, #22c55e, #16a34a); color: white; border: none; font-weight: bold; cursor: pointer; font-size: 16px; text-transform: uppercase;">Create Account</button>
+            <p style="text-align: center; margin-top: 20px; font-size: 14px;"><a href="#" onclick="toggleAuth('login')" style="color: #94a3b8; text-decoration: none;">Already have an account? <span style="color: #4ade80;">Login</span></a></p>
         </div>
+        
     </div>
 
     <div id="app-sec" style="display:none;">
@@ -330,24 +334,58 @@ HTML_CODE = '''
     }
     checkAuth();
 
-    function toggleAuth() {
-        const isLogin = document.getElementById('login-form').style.display !== 'none';
-        document.getElementById('login-form').style.display = isLogin ? 'none' : 'block';
-        document.getElementById('reg-form').style.display = isLogin ? 'block' : 'none';
-    }
+    function toggleAuth(type) {
+            document.getElementById('login-box').style.display = type === 'login' ? 'block' : 'none';
+            document.getElementById('reg-box').style.display = type === 'register' ? 'block' : 'none';
+        }
 
-    async function handleAuth(type) {
-        const user = document.getElementById(type==='login'?'l-user':'r-user').value.trim();
-        const pass = document.getElementById(type==='login'?'l-pass':'r-pass').value;
-        if(!user || !pass) return alert("Please fill all fields");
-        const r = await fetch('/api/auth', {
-            method:'POST', headers:{'Content-Type':'application/json'},
-            body: JSON.stringify({type, user, pass})
-        });
-        const res = await r.json();
-        if(res.success) { localStorage.setItem('user', user); location.reload(); }
-        else alert(res.msg);
-    }            
+        async function auth(type) {
+            let user, pass;
+            
+            if (type === 'register') {
+                const name = document.getElementById('reg-name').value.trim();
+                user = document.getElementById('reg-user').value.trim();
+                pass = document.getElementById('reg-pass').value;
+                const repass = document.getElementById('reg-repass').value;
+
+                if (!name || !user || !pass || !repass) return alert("❌ ကျေးဇူးပြု၍ အချက်အလက်အားလုံး ပြည့်စုံစွာ ဖြည့်ပါ!");
+                if (!user.startsWith('@')) return alert("❌ Telegram Username ၏ အရှေ့တွင် '@' ပါရပါမည်!");
+                if (pass !== repass) return alert("❌ Password နှစ်ခု တူညီမှုမရှိပါ!");
+                
+            } else {
+                user = document.getElementById('log-user').value.trim();
+                pass = document.getElementById('log-pass').value;
+                
+                if (!user || !pass) return alert("❌ Username နှင့် Password ဖြည့်ရန် လိုအပ်ပါသည်!");
+                if (!user.startsWith('@')) return alert("❌ Telegram Username ၏ အရှေ့တွင် '@' ပါရပါမည်!");
+            }
+
+            try {
+                const res = await fetch('/api/auth', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ type: type, user: user, pass: pass }) // Backend က Name မတောင်းလို့ ၃ ခုပဲ လှမ်းပို့ပါတယ်
+                });
+                const data = await res.json();
+                
+                if (data.success) {
+                    if (type === 'register') {
+                        alert("✅ အကောင့်ဖွင့်ခြင်း အောင်မြင်ပါသည်! ကျေးဇူးပြု၍ Login ဝင်ပါ။");
+                        toggleAuth('login');
+                    } else {
+                        currentUser = user;
+                        document.getElementById('auth-sec').style.display = 'none';
+                        document.getElementById('top-sec').style.display = 'block';
+                        document.getElementById('h-sec').style.display = 'block';
+                        showM(); // မူလ Home Page သို့ သွားရန်
+                    }
+                } else {
+                    alert("❌ Error: " + data.msg);
+                }
+            } catch (error) {
+                alert("❌ Server နှင့် ချိတ်ဆက်၍ မရပါ။");
+            }
+        }
 
     function logout() { localStorage.removeItem('user'); location.reload(); }
 
