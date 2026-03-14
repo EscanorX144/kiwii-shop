@@ -546,17 +546,32 @@ def auth():
             if users_col.find_one({"user": user}): 
                 return jsonify({"success": False, "msg": "User already exists!"})
             
-            # 🛡️ Password ကို စာဝှက် (Hash) ပြောင်းပြီးမှ သိမ်းပါမည်
+            # 🛡️ အကောင့်သစ်များကို လုံခြုံသော Hash ဖြင့် သိမ်းဆည်းခြင်း
             hashed_pw = generate_password_hash(psw)
             users_col.insert_one({"user": user, "pass": hashed_pw})
             return jsonify({"success": True})
             
         else:
             u = users_col.find_one({"user": user})
-            # 🛡️ Database ထဲက Hash နဲ့ User ရိုက်ထည့်တာ ကိုက်/မကိုက် စစ်ပါမည်
-            if u and check_password_hash(u['pass'], psw):
-                return jsonify({"success": True})
+            if u:
+                stored_pass = u.get('pass', '')
+                is_valid = False
                 
+                # စကားဝှက်သည် Hash ပြောင်းပြီးသားလား (အသစ်လား) စစ်ဆေးခြင်း
+                if stored_pass.startswith('pbkdf2:') or stored_pass.startswith('scrypt:'):
+                    is_valid = check_password_hash(stored_pass, psw)
+                else:
+                    # အကောင့်ဟောင်း (Password အစိမ်း) ဖြစ်နေလျှင် တိုက်ရိုက်စစ်ဆေးခြင်း
+                    is_valid = (stored_pass == psw)
+                    
+                    # 💡 အရေးကြီး: အကောင့်ဟောင်းဖြစ်ပြီး Password မှန်ကန်ပါက Hash သို့ အလိုအလျောက် ပြောင်းလဲသိမ်းဆည်းပေးခြင်း
+                    if is_valid:
+                        new_hash = generate_password_hash(psw)
+                        users_col.update_one({"_id": u["_id"]}, {"$set": {"pass": new_hash}})
+                        
+                if is_valid:
+                    return jsonify({"success": True})
+                    
             return jsonify({"success": False, "msg": "Invalid Login!"})
             
     except Exception as e: 
