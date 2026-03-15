@@ -376,11 +376,17 @@ HTML_CODE = '''
 <div id="terms-sec" style="display:none; padding:15px; padding-bottom: 80px;">
     <h2 style="color:#4ade80; text-align:center; text-transform:uppercase; font-weight:800;">Terms & Conditions</h2>
     <div style="background: rgba(15, 23, 42, 0.6); padding: 20px; border-radius: 12px; border: 1px solid rgba(74, 222, 128, 0.2); color: #f1f5f9; font-size: 14px; line-height: 1.8;">
+
+        <p style="text-align: justify; margin-bottom: 15px; color: #94a3b8; border-bottom: 1px dashed rgba(74, 222, 128, 0.3); padding-bottom: 15px; font-size: 13px;">
+            <i>Kiwii Game Store သည် Digital Game Item များနှင့် Top-up ဝန်ဆောင်မှုများကို ရောင်းချပေးသော နေရာဖြစ်ပါသည်။ ဝန်ဆောင်မှုများကို အသုံးပြုခြင်းဖြင့် သင်သည် ဤစည်းကမ်းချက်များကို ဖတ်ရှုနားလည်ပြီး သဘောတူညီကြောင်း အတည်ပြုပါသည်။</i>
+        </p>
+        
         <p><b>၁။ အချက်အလက်မှန်ကန်မှု:</b> Order တင်ရာတွင် Game ID , Zone ID နှင့် ငွေလွှဲပြေစာများ မှန်ကန်စေရန် သေချာစွာ စစ်ဆေးရပါမည်။ မှားယွင်းဖြည့်စွက်မှုကြောင့် Order Cancel ခြင်းဖြစ်ပေါ်ပါမည်။</p>
         <p><b>၂။ ကြာမြင့်ချိန်:</b> ပုံမှန်အားဖြင့် Order တစ်ခုလျှင် (1) မိနစ်မှ (5) မိနစ်ခန့် ကြာမြင့်နိုင်ပြီး၊ Game Server ပြုပြင်နေချိန်များတွင် ပိုမို ကြာမြင့်နိုင်ပါသည်။</p>
         <p><b>၃။ ဈေးနှုန်းပြောင်းလဲခြင်း:</b> Package ဈေးနှုန်းများသည် ငွေလဲနှုန်းနှင့် Game ကုမ္ပဏီများ၏ သတ်မှတ်ချက်အရ ကြိုတင်အကြောင်းကြားခြင်းမရှိဘဲ ပြောင်းလဲနိုင်ပါသည်။</p>
         <p><b>၄။ ငွေလွှဲပြေစာနှင့် အကောင့်ပိတ်သိမ်းခြင်း:</b> ငွေလွှဲပြေစာ (Screenshot) အတုများ အသုံးပြုခြင်း၊ ငွေမပြည့်ဘဲ လိမ်လည်တင်ခြင်းများ စစ်ဆေးတွေ့ရှိပါက အကောင့်အား အပြီးတိုင် (Ban) ပိတ်သိမ်းပါမည်။</p>
         <p><b>၅။ ငွေပြန်အမ်းခြင်း:</b> ဝယ်ယူမှု အောင်မြင်ပြီးသွားသော (Completed ဖြစ်သွားသော) Order များအတွက် ငွေပြန်အမ်းပေးမည် မဟုတ်ပါ။</p>
+        
         <button onclick="goH()" style="margin-top:20px; width:100%; padding:12px; background: linear-gradient(135deg, #22c55e, #16a34a); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">နောက်သို့ ပြန်သွားမည်</button>
     </div>
 </div>
