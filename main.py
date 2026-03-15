@@ -527,7 +527,7 @@ HTML_CODE = '''
             const data = await r.json();
             let topHTML = data.top10.map((u, i) => `
                 <div style="background:#1e293b;padding:15px;margin-bottom:10px;border-radius:12px;display:flex;justify-content:space-between;border-left:5px solid ${i===0?'#fbbf24':i===1?'#94a3b8':i===2?'#b45309':'#334155'};">
-                    <span><b>#${i+1}</b> ${u._id}</span>
+                    <span><b>#${i+1}</b> ${u.display_name}</span>
                     <b style="color:#fbbf24;">${u.totalSpent.toLocaleString()} Ks</b>
                 </div>`).join('');
             document.getElementById('top-list').innerHTML = topHTML + `
@@ -780,13 +780,29 @@ def history():
 def top10():
     try:
         current_user = request.args.get('user')
-        pipeline = [{"$match": {"status": "Completed", "tg_user": {"$nin": ADMIN_USERNAMES}}}, {"$group": {"_id": "$tg_user", "totalSpent": {"$sum": "$price"}}}, {"$sort": {"totalSpent": -1}}, {"$limit": 10}]
+        pipeline = [{"$match": {"status": "Completed", "tg_user": {"$nin": ADMIN_USERNAMES}}}, {"$group": {"_id": "$tg_user", "totalSpent": {"$sum": "$price"}}}, {"$sort": {"totalSpent": -1}}]
         all_ranks = list(orders_col.aggregate(pipeline))
-        user_rank, user_spent = "N/A", 0
+        
+        user_rank, user_spent = 'N/A', 0
         for i, u in enumerate(all_ranks):
-            if u['_id'] == current_user: user_rank, user_spent = i + 1, u['totalSpent']; break
-        return jsonify({"top10": all_ranks, "userRank": user_rank, "userSpent": user_spent})
-    except: return jsonify({"top10": [], "userRank": "N/A", "userSpent": 0})
+            if u['_id'] == current_user: 
+                user_rank, user_spent = i + 1, u['totalSpent']
+                break
+                
+        # 🔴 Top 10 အတွက် Username အစား Name ကို Database မှ လှမ်းယူခြင်း
+        top_10_list = all_ranks[:10]
+        for u in top_10_list:
+            user_data = users_col.find_one({"user": u["_id"]})
+            if user_data and "name" in user_data:
+                u["display_name"] = user_data["name"] # Name တွေ့ပါက Name ကိုသုံးမည်
+            else:
+                u["display_name"] = u["_id"] # မတွေ့ပါက မူလ Username ကိုသာပြမည်
 
+        return jsonify({"top10": top_10_list, "userRank": user_rank, "userSpent": user_spent})
+        
+    except Exception as e:
+        print(e)
+        return jsonify({"top10": [], "userRank": "N/A", "userSpent": 0})
+        
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
