@@ -684,17 +684,41 @@ function showPrivacy() {
                     }
 
                     // 📦 Box Design အသစ် (Cancel Message နှင့် Icon ပါဝင်ပြီးသား)
-                    return `
-                    <div style="background:#1e293b;padding:15px;margin-bottom:10px;border-radius:12px;border-left:5px solid ${statusColor};">
-                        <div style="display:flex; justify-content:space-between; align-items:center;">
-                            <b>💎 ${o.pkg}</b>
-                            <span style="color:${statusColor}; font-weight:bold;">${stIcon} ${o.status}</span>
-                        </div>
-                        <div style="color:#94a3b8; font-size:12px; margin-top:5px;">
-                            ID: ${o.uid} | Price: ${parseInt(o.price).toLocaleString()} Ks
-                        </div>
-                        ${cancelMsg}
+                    // MongoDB ID မှ မြန်မာစံတော်ချိန် (MMT) ကို အလိုအလျောက် တွက်ယူခြင်း
+            let orderTime = "N/A";
+            if (o._id) {
+                let timestamp = parseInt(o._id.substring(0, 8), 16) * 1000;
+                orderTime = new Date(timestamp).toLocaleString("en-US", {
+                    timeZone: "Asia/Yangon", 
+                    year: 'numeric', month: 'short', day: 'numeric', 
+                    hour: '2-digit', minute:'2-digit', hour12: true
+                });
+            } else if (o.date) {
+                orderTime = o.date;
+            }
+
+            return `
+            <div style="background:#1e293b;padding:15px;margin-bottom:10px;border-radius:12px;border-left:5px solid ${statusColor}">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <b>💎 ${o.pkg}</b>
+                    <span style="color:${statusColor}; font-weight:bold;">${stIcon} ${o.status}</span>
+                </div>
+                
+                <div style="color:#94a3b8; font-size:13px; margin-top:8px; line-height: 1.6;">
+                    <div style="display:flex; justify-content:space-between;">
+                        <span>ID: <b style="color:white;">${o.uid}</b></span>
+                        <span>Server: <b style="color:white;">${o.srv || '-'}</b></span>
                     </div>
+                    <div style="display:flex; justify-content:space-between;">
+                        <span>Price: <b style="color:#fbbf24;">${parseInt(o.price).toLocaleString()} Ks</b></span>
+                    </div>
+                    <div style="margin-top:5px; font-size:11px; color:#64748b;">
+                        <i class="fas fa-clock"></i> ${orderTime}
+                    </div>
+                </div>
+                ${cancelMsg}
+            </div>
+            `;</div>
                     `;
             }).join('');
         } catch (error) { document.getElementById('hist-list').innerHTML = "Failed to load history."; }
@@ -907,17 +931,29 @@ def telegram_webhook():
                 # Database တွင် Status သွားပြောင်းပါမည်
                 orders_col.update_one({"_id": ObjectId(oid)}, {"$set": update_data})
                 
-                # 📩 Telegram Group ထဲက စာကို Update လုပ်ခြင်း
-                msg_id = cb["message"]["message_id"]
-                chat_id = cb["message"]["chat"]["id"]
-                status_icon = '✅' if status == 'Completed' else '❌'
-                
-                caption = f"<b>🛍️ ORDER UPDATE</b>\n━━━━━━━━━━━━━━━\nOrder ID: {oid}\n{status_icon} Status: <b>{status}</b>"
-                if status == 'Cancelled':
-                    caption += f"\n⚠️ Reason: {cancel_reason}"
-                    
-                requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/editMessageCaption", 
-                    json={'chat_id': chat_id, 'message_id': msg_id, 'caption': caption, 'parse_mode': 'HTML'})
+                # 🔴 အောက်ပါအပိုင်းကို အစားထိုးရန် 🔴
+            # Telegram Group ထဲက စာကို Update လုပ်ခြင်း
+            msg_id = cb["message"]["message_id"]
+            chat_id = cb["message"]["chat"]["id"]
+            status_icon = '✅' if status == 'Completed' else '❌'
+            
+            # မူလ စာသားဟောင်း (Caption) ကို ပြန်ယူခြင်း
+            original_caption = cb["message"].get("caption", "")
+            
+            # မူလစာသားထဲမှာ ⏳ Status: Pending ပါနေရင် အဲ့ဒီနေရာကနေစပြီး အောက်ပိုင်းကို ဖြတ်ထုတ်မည်
+            if "⏳ Status: Pending" in original_caption:
+                original_caption = original_caption.split("⏳ Status: Pending")[0].strip()
+            
+            # စာသားအဟောင်းရဲ့ အောက်ဆုံးမှာ Status အသစ်ကို ထပ်ပေါင်းထည့်ခြင်း
+            caption = f"{original_caption}\n\n<b>{status_icon} Status: {status}</b>"
+            
+            if status == 'Cancelled':
+                caption += f"\n⚠️ Reason: {cancel_reason}"
+
+            # Reply Markup (ခလုတ်များ) ကို ဖယ်ရှားပြီး Caption သာ Update လုပ်ခြင်း
+            requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/editMessageCaption", 
+                          json={'chat_id': chat_id, 'message_id': msg_id, 'caption': caption, 'parse_mode': 'HTML', 'reply_markup': {"inline_keyboard": []}})
+            # 🔴 အစားထိုးရန် အဆုံး 🔴
                 
                 # ✅ ခလုတ်နှိပ်ကြောင်း Telegram ကို အကြောင်းပြန်ခြင်း (Loading ရပ်သွားရန်)
                 requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/answerCallbackQuery", 
