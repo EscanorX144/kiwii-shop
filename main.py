@@ -602,19 +602,52 @@ HTML_CODE = '''
         try {
             const r = await fetch(`/api/top10?user=${currentUser}`);
             const data = await r.json();
-            let topHTML = data.top10.map((u, i) => `
-                <div style="background:#1e293b;padding:15px;margin-bottom:10px;border-radius:12px;display:flex;justify-content:space-between;border-left:5px solid ${i===0?'#fbbf24':i===1?'#94a3b8':i===2?'#b45309':'#334155'};">
-                    <span><b>#${i+1}</b> ${u.display_name}</span>
-                    <b style="color:#fbbf24;">${u.totalSpent.toLocaleString()} Ks</b>
-                </div>`).join('');
-            document.getElementById('top-list').innerHTML = topHTML + `
-                <div class="my-rank-card">
-                    <p style="margin:0; font-size:12px; font-weight:bold;">YOUR CURRENT RANK</p>
-                    <h3 style="margin:5px 0;">#${data.userRank}</h3>
-                    <p style="margin:0; font-size:14px;">Total Spent: <b>${data.userSpent.toLocaleString()} Ks</b></p>
+            
+            // --- TOP 10 LIST DESIGN (Professional - No VIP Text) ---
+            let topHTML = data.top10.map((u, i) => {
+                let rankBadge = '';
+                let boxStyle = '';
+                
+                if (i === 0) { // Top 1 🥇
+                    rankBadge = '<div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg, #fbbf24, #d97706);display:flex;align-items:center;justify-content:center;color:white;font-size:18px;box-shadow:0 0 15px rgba(251,191,36,0.4);">🥇</div>';
+                    boxStyle = 'background: linear-gradient(90deg, rgba(251,191,36,0.1) 0%, #1e293b 100%); border: 1px solid rgba(251,191,36,0.3); border-left: 5px solid #fbbf24;';
+                } else if (i === 1) { // Top 2 🥈
+                    rankBadge = '<div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg, #cbd5e1, #64748b);display:flex;align-items:center;justify-content:center;color:white;font-size:18px;box-shadow:0 0 15px rgba(148,163,184,0.3);">🥈</div>';
+                    boxStyle = 'background: linear-gradient(90deg, rgba(148,163,184,0.1) 0%, #1e293b 100%); border: 1px solid rgba(148,163,184,0.3); border-left: 5px solid #94a3b8;';
+                } else if (i === 2) { // Top 3 🥉
+                    rankBadge = '<div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg, #d97706, #92400e);display:flex;align-items:center;justify-content:center;color:white;font-size:18px;box-shadow:0 0 15px rgba(180,83,9,0.3);">🥉</div>';
+                    boxStyle = 'background: linear-gradient(90deg, rgba(180,83,9,0.1) 0%, #1e293b 100%); border: 1px solid rgba(180,83,9,0.3); border-left: 5px solid #b45309;';
+                } else { // Top 4 to 10
+                    rankBadge = `<div style="width:38px;height:38px;border-radius:50%;background:#334155;display:flex;align-items:center;justify-content:center;color:#cbd5e1;font-weight:bold;font-size:14px; border: 1px solid #475569;">#${i+1}</div>`;
+                    boxStyle = 'background: #1e293b; border: 1px solid #334155;';
+                }
+
+                return `
+                <div style="${boxStyle} padding:15px; margin-bottom:12px; border-radius:12px; display:flex; justify-content:space-between; align-items:center;">
+                    <div style="display:flex; align-items:center; gap:15px;">
+                        ${rankBadge}
+                        <span style="color:#f1f5f9; font-weight:bold; font-size:16px; letter-spacing: 0.5px;">${u.display_name}</span>
+                    </div>
+                    <div style="text-align:right;">
+                        <b style="color:#4ade80; font-size:16px;">${u.totalSpent.toLocaleString()} Ks</b>
+                    </div>
                 </div>`;
+            }).join('');
+
+            // --- MY RANK CARD DESIGN (Glassmorphism Effect) ---
+            let myRankHTML = `
+                <div style="margin-top:30px; background:linear-gradient(135deg, rgba(168,85,247,0.15), rgba(126,34,206,0.05)); border:1px solid rgba(168,85,247,0.4); padding:20px; border-radius:16px; text-align:center; box-shadow:0 10px 30px rgba(0,0,0,0.3); position:relative; overflow:hidden;">
+                    <div style="position:absolute; top:-20px; right:-20px; font-size:100px; opacity:0.04;">👑</div>
+                    <p style="margin:0; font-size:12px; font-weight:800; color:#c084fc; letter-spacing:1.5px; text-transform:uppercase;">Your Current Rank</p>
+                    <h2 style="margin:10px 0; color:white; font-size:36px; text-shadow: 0 2px 10px rgba(192,132,252,0.4);">${data.userRank === 'N/A' ? 'Unranked' : '#' + data.userRank}</h2>
+                    <div style="display:inline-block; background:rgba(0,0,0,0.4); padding:8px 20px; border-radius:30px; border:1px solid rgba(255,255,255,0.05);">
+                        <p style="margin:0; font-size:14px; color:#cbd5e1;">Total Spent: <b style="color:#fbbf24; font-size:16px;">${data.userSpent.toLocaleString()} Ks</b></p>
+                    </div>
+                </div>`;
+
+            document.getElementById('top-list').innerHTML = topHTML + myRankHTML;
+            
         } catch(e) { console.error(e); }
-    }
 
     async function showH() {
         document.getElementById('h-sec').style.display='none';
