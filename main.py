@@ -328,7 +328,7 @@ HTML_CODE = '''
 <div id="privacy-sec" style="display:none; padding:15px; padding-bottom: 80px;">
             <h2 style="color:#c084fc; text-align:center; text-transform:uppercase; font-weight:800;">Privacy Policy</h2>
             <div style="background: rgba(15, 23, 42, 0.6); padding: 20px; border-radius: 12px; border: 1px solid rgba(147, 51, 234, 0.2); color: #f1f5f9; font-size: 14px; line-height: 1.8;">
-                <p><b>၁။ အချက်အလက်ရယူခြင်း:</b> Kiwii Game Shop သည် လူကြီးမင်း၏ Telegram Username, Game ID နှင့် ဝယ်ယူမှုမှတ်တမ်းများကိုသာ ဝန်ဆောင်မှုပေးရန်အတွက် သိမ်းဆည်းထားပါသည်။</p>
+                <p><b>၁။ အချက်အလက်ရယူခြင်း:</b> Kiwii Game Store သည် လူကြီးမင်း၏ Telegram Username, Game ID နှင့် ဝယ်ယူမှုမှတ်တမ်းများကိုသာ ဝန်ဆောင်မှုပေးရန်အတွက် သိမ်းဆည်းထားပါသည်။</p>
                 <p><b>၂။ လုံခြုံရေး:</b> လူကြီးမင်း၏ အချက်အလက်များကို အခြားပြင်ပသို့ ပေါက်ကြားမှုမရှိစေရန် အထူးဂရုစိုက် ထိန်းသိမ်းထားပါသည်။</p>
                 <p><b>၃။ ဆက်သွယ်ရန်:</b> အခက်အခဲတစ်စုံတစ်ရာရှိပါက Customer Service သို့ အချိန်မရွေး ဆက်သွယ်နိုင်ပါသည်။</p>
                 <button onclick="goH()" style="margin-top:20px; width:100%; padding:12px; background: linear-gradient(135deg, #a855f7, #7e22ce); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">နောက်သို့ ပြန်သွားမည်</button>
