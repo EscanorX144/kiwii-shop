@@ -649,6 +649,8 @@ HTML_CODE = '''
             
         } catch(e) { console.error(e); }
 
+      }
+
     async function showH() {
         document.getElementById('h-sec').style.display='none';
         document.getElementById('o-sec').style.display='none';
