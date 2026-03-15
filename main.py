@@ -96,9 +96,10 @@ GAMES_DATA = [
         }
     },
     {
-        "name": "Magic Chess Go Go",
-        "img": "/static/mcgg.jpg", # ပုံမရှိသေးပါက ဒီအတိုင်းထားပါ
+        "id": 7, "name": "Magic Chess Go Go",
+        "img": "/static/mcgg.jpg", 
         "zone": True, 
+        "cat_order": ["Weekly Pass", "Bundle Pack", "2X Diamonds", "Diamonds"],
         "cats": {
             "Weekly Pass": [
                 {"d": "Weekly Pass", "p": 6700}
@@ -133,8 +134,8 @@ GAMES_DATA = [
                 {"d": "💎 9288 Diamonds", "p": 485000}
             ]
         }
-    },
- ]
+    }
+]
  
 HTML_CODE = '''
 <!DOCTYPE html><html><head>
