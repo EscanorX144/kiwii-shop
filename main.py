@@ -943,24 +943,39 @@ def history():
 def top10():
     try:
         current_user = request.args.get('user')
-        pipeline = [{"$match": {"status": "Completed", "tg_user": {"$nin": ADMIN_USERNAMES}}}, {"$group": {"_id": "$tg_user", "totalSpent": {"$sum": "$price"}}}, {"$sort": {"totalSpent": -1}}]
+        
+        # Order ထဲက Completed ဖြစ်တဲ့ ဟာတွေကိုပဲ ပေါင်းပြီး အများဆုံးကနေ အနည်းဆုံးစီမည်
+        pipeline = [
+            {"$match": {"status": "Completed"}}, 
+            {"$group": {"_id": "$tg_user", "totalSpent": {"$sum": "$price"}}},
+            {"$sort": {"totalSpent": -1}}
+        ]
         all_ranks = list(orders_col.aggregate(pipeline))
         
         user_rank, user_spent = 'N/A', 0
         for i, u in enumerate(all_ranks):
-            if u['_id'] == current_user: 
+            if u['_id'] == current_user:
                 user_rank, user_spent = i + 1, u['totalSpent']
                 break
-                
-        # 🔴 Top 10 အတွက် Username အစား Name ကို Database မှ လှမ်းယူခြင်း
+        
+        # Top 10 အတွက် နာမည်များကို Database တွင် ရှာဖွေခြင်း
         top_10_list = all_ranks[:10]
         for u in top_10_list:
-            user_data = users_col.find_one({"user": u["_id"]})
-            if user_data and "name" in user_data:
-                u["display_name"] = user_data["name"] # Name တွေ့ပါက Name ကိုသုံးမည်
+            # User ရဲ့ မှတ်ပုံတင်ထားသော အချက်အလက်ကို ရှာမည်
+            user_data = users_col.find_one({
+                "$or": [{"user": u["_id"]}, {"phone": u["_id"]}, {"email": u["_id"]}]
+            })
+            
+            if user_data and user_data.get("name"):
+                u["display_name"] = user_data["name"] # နာမည်ရှိရင် နာမည်ကို ပြမည်
             else:
-                u["display_name"] = u["_id"] # မတွေ့ပါက မူလ Username ကိုသာပြမည်
-
+                # နာမည်မရှိခဲ့ပါက Privacy အရ ဖုန်းနံပါတ်/Email ကို အလယ်က စာဖျောက်ပြီး ပြမည် (ဥပမာ 091***789)
+                uid_str = str(u["_id"])
+                if len(uid_str) > 6:
+                    u["display_name"] = uid_str[:3] + "***" + uid_str[-3:]
+                else:
+                    u["display_name"] = uid_str
+                    
         return jsonify({"top10": top_10_list, "userRank": user_rank, "userSpent": user_spent})
         
     except Exception as e:
