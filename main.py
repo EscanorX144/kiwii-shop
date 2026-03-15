@@ -286,22 +286,14 @@ HTML_CODE = '''
     <div id="auth-sec" style="max-width: 380px; width: 90%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(15, 23, 42, 0.9); padding: 30px; border-radius: 15px; border: 1px solid rgba(147, 51, 234, 0.3); box-shadow: 0 0 20px rgba(147, 51, 234, 0.1); box-sizing: border-box;">
     
         <div id="login-box">
-            <h2 style="text-align: center; color: #c084fc; margin-top: 0; margin-bottom: 25px; text-transform: uppercase; font-weight: 800;">LOGIN</h2>
-            <input type="text" id="log-user" placeholder="Telegram Username (e.g., @Bby_kiwii7)" style="width: 100%; padding: 14px; margin-bottom: 15px; border-radius: 8px; border: none; background: #020617; color: white; box-sizing: border-box; font-size: 15px;">
-            <input type="password" id="log-pass" placeholder="Password" style="width: 100%; padding: 14px; margin-bottom: 25px; border-radius: 8px; border: none; background: #020617; color: white; box-sizing: border-box; font-size: 15px;">
-            <button onclick="auth('login')" style="width: 100%; padding: 14px; border-radius: 8px; background: linear-gradient(135deg, #a855f7, #7e22ce); color: white; border: none; font-weight: bold; cursor: pointer; font-size: 16px; text-transform: uppercase;">Login</button>
-            <p style="text-align: center; margin-top: 20px; font-size: 14px;"><a href="#" onclick="toggleAuth('register')" style="color: #94a3b8; text-decoration: none;">Don't have an account? <span style="color: #c084fc;">Sign Up</span></a></p>
+        <div id="login-box" style="text-align: center; padding: 20px; margin-top: 30px;">
+            <h2 style="color: #c084fc; margin-bottom: 20px; font-weight: 800;">WELCOME</h2>
+            <p style="color: #94a3b8; font-size: 14px; margin-bottom: 30px; line-height: 1.6;">စနစ်အတွင်းသို့ ဝင်ရောက်ရန်နှင့် အကောင့်သစ်ဖွင့်ရန်<br>အောက်ပါခလုတ်ကို နှိပ်ပါ</p>
+            
+            <script async src="https://telegram.org/js/telegram-widget.js?22" data-telegram-login="BOT_USERNAME_HERE" data-size="large" data-radius="8" data-onauth="onTelegramAuth(user)" data-request-access="write"></script>
         </div>
-
-        <div id="reg-box" style="display: none;">
-            <h2 style="text-align: center; color: #4ade80; margin-top: 0; margin-bottom: 25px; text-transform: uppercase; font-weight: 800;">SIGN UP</h2>
-            <input type="text" id="reg-name" placeholder="Name" style="width: 100%; padding: 14px; margin-bottom: 15px; border-radius: 8px; border: none; background: #020617; color: white; box-sizing: border-box; font-size: 15px;">
-            <input type="text" id="reg-user" placeholder="Telegram Username (@Bby_kiwii7)" style="width: 100%; padding: 14px; margin-bottom: 15px; border-radius: 8px; border: 1px solid rgba(74,222,128,0.3); background: rgba(15,23,42,0.8); color: white; box-sizing: border-box; font-size: 14px;">
-            <input type="password" id="reg-pass" placeholder="Password" style="width: 100%; padding: 14px; margin-bottom: 15px; border-radius: 8px; border: none; background: #020617; color: white; box-sizing: border-box; font-size: 15px;">
-            <input type="password" id="reg-repass" placeholder="Retype Password" style="width: 100%; padding: 14px; margin-bottom: 25px; border-radius: 8px; border: none; background: #020617; color: white; box-sizing: border-box; font-size: 15px;">
-            <button onclick="auth('register')" style="width: 100%; padding: 14px; border-radius: 8px; background: linear-gradient(135deg, #22c55e, #16a34a); color: white; border: none; font-weight: bold; cursor: pointer; font-size: 16px; text-transform: uppercase;">Create Account</button>
-            <p style="text-align: center; margin-top: 20px; font-size: 14px;"><a href="#" onclick="toggleAuth('login')" style="color: #94a3b8; text-decoration: none;">Already have an account? <span style="color: #4ade80;">Login</span></a></p>
-        </div>
+        
+        <div id="reg-box" style="display: none;"></div>
         
     </div>
 
@@ -388,6 +380,29 @@ HTML_CODE = '''
     const games = JSON_DATA_HERE;
     let currentUser = localStorage.getItem('user');
     let sel_srv, sel_pkg, sel_prc;
+
+    function onTelegramAuth(user) {
+            // Telegram မှ ရလာသော Data များကို Backend သို့ ပို့၍ အကောင့်ဝင်ခြင်း
+            fetch('/api/tg_login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(user)
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    // အကောင့်ဝင်ခြင်း အောင်မြင်ပါက
+                    localStorage.setItem('currentUser', data.username);
+                    checkAuth(); // Home Page သို့ တန်းသွားမည်
+                } else {
+                    alert("အကောင့်ဝင်ခြင်း မအောင်မြင်ပါ။");
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert("ချိတ်ဆက်မှု ပြတ်တောက်သွားပါသည်။");
+            });
+        }
 
     function checkAuth() {
         if(currentUser) {
@@ -717,6 +732,39 @@ def auth():
             
     except Exception as e: 
         return jsonify({"success": False, "msg": str(e)})
+
+@app.route('/api/tg_login', methods=['POST'])
+def tg_login():
+    try:
+        import hashlib, hmac
+        data = request.json
+        auth_data = data.copy()
+        received_hash = auth_data.pop('hash', None)
+        
+        # Telegram မှ လာသော Data ဟုတ်မဟုတ် စစ်ဆေးခြင်း
+        data_check_string = "\n".join([f"{k}={v}" for k, v in sorted(auth_data.items())])
+        secret_key = hashlib.sha256(BOT_TOKEN.encode()).digest()
+        hash_check = hmac.new(secret_key, data_check_string.encode(), hashlib.sha256).hexdigest()
+        
+        if hash_check == received_hash:
+            tg_user = data.get('username')
+            # Username မရှိသူများအတွက် Telegram ID ကို အစားထိုး အသုံးပြုပါမည်
+            if not tg_user:
+                tg_user = str(data.get('id'))
+            
+            name = data.get('first_name', '')
+            
+            # Database တွင် မှတ်တမ်းတင်ခြင်း
+            existing = users_col.find_one({"user": tg_user})
+            if not existing:
+                users_col.insert_one({"user": tg_user, "name": name, "tg_id": data.get('id')})
+            
+            return jsonify({"success": True, "username": tg_user})
+        else:
+            return jsonify({"success": False})
+    except Exception as e:
+        print("TG Login Error:", e)
+        return jsonify({"success": False})
         
 @app.route('/order', methods=['POST'])
 def order():
