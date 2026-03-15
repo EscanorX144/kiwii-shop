@@ -284,27 +284,24 @@ HTML_CODE = '''
 </head><body>
 <div id="main-container">
     <div id="auth-sec" style="max-width: 380px; width: 90%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #0f172a; padding: 30px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid #334155; z-index: 9999;">
-    
-            <div id="login-box">
-                <h2 style="text-align: center; color: #c084fc; margin-top: 0; margin-bottom: 25px; text-transform: uppercase; font-weight: 800;">LOGIN</h2>
-                <input type="text" id="log-user" placeholder="Phone Number (or) Email" style="width: 100%; padding: 14px; margin-bottom: 15px; border-radius: 8px; border: none; background: #020617; color: white; box-sizing: border-box; font-size: 15px;">
-                <input type="password" id="log-pass" placeholder="Password" style="width: 100%; padding: 14px; margin-bottom: 25px; border-radius: 8px; border: none; background: #020617; color: white; box-sizing: border-box; font-size: 15px;">
-                <button onclick="auth('login')" style="width: 100%; padding: 14px; border-radius: 8px; background: linear-gradient(135deg, #a855f7, #7e22ce); color: white; border: none; font-weight: bold; cursor: pointer; font-size: 16px; text-transform: uppercase;">Login</button>
-                <p style="text-align: center; margin-top: 20px; font-size: 14px;"><a href="#" onclick="toggleAuth('register')" style="color: #94a3b8; text-decoration: none;">Don't have an account? <span style="color: #c084fc;">Sign Up</span></a></p>
-            </div>
-
-            <div id="reg-box" style="display: none;">
-                <h2 style="text-align: center; color: #4ade80; margin-top: 0; margin-bottom: 25px; text-transform: uppercase; font-weight: 800;">SIGN UP</h2>
-                <input type="text" id="reg-name" placeholder="Name" style="width: 100%; padding: 14px; margin-bottom: 12px; border-radius: 8px; border: none; background: #020617; color: white; box-sizing: border-box; font-size: 15px;">
-                <input type="email" id="reg-email" placeholder="Email" style="width: 100%; padding: 14px; margin-bottom: 12px; border-radius: 8px; border: none; background: #020617; color: white; box-sizing: border-box; font-size: 15px;">
-                <input type="tel" id="reg-phone" placeholder="Phone Number" style="width: 100%; padding: 14px; margin-bottom: 12px; border-radius: 8px; border: none; background: #020617; color: white; box-sizing: border-box; font-size: 15px;">
-                <input type="password" id="reg-pass" placeholder="Password" style="width: 100%; padding: 14px; margin-bottom: 12px; border-radius: 8px; border: none; background: #020617; color: white; box-sizing: border-box; font-size: 15px;">
-                <input type="password" id="reg-repass" placeholder="Retype Password" style="width: 100%; padding: 14px; margin-bottom: 25px; border-radius: 8px; border: none; background: #020617; color: white; box-sizing: border-box; font-size: 15px;">
-                <button onclick="auth('register')" style="width: 100%; padding: 14px; border-radius: 8px; background: linear-gradient(135deg, #22c55e, #16a34a); color: white; border: none; font-weight: bold; cursor: pointer; font-size: 16px; text-transform: uppercase;">Create Account</button>
-                <p style="text-align: center; margin-top: 20px; font-size: 14px;"><a href="#" onclick="toggleAuth('login')" style="color: #94a3b8; text-decoration: none;">Already have an account? <span style="color: #4ade80;">Login</span></a></p>
-            </div>
-            
+        <div id="login-box">
+            <h2 style="text-align: center; color: #c084fc; margin-top: 0; margin-bottom: 25px; text-transform: uppercase; font-weight: 800;">LOGIN</h2>
+            <input type="text" id="log-user" placeholder="Phone Number (or) Email" style="width: 100%; padding: 14px; margin-bottom: 15px; border-radius: 8px; border: none; background: #020617; color: white; box-sizing: border-box; font-size: 15px;">
+            <input type="password" id="log-pass" placeholder="Password" style="width: 100%; padding: 14px; margin-bottom: 25px; border-radius: 8px; border: none; background: #020617; color: white; box-sizing: border-box; font-size: 15px;">
+            <button onclick="auth('login')" style="width: 100%; padding: 14px; border-radius: 8px; background: linear-gradient(135deg, #a855f7, #7e22ce); color: white; border: none; font-weight: bold; cursor: pointer; font-size: 16px; text-transform: uppercase;">Login</button>
+            <p style="text-align: center; margin-top: 20px; font-size: 14px;"><a href="#" onclick="toggleAuth('register')" style="color: #94a3b8; text-decoration: none;">Don't have an account? <span style="color: #c084fc;">Sign Up</span></a></p>
         </div>
+        <div id="reg-box" style="display: none;">
+            <h2 style="text-align: center; color: #4ade80; margin-top: 0; margin-bottom: 25px; text-transform: uppercase; font-weight: 800;">SIGN UP</h2>
+            <input type="text" id="reg-name" placeholder="Name" style="width: 100%; padding: 14px; margin-bottom: 12px; border-radius: 8px; border: none; background: #020617; color: white; box-sizing: border-box; font-size: 15px;">
+            <input type="email" id="reg-email" placeholder="Email" style="width: 100%; padding: 14px; margin-bottom: 12px; border-radius: 8px; border: none; background: #020617; color: white; box-sizing: border-box; font-size: 15px;">
+            <input type="tel" id="reg-phone" placeholder="Phone Number" style="width: 100%; padding: 14px; margin-bottom: 12px; border-radius: 8px; border: none; background: #020617; color: white; box-sizing: border-box; font-size: 15px;">
+            <input type="password" id="reg-pass" placeholder="Password" style="width: 100%; padding: 14px; margin-bottom: 12px; border-radius: 8px; border: none; background: #020617; color: white; box-sizing: border-box; font-size: 15px;">
+            <input type="password" id="reg-repass" placeholder="Retype Password" style="width: 100%; padding: 14px; margin-bottom: 25px; border-radius: 8px; border: none; background: #020617; color: white; box-sizing: border-box; font-size: 15px;">
+            <button onclick="auth('register')" style="width: 100%; padding: 14px; border-radius: 8px; background: linear-gradient(135deg, #22c55e, #16a34a); color: white; border: none; font-weight: bold; cursor: pointer; font-size: 16px; text-transform: uppercase;">Create Account</button>
+            <p style="text-align: center; margin-top: 20px; font-size: 14px;"><a href="#" onclick="toggleAuth('login')" style="color: #94a3b8; text-decoration: none;">Already have an account? <span style="color: #4ade80;">Login</span></a></p>
+        </div>
+    </div>
 
     <div id="app-sec" style="display:none;">
         <div class="user-banner">
@@ -312,20 +309,18 @@ HTML_CODE = '''
                 <div class="user-icon"><i class="fas fa-user"></i></div>
                 <b id="display-user" style="font-size: 15px;"></b>
             </span>
-            <button class="logout-btn" onclick="logout()">
-                LOGOUT <i class="fas fa-sign-out-alt"></i>
-            </button>
+            <button class="logout-btn" onclick="logout()">LOGOUT <i class="fas fa-sign-out-alt"></i></button>
         </div>
+        
         <div id="h-sec">
             <div class="header-logo">KIWII GAME STORE</div>
             <div class="game-grid" id="g-list"></div>
-            
             <div style="text-align: center; margin-top: 40px; margin-bottom: 30px;">
                 <a href="#" onclick="showPrivacy()" style="color: #94a3b8; font-size: 13px; text-decoration: none; margin-right: 20px; border-bottom: 1px solid #475569; padding-bottom: 2px;">Privacy Policy</a>
                 <a href="#" onclick="showTerms()" style="color: #94a3b8; font-size: 13px; text-decoration: none; border-bottom: 1px solid #475569; padding-bottom: 2px;">Terms & Conditions</a>
             </div>
-
         </div>
+
         <div id="o-sec" style="display:none; padding:15px;">
             <button onclick="goH()" style="background:none;color:white;border:1px solid #334155;padding:8px 15px;border-radius:8px;margin-bottom:15px;">← Back</button>
             <h2 id="g-title" style="color:#fbbf24;"></h2>
@@ -355,6 +350,7 @@ HTML_CODE = '''
                 <button type="submit" class="buy-btn" id="submitBtn">PLACE ORDER</button>
             </form>
         </div>
+
         <div id="top-sec" style="display:none; padding:15px;"><h3>🏆 TOP 10 USERS</h3><div id="top-list"></div></div>
         <div id="hist-sec" style="display:none; padding:15px;"><h3>History</h3><div id="hist-list"></div></div>
         
@@ -367,51 +363,28 @@ HTML_CODE = '''
 </div>
 
 <div id="privacy-sec" style="display:none; padding:15px; padding-bottom: 80px;">
-            <h2 style="color:#c084fc; text-align:center; text-transform:uppercase; font-weight:800;">Privacy Policy</h2>
-            <div style="background: rgba(15, 23, 42, 0.6); padding: 20px; border-radius: 12px; border: 1px solid rgba(147, 51, 234, 0.2); color: #f1f5f9; font-size: 14px; line-height: 1.8;">
-                <p><b>၁။ အချက်အလက်ရယူခြင်း:</b> Kiwii Game Store သည် လူကြီးမင်း၏ Telegram Username, Game ID နှင့် ဝယ်ယူမှုမှတ်တမ်းများကိုသာ ဝန်ဆောင်မှုပေးရန်အတွက် သိမ်းဆည်းထားပါသည်။</p>
-                <p><b>၂။ လုံခြုံရေး:</b> လူကြီးမင်း၏ အချက်အလက်များကို အခြားပြင်ပသို့ ပေါက်ကြားမှုမရှိစေရန် အထူးဂရုစိုက် ထိန်းသိမ်းထားပါသည်။</p>
-                <p><b>၃။ ဆက်သွယ်ရန်:</b> အခက်အခဲတစ်စုံတစ်ရာရှိပါက Customer Service သို့ အချိန်မရွေး ဆက်သွယ်နိုင်ပါသည်။</p>
-                <button onclick="goH()" style="margin-top:20px; width:100%; padding:12px; background: linear-gradient(135deg, #a855f7, #7e22ce); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">နောက်သို့ ပြန်သွားမည်</button>
-            </div>
-        </div>
+    <h2 style="color:#c084fc; text-align:center; text-transform:uppercase; font-weight:800;">Privacy Policy</h2>
+    <div style="background: rgba(15, 23, 42, 0.6); padding: 20px; border-radius: 12px; border: 1px solid rgba(147, 51, 234, 0.2); color: #f1f5f9; font-size: 14px; line-height: 1.8;">
+        <p><b>၁။ အချက်အလက်ရယူခြင်း:</b> Kiwii Game Store သည် လူကြီးမင်း၏ Telegram Username, Game ID နှင့် ဝယ်ယူမှုမှတ်တမ်းများကိုသာ ဝန်ဆောင်မှုပေးရန်အတွက် သိမ်းဆည်းထားပါသည်။</p>
+        <p><b>၂။ လုံခြုံရေး:</b> လူကြီးမင်း၏ အချက်အလက်များကို အခြားပြင်ပသို့ ပေါက်ကြားမှုမရှိစေရန် အထူးဂရုစိုက် ထိန်းသိမ်းထားပါသည်။</p>
+        <p><b>၃။ ဆက်သွယ်ရန်:</b> အခက်အခဲတစ်စုံတစ်ရာရှိပါက Customer Service သို့ အချိန်မရွေး ဆက်သွယ်နိုင်ပါသည်။</p>
+        <button onclick="goH()" style="margin-top:20px; width:100%; padding:12px; background: linear-gradient(135deg, #a855f7, #7e22ce); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">နောက်သို့ ပြန်သွားမည်</button>
+    </div>
+</div>
 
-        <div id="terms-sec" style="display:none; padding:15px; padding-bottom: 80px;">
-            <h2 style="color:#4ade80; text-align:center; text-transform:uppercase; font-weight:800;">Terms & Conditions</h2>
-            <div style="background: rgba(15, 23, 42, 0.6); padding: 20px; border-radius: 12px; border: 1px solid rgba(74, 222, 128, 0.2); color: #f1f5f9; font-size: 14px; line-height: 1.8;">
-                <p><b>၁။ အချက်အလက်မှန်ကန်မှု:</b> Order တင်ရာတွင် Game ID , Zone ID နှင့် ငွေလွှဲပြေစာများ မှန်ကန်စေရန် သေချာစွာ စစ်ဆေးရပါမည်။ မှားယွင်းဖြည့်စွက်မှုကြောင့် Oder Cancel ခြင်းဖြစ်ပေါ်ပါမည်။</p>
-                <p><b>၂။ ငွေလွှဲပြေစာ:</b> ငွေလွှဲပြေစာ (Screenshot) အတုများအသုံးပြုခြင်းများ စစ်ဆေးတွေ့ရှိပါက အကောင့်အား အပြီးတိုင် ပိတ်သိမ်းပါမည်။</p>
-                <p><b>၃။ ငွေပြန်အမ်းခြင်း:</b> ဝယ်ယူမှု အောင်မြင်ပြီးသွားသော (Completed ဖြစ်သွားသော) Order များအတွက် ငွေပြန်အမ်းပေးမည် မဟုတ်ပါ။</p>
-                <button onclick="goH()" style="margin-top:20px; width:100%; padding:12px; background: linear-gradient(135deg, #22c55e, #16a34a); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">နောက်သို့ ပြန်သွားမည်</button>
-            </div>
-        </div>
+<div id="terms-sec" style="display:none; padding:15px; padding-bottom: 80px;">
+    <h2 style="color:#4ade80; text-align:center; text-transform:uppercase; font-weight:800;">Terms & Conditions</h2>
+    <div style="background: rgba(15, 23, 42, 0.6); padding: 20px; border-radius: 12px; border: 1px solid rgba(74, 222, 128, 0.2); color: #f1f5f9; font-size: 14px; line-height: 1.8;">
+        <p><b>၁။ အချက်အလက်မှန်ကန်မှု:</b> Order တင်ရာတွင် Game ID , Zone ID နှင့် ငွေလွှဲပြေစာများ မှန်ကန်စေရန် သေချာစွာ စစ်ဆေးရပါမည်။ မှားယွင်းဖြည့်စွက်မှုကြောင့် Oder Cancel ခြင်းဖြစ်ပေါ်ပါမည်။</p>
+        <p><b>၂။ ငွေလွှဲပြေစာ:</b> ငွေလွှဲပြေစာ (Screenshot) အတုများအသုံးပြုခြင်းများ စစ်ဆေးတွေ့ရှိပါက အကောင့်အား အပြီးတိုင် ပိတ်သိမ်းပါမည်။</p>
+        <p><b>၃။ ငွေပြန်အမ်းခြင်း:</b> ဝယ်ယူမှု အောင်မြင်ပြီးသွားသော (Completed ဖြစ်သွားသော) Order များအတွက် ငွေပြန်အမ်းပေးမည် မဟုတ်ပါ။</p>
+        <button onclick="goH()" style="margin-top:20px; width:100%; padding:12px; background: linear-gradient(135deg, #22c55e, #16a34a); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">နောက်သို့ ပြန်သွားမည်</button>
+    </div>
+</div>
 <script>
     const games = JSON_DATA_HERE;
     let currentUser = localStorage.getItem('user');
     let sel_srv, sel_pkg, sel_prc;
-
-    function onTelegramAuth(user) {
-            // Telegram မှ ရလာသော Data များကို Backend သို့ ပို့၍ အကောင့်ဝင်ခြင်း
-            fetch('/api/tg_login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(user)
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    // အကောင့်ဝင်ခြင်း အောင်မြင်ပါက
-                    localStorage.setItem('currentUser', data.username);
-                    checkAuth(); // Home Page သို့ တန်းသွားမည်
-                } else {
-                    alert("အကောင့်ဝင်ခြင်း မအောင်မြင်ပါ။");
-                }
-            })
-            .catch(err => {
-                console.error(err);
-                alert("ချိတ်ဆက်မှု ပြတ်တောက်သွားပါသည်။");
-            });
-        }
 
     function checkAuth() {
         if(currentUser) {
@@ -424,63 +397,56 @@ HTML_CODE = '''
     checkAuth();
 
     function toggleAuth(type) {
-            document.getElementById('login-box').style.display = type === 'login' ? 'block' : 'none';
-            document.getElementById('reg-box').style.display = type === 'register' ? 'block' : 'none';
+        document.getElementById('login-box').style.display = type === 'login' ? 'block' : 'none';
+        document.getElementById('reg-box').style.display = type === 'register' ? 'block' : 'none';
+    }
+
+    async function auth(type) {
+        let user, pass, name = "", email = "", phone = "";
+        if (type === 'register') {
+            name = document.getElementById('reg-name').value.trim();
+            email = document.getElementById('reg-email').value.trim();
+            phone = document.getElementById('reg-phone').value.trim();
+            pass = document.getElementById('reg-pass').value;
+            const repass = document.getElementById('reg-repass').value;
+            if (!name || !email || !phone || !pass || !repass) return alert('❌ ကျေးဇူးပြု၍ အချက်အလက်အားလုံး ပြည့်စုံစွာ ဖြည့်ပါ!');
+            if (pass !== repass) return alert('❌ Password နှစ်ခု တူညီမှုမရှိပါ!');
+            user = phone;
+        } else {
+            user = document.getElementById('log-user').value.trim();
+            pass = document.getElementById('log-pass').value;
+            if (!user || !pass) return alert("❌ လိုအပ်သော အချက်အလက်များ ဖြည့်ပါ!");
         }
 
-        async function auth(type) {
-            let user, pass, name = "", email = "", phone = "";
-
-            if (type === 'register') {
-                name = document.getElementById('reg-name').value.trim();
-                email = document.getElementById('reg-email').value.trim();
-                phone = document.getElementById('reg-phone').value.trim();
-                pass = document.getElementById('reg-pass').value;
-                const repass = document.getElementById('reg-repass').value;
-
-                if (!name || !email || !phone || !pass || !repass) return alert('❌ ကျေးဇူးပြု၍ အချက်အလက်အားလုံး ပြည့်စုံစွာ ဖြည့်ပါ!');
-                if (pass !== repass) return alert('❌ Password နှစ်ခု တူညီမှုမရှိပါ!');
-                user = phone; // Register လုပ်ချိန်တွင် Phone ကို အဓိကထားပို့ပါမည်
-            } else {
-                user = document.getElementById('log-user').value.trim();
-                pass = document.getElementById('log-pass').value;
-                if (!user || !pass) return alert("❌ လိုအပ်သော အချက်အလက်များ ဖြည့်ပါ!");
-            }
-
-            try {
-                const res = await fetch('/api/auth', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ type: type, user: user, pass: pass, name: name, email: email, phone: phone })
-                });
-                
-                const data = await res.json();
-
-                if (data.success) {
-                    if (type === 'register') {
-                        alert("✅ အကောင့်ဖွင့်ခြင်း အောင်မြင်ပါသည်! ကျေးဇူးပြု၍ Login ဝင်ပေးပါ။");
-                        toggleAuth('login');
-                    } else {
-                        // Login အောင်မြင်ပါက
-                        localStorage.setItem('user', data.user); // Backend မှ ပို့ပေးသော User ID ကို သိမ်းမည်
-                        location.reload();
-                    }
+        try {
+            const res = await fetch('/api/auth', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ type: type, user: user, pass: pass, name: name, email: email, phone: phone })
+            });
+            const data = await res.json();
+            if (data.success) {
+                if (type === 'register') {
+                    alert("✅ အကောင့်ဖွင့်ခြင်း အောင်မြင်ပါသည်! ကျေးဇူးပြု၍ Login ဝင်ပေးပါ။");
+                    toggleAuth('login');
                 } else {
-                    alert('❌ Error: ' + data.msg);
+                    localStorage.setItem('user', data.user);
+                    location.reload();
                 }
-            } catch (error) {
-                console.error(error);
-                alert('❌ System Error: ကျေးဇူးပြု၍ ခဏစောင့်ပြီး ပြန်လည်ကြိုးစားပါ။');
+            } else {
+                alert('❌ Error: ' + data.msg);
             }
+        } catch (error) {
+            alert('❌ System Error: ကျေးဇူးပြု၍ ခဏစောင့်ပြီး ပြန်လည်ကြိုးစားပါ။');
         }
+    }
+
     function logout() { localStorage.removeItem('user'); location.reload(); }
 
     function init() {
         document.getElementById('g-list').innerHTML = games.map(g => `
             <div class="game-card" onclick="selG(${g.id})">
-                <div class="img-box">
-                    <img src="${g.img}">
-                </div>
+                <div class="img-box"><img src="${g.img}"></div>
                 <b>${g.name}</b>
             </div>`).join('');
     }
@@ -498,7 +464,6 @@ HTML_CODE = '''
     function getPkgImg(text) {
         let lowerText = text.toLowerCase();
         let num = text.replace(/[^0-9]/g, ''); 
-
         if (lowerText.includes("50+50")) return "/static/dia50+50.png";
         if (lowerText.includes("150+150")) return "/static/dia150+150.png";
         if (lowerText.includes("250+250")) return "/static/dia250+250.png";
@@ -507,8 +472,6 @@ HTML_CODE = '''
         if (lowerText.includes("monthly epic")) return "/static/monthlyepic.png";
         if (lowerText.includes("weekly")) return "/static/weeklypass.png";
         if (lowerText.includes("twilight")) return "/static/twilight.png";
-        
-        // Diamond ပုံများအတွက် (dia11.png, dia22.png, ...)
         return `/static/dia${num}.png`;
     }
 
@@ -548,10 +511,7 @@ HTML_CODE = '''
             btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
             btn.style.background = '#10b981';
             btn.style.color = 'white';
-            setTimeout(() => {
-                btn.innerHTML = originalHTML;
-                btn.style.background = '#334155';
-            }, 2000);
+            setTimeout(() => { btn.innerHTML = originalHTML; btn.style.background = '#334155'; }, 2000);
         });
     }
 
@@ -581,9 +541,7 @@ HTML_CODE = '''
                     confirmButtonText: 'OK',
                     background: '#1e293b',
                     color: '#fff'
-                }).then(() => {
-                    location.reload();
-                });
+                }).then(() => { location.reload(); });
             } else {
                 Swal.fire({ title: 'Failed!', text: 'အော်ဒါတင်ခြင်း မအောင်မြင်ပါ။', icon: 'error', background: '#1e293b', color: '#fff' });
                 btn.innerText = "PLACE ORDER"; btn.disabled = false;
@@ -593,6 +551,7 @@ HTML_CODE = '''
             btn.innerText = "PLACE ORDER"; btn.disabled = false;
         }
     }
+
     function goH() {
         document.getElementById('h-sec').style.display='block';
         document.getElementById('o-sec').style.display='none';
@@ -603,23 +562,25 @@ HTML_CODE = '''
         document.getElementById('privacy-sec').style.display = 'none';
         document.getElementById('terms-sec').style.display = 'none';
     }
-function showPrivacy() {
-            document.getElementById('h-sec').style.display = 'none';
-            document.getElementById('o-sec').style.display = 'none';
-            document.getElementById('top-sec').style.display = 'none';
-            document.getElementById('hist-sec').style.display = 'none';
-            document.getElementById('terms-sec').style.display = 'none';
-            document.getElementById('privacy-sec').style.display = 'block';
-        }
 
-        function showTerms() {
-            document.getElementById('h-sec').style.display = 'none';
-            document.getElementById('o-sec').style.display = 'none';
-            document.getElementById('top-sec').style.display = 'none';
-            document.getElementById('hist-sec').style.display = 'none';
-            document.getElementById('privacy-sec').style.display = 'none';
-            document.getElementById('terms-sec').style.display = 'block';
-        }
+    function showPrivacy() {
+        document.getElementById('h-sec').style.display = 'none';
+        document.getElementById('o-sec').style.display = 'none';
+        document.getElementById('top-sec').style.display = 'none';
+        document.getElementById('hist-sec').style.display = 'none';
+        document.getElementById('terms-sec').style.display = 'none';
+        document.getElementById('privacy-sec').style.display = 'block';
+    }
+
+    function showTerms() {
+        document.getElementById('h-sec').style.display = 'none';
+        document.getElementById('o-sec').style.display = 'none';
+        document.getElementById('top-sec').style.display = 'none';
+        document.getElementById('hist-sec').style.display = 'none';
+        document.getElementById('privacy-sec').style.display = 'none';
+        document.getElementById('terms-sec').style.display = 'block';
+    }
+
     async function showTop() {
         document.getElementById('h-sec').style.display='none';
         document.getElementById('o-sec').style.display='none';
@@ -657,63 +618,51 @@ function showPrivacy() {
             const data = await r.json();
             const myHist = data.filter(o => o.tg_user === currentUser);
             document.getElementById('hist-list').innerHTML = myHist.map(o => {
-                // Status အရ အရောင်နှင့် Icon သတ်မှတ်ခြင်း (Rejected အစား Cancelled သို့ ပြောင်းထားပါသည်)
-                    let statusColor = o.status === 'Completed' ? '#10b981' : (o.status === 'Cancelled' ? '#ef4444' : '#fbbf24');
-                    let stIcon = o.status === 'Completed' ? '✅' : (o.status === 'Cancelled' ? '❌' : '⏳');
-                    
-                    // 🔴 Cancel ဖြစ်ပါက Admin ရွေးချယ်ခဲ့သည့် အကြောင်းပြချက်ကို ပြသမည်
-                    let cancelMsg = '';
-                    if (o.status === 'Cancelled') {
-                        let reasonTxt = o.reason ? o.reason : "အချက်အလက် မှားယွင်းနေသဖြင့် ပယ်ဖျက်လိုက်ပါသည်။";
-                        cancelMsg = `
-                        <div style="background: rgba(239, 68, 68, 0.1); border-left: 4px solid #ef4444; padding: 10px; margin-top: 12px; border-radius: 4px; font-size: 13px; color: #fca5a5;">
-                            ⚠️ <b>ပယ်ဖျက်လိုက်ပါသည်:</b> ${reasonTxt} <br><br>
-                            <i>ကျေးဇူးပြု၍ သေချာပြန်စစ်ပြီး Order အသစ် ထပ်တင်ပေးပါ။ (ငွေလွှဲပြဿနာဖြစ်ပါက @Bby_kiwii7 သို့ ဆက်သွယ်မေးမြန်းနိုင်ပါသည်)</i>
-                        </div>`;
-                    }
-
-                    // 📦 Box Design အသစ် (Cancel Message နှင့် Icon ပါဝင်ပြီးသား)
-                    // MongoDB ID မှ မြန်မာစံတော်ချိန် (MMT) ကို အလိုအလျောက် တွက်ယူခြင်း
-            let orderTime = "N/A";
-            if (o._id) {
-                let timestamp = parseInt(o._id.substring(0, 8), 16) * 1000;
-                orderTime = new Date(timestamp).toLocaleString("en-US", {
-                    timeZone: "Asia/Yangon", 
-                    year: 'numeric', month: 'short', day: 'numeric', 
-                    hour: '2-digit', minute:'2-digit', hour12: true
-                });
-            } else if (o.date) {
-                orderTime = o.date;
-            }
-
-            return `
-            <div style="background:#1e293b;padding:15px;margin-bottom:10px;border-radius:12px;border-left:5px solid ${statusColor}">
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <b>💎 ${o.pkg}</b>
-                    <span style="color:${statusColor}; font-weight:bold;">${stIcon} ${o.status}</span>
-                </div>
+                let statusColor = o.status === 'Completed' ? '#10b981' : (o.status === 'Cancelled' ? '#ef4444' : '#fbbf24');
+                let stIcon = o.status === 'Completed' ? '✅' : (o.status === 'Cancelled' ? '❌' : '⏳');
                 
-                <div style="color:#94a3b8; font-size:13px; margin-top:8px; line-height: 1.6;">
-                    <div style="display:flex; justify-content:space-between;">
-                        <span>ID: <b style="color:white;">${o.uid}</b></span>
-                        <span>Server: <b style="color:white;">${o.srv || '-'}</b></span>
+                let cancelMsg = '';
+                if (o.status === 'Cancelled') {
+                    let reasonTxt = o.reason ? o.reason : "အချက်အလက် မှားယွင်းနေသဖြင့် ပယ်ဖျက်လိုက်ပါသည်။";
+                    cancelMsg = `
+                    <div style="background: rgba(239, 68, 68, 0.1); border-left: 4px solid #ef4444; padding: 10px; margin-top: 12px; border-radius: 4px; font-size: 13px; color: #fca5a5;">
+                        ⚠️ <b>ပယ်ဖျက်လိုက်ပါသည်:</b> ${reasonTxt} <br><br>
+                        <i>ကျေးဇူးပြု၍ သေချာပြန်စစ်ပြီး Order အသစ် ထပ်တင်ပေးပါ။ (ငွေလွှဲပြဿနာဖြစ်ပါက @Bby_kiwii7 သို့ ဆက်သွယ်နိုင်ပါသည်)</i>
+                    </div>`;
+                }
+
+                let orderTime = "N/A";
+                if (o._id) {
+                    let timestamp = parseInt(o._id.substring(0, 8), 16) * 1000;
+                    orderTime = new Date(timestamp).toLocaleString("en-US", { timeZone: "Asia/Yangon", year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit', hour12: true });
+                } else if (o.date) {
+                    orderTime = o.date;
+                }
+
+                return `
+                <div style="background:#1e293b;padding:15px;margin-bottom:10px;border-radius:12px;border-left:5px solid ${statusColor}">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <b>💎 ${o.pkg}</b>
+                        <span style="color:${statusColor}; font-weight:bold;">${stIcon} ${o.status}</span>
                     </div>
-                    <div style="display:flex; justify-content:space-between;">
-                        <span>Price: <b style="color:#fbbf24;">${parseInt(o.price).toLocaleString()} Ks</b></span>
+                    <div style="color:#94a3b8; font-size:13px; margin-top:8px; line-height: 1.6;">
+                        <div style="display:flex; justify-content:space-between;">
+                            <span>ID: <b style="color:white;">${o.uid}</b></span>
+                            <span>Server: <b style="color:white;">${o.srv || '-'}</b></span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between;">
+                            <span>Price: <b style="color:#fbbf24;">${parseInt(o.price).toLocaleString()} Ks</b></span>
+                        </div>
+                        <div style="margin-top:5px; font-size:11px; color:#64748b;">
+                            <i class="fas fa-clock"></i> ${orderTime}
+                        </div>
                     </div>
-                    <div style="margin-top:5px; font-size:11px; color:#64748b;">
-                        <i class="fas fa-clock"></i> ${orderTime}
-                    </div>
-                </div>
-                ${cancelMsg}
-            </div>
-            `;</div>
-                    `;
+                    ${cancelMsg}
+                </div>`;
             }).join('');
         } catch (error) { document.getElementById('hist-list').innerHTML = "Failed to load history."; }
     }
 </script>
-
 <a href="https://t.me/Bby_kiwii7" target="_blank" class="cs-float">💬</a>
 </body></html>
 '''
@@ -729,7 +678,7 @@ def auth():
     try:
         data = request.json
         utype = data.get('type')
-        user_input = data.get('user') # ဖုန်း (သို့) Email ဖြစ်နိုင်ပါသည်
+        user_input = data.get('user')
         psw = data.get('pass')
 
         if utype == 'register':
@@ -737,30 +686,20 @@ def auth():
             email = data.get('email')
             phone = data.get('phone')
             
-            # Email (သို့) ဖုန်းနံပါတ် တူနေတာ ရှိ/မရှိ စစ်ဆေးခြင်း
             if users_col.find_one({"$or": [{"email": email}, {"phone": phone}]}):
                 return jsonify({"success": False, "msg": "Email (သို့) Phone Number ကို အသုံးပြုပြီးသား ဖြစ်နေပါသည်!"})
             
             hashed_pw = generate_password_hash(psw)
-            
-            # Database သို့ သိမ်းဆည်းခြင်း (Phone ကို အဓိက User ID အနေဖြင့် သုံးပါမည်)
             users_col.insert_one({
-                "user": phone, 
-                "name": name, 
-                "email": email, 
-                "phone": phone, 
-                "pass": hashed_pw
+                "user": phone, "name": name, "email": email, "phone": phone, "pass": hashed_pw
             })
             return jsonify({"success": True, "user": phone})
 
         else:
-            # Login ဝင်သည့်အခါ ဖုန်း (သို့) Email (သို့) Username အဟောင်းများဖြင့် ရှာဖွေနိုင်ရန်
             u = users_col.find_one({"$or": [{"phone": user_input}, {"email": user_input}, {"user": user_input}]})
             if u:
                 stored_pass = u.get('pass', '')
                 is_valid = False
-                
-                # Password မှန်မမှန် စစ်ဆေးခြင်း (အဟောင်း/အသစ် ၂ မျိုးလုံးအတွက်)
                 if stored_pass.startswith('pbkdf2:') or stored_pass.startswith('scrypt:'):
                     is_valid = check_password_hash(stored_pass, psw)
                 else:
@@ -770,7 +709,6 @@ def auth():
                         users_col.update_one({"_id": u["_id"]}, {"$set": {"pass": new_hash}})
                 
                 if is_valid:
-                    # Login အောင်မြင်ပါက အဓိက User ID ကို ပြန်ပို့ပေးမည်
                     return jsonify({"success": True, "user": u.get("user")})
             
             return jsonify({"success": False, "msg": "ဖုန်းနံပါတ်/Email (သို့) Password မှားယွင်းနေပါသည်!"})
@@ -778,39 +716,6 @@ def auth():
     except Exception as e:
         return jsonify({"success": False, "msg": str(e)})
 
-@app.route('/api/tg_login', methods=['POST'])
-def tg_login():
-    try:
-        import hashlib, hmac
-        data = request.json
-        auth_data = data.copy()
-        received_hash = auth_data.pop('hash', None)
-        
-        # Telegram မှ လာသော Data ဟုတ်မဟုတ် စစ်ဆေးခြင်း
-        data_check_string = "\n".join([f"{k}={v}" for k, v in sorted(auth_data.items())])
-        secret_key = hashlib.sha256(BOT_TOKEN.encode()).digest()
-        hash_check = hmac.new(secret_key, data_check_string.encode(), hashlib.sha256).hexdigest()
-        
-        if hash_check == received_hash:
-            tg_user = data.get('username')
-            # Username မရှိသူများအတွက် Telegram ID ကို အစားထိုး အသုံးပြုပါမည်
-            if not tg_user:
-                tg_user = str(data.get('id'))
-            
-            name = data.get('first_name', '')
-            
-            # Database တွင် မှတ်တမ်းတင်ခြင်း
-            existing = users_col.find_one({"user": tg_user})
-            if not existing:
-                users_col.insert_one({"user": tg_user, "name": name, "tg_id": data.get('id')})
-            
-            return jsonify({"success": True, "username": tg_user})
-        else:
-            return jsonify({"success": False})
-    except Exception as e:
-        print("TG Login Error:", e)
-        return jsonify({"success": False})
-        
 @app.route('/order', methods=['POST'])
 def order():
     try:
@@ -821,10 +726,7 @@ def order():
         srv = request.form.get('srv')
         photo = request.files.get('photo')
         
-        # --- 🛡️ SECURITY PATCH: ဈေးနှုန်းကို Backend မှ တိုက်စစ်ခြင်း ---
         actual_price = None
-        
-        # GAMES_DATA ထဲတွင် Server နှင့် Package နာမည်ကို လိုက်ရှာပြီး ဈေးနှုန်းအစစ်ကို ဆွဲထုတ်ပါမည်
         for server in GAMES_DATA:
             if server['name'] == srv:
                 for cat_items in server['cats'].values():
@@ -832,18 +734,12 @@ def order():
                         if item['d'] == pkg:
                             actual_price = int(item['p'])
                             break
-                    if actual_price is not None:
-                        break
-            if actual_price is not None:
-                break
+                    if actual_price is not None: break
+            if actual_price is not None: break
         
-        # အကယ်၍ မသမာသူက Package နာမည်ကိုပါ ထပ်ခိုးပြင်လာခဲ့လျှင် Order ကို လုံးဝ ပယ်ချပါမည်
         if actual_price is None:
             return "❌ Error: Invalid Server or Package!", 400
-        
-        # အစစ်အမှန် ဈေးနှုန်းကိုသာ အသုံးပြုပါမည်
         price = actual_price 
-        # ----------------------------------------------------------------
         
         order_date = datetime.now(timezone(timedelta(hours=6, minutes=30))).strftime("%d/%m/%Y %I:%M %p")
         oid = orders_col.insert_one({"tg_user": tg_user, "uid": uid, "zone": zid, "pkg": pkg, "srv": srv, "price": price, "status": "Pending", "date": order_date}).inserted_id
@@ -866,20 +762,12 @@ def order():
             [{"text": "❌ Cancel (ငွေလွှဲပြေစာမှား)", "callback_data": f"st_Cancelled_Other_{str(oid)}"}]
         ]}
         
-        # စာနှင့် ပုံကို တစ်စောင်တည်း ပေါင်း၍ ပို့ခြင်း (Send Photo with Caption)
         requests.post(
             f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto", 
-            data={
-                'chat_id': CHAT_ID, 
-                'caption': msg_caption, 
-                'parse_mode': 'HTML',
-                'reply_markup': json.dumps(reply_markup)
-            }, 
+            data={'chat_id': CHAT_ID, 'caption': msg_caption, 'parse_mode': 'HTML', 'reply_markup': json.dumps(reply_markup)}, 
             files={'photo': photo}
         )
-        
         return "Success"
-        
     except Exception as e: 
         return str(e), 500
 
@@ -894,63 +782,42 @@ def telegram_webhook():
             cb = data["callback_query"]
             call_data = cb.get("data", "")
             
-            # ခလုတ် Data ဖမ်းယူခြင်း
             if call_data.startswith('st_'):
                 parts = call_data.split('_')
                 status = parts[1]
-                # ခလုတ်အဟောင်းနဲ့ အသစ် ရောနှိပ်မိရင်တောင် Error မတက်အောင် ကာကွယ်ထားပါသည်
                 reason_code = parts[2] if len(parts) > 2 else ""
                 oid = parts[3] if len(parts) > 3 else (parts[2] if len(parts) > 2 else "")
                 
-                # 🔴 အကြောင်းရင်း (Reason) ပြင်ဆင်ခြင်း
                 cancel_reason = ""
                 if status == 'Cancelled':
-                    if reason_code == "WrongID":
-                        cancel_reason = "Game ID (သို့) Zone ID မှားယွင်းနေပါသည်။"
-                    elif reason_code == "BadReceipt":
-                        cancel_reason = "ကျသင့်ငွေ မပြည့်ခြင်းကြောင့် ဖြစ်ပါသည်။"
-                    else:
-                        cancel_reason = "ငွေလွှဲပြေစာ မှားယွင်းနေသဖြင့် ပယ်ဖျက်လိုက်ပါသည်။"
+                    if reason_code == "WrongID": cancel_reason = "Game ID (သို့) Zone ID မှားယွင်းနေပါသည်။"
+                    elif reason_code == "BadReceipt": cancel_reason = "ကျသင့်ငွေ မပြည့်ခြင်းကြောင့် ဖြစ်ပါသည်။"
+                    else: cancel_reason = "ငွေလွှဲပြေစာ မှားယွင်းနေသဖြင့် ပယ်ဖျက်လိုက်ပါသည်။"
 
-                # 💾 Database Update လုပ်ခြင်း
                 update_data = {"status": status}
-                if status == 'Cancelled':
-                    update_data["reason"] = cancel_reason
+                if status == 'Cancelled': update_data["reason"] = cancel_reason
 
-                # Database တွင် Status သွားပြောင်းပါမည်
                 orders_col.update_one({"_id": ObjectId(oid)}, {"$set": update_data})
                 
-                # 🔴 အောက်ပါအပိုင်းကို အစားထိုးရန် 🔴
-            # Telegram Group ထဲက စာကို Update လုပ်ခြင်း
-            msg_id = cb["message"]["message_id"]
-            chat_id = cb["message"]["chat"]["id"]
-            status_icon = '✅' if status == 'Completed' else '❌'
-            
-            # မူလ စာသားဟောင်း (Caption) ကို ပြန်ယူခြင်း
-            original_caption = cb["message"].get("caption", "")
-            
-            # မူလစာသားထဲမှာ ⏳ Status: Pending ပါနေရင် အဲ့ဒီနေရာကနေစပြီး အောက်ပိုင်းကို ဖြတ်ထုတ်မည်
-            if "⏳ Status: Pending" in original_caption:
-                original_caption = original_caption.split("⏳ Status: Pending")[0].strip()
-            
-            # စာသားအဟောင်းရဲ့ အောက်ဆုံးမှာ Status အသစ်ကို ထပ်ပေါင်းထည့်ခြင်း
-            caption = f"{original_caption}\n\n<b>{status_icon} Status: {status}</b>"
-            
-            if status == 'Cancelled':
-                caption += f"\n⚠️ Reason: {cancel_reason}"
+                msg_id = cb["message"]["message_id"]
+                chat_id = cb["message"]["chat"]["id"]
+                status_icon = '✅' if status == 'Completed' else '❌'
+                
+                original_caption = cb["message"].get("caption", "")
+                if "⏳ Status: Pending" in original_caption:
+                    original_caption = original_caption.split("⏳ Status: Pending")[0].strip()
+                
+                caption = f"{original_caption}\n\n<b>{status_icon} Status: {status}</b>"
+                if status == 'Cancelled': caption += f"\n⚠️ Reason: {cancel_reason}"
 
-            # Reply Markup (ခလုတ်များ) ကို ဖယ်ရှားပြီး Caption သာ Update လုပ်ခြင်း
-            requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/editMessageCaption", 
-                          json={'chat_id': chat_id, 'message_id': msg_id, 'caption': caption, 'parse_mode': 'HTML', 'reply_markup': {"inline_keyboard": []}})
-            
-            # မလိုတဲ့ Loading ရပ်သွားရန်
-            requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/answerCallbackQuery",
-                          json={'callback_query_id': cb['id'], 'text': f'Order {status} updated!'})
-            
-            return "OK", 200
+                requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/editMessageCaption", 
+                              json={'chat_id': chat_id, 'message_id': msg_id, 'caption': caption, 'parse_mode': 'HTML', 'reply_markup': {"inline_keyboard": []}})
+                requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/answerCallbackQuery",
+                              json={'callback_query_id': cb['id'], 'text': f'Order {status} updated!'})
+                
+                return "OK", 200
         
     except Exception as e:
-        # 🔴 Error တက်ပါက Render သွားစစ်စရာမလိုဘဲ Telegram Group ထဲသို့ Error Message ပို့ပေးမည့်စနစ်
         import traceback, requests
         error_details = traceback.format_exc()
         error_msg = f"⚠️ <b>Webhook Error တက်နေပါသည်</b> ⚠️\n\n<pre>{error_details[-500:]}</pre>"
@@ -967,21 +834,10 @@ def history():
 def top10():
     try:
         current_user = request.args.get('user')
+        admin_list = ['@Bby_kiwii7', 'Bby_kiwii7', '09775394979', '@Escanor_XX', 'Escanor_XX', '@Escanor_X', 'Escanor_X']
         
-        # 🔴 Admin အကောင့်များကို စာရင်းထဲမှ ဖယ်ထုတ်ရန် စာရင်း
-        admin_list = [
-            '@Bby_kiwii7', 'Bby_kiwii7', 
-            '09775394979', 
-            '@Escanor_XX', 'Escanor_XX', 
-            '@Escanor_X', 'Escanor_X'
-        ]
-        
-        # Order ထဲက Completed ဖြစ်တဲ့ ဟာတွေကိုပဲ ပေါင်းပြီး Admin တွေကို ဖယ်ထုတ်မည်
         pipeline = [
-            {"$match": {
-                "status": "Completed",
-                "tg_user": {"$nin": admin_list}  # Admin များကို ဤနေရာတွင် ဖယ်ထုတ်ပါသည်
-            }}, 
+            {"$match": {"status": "Completed", "tg_user": {"$nin": admin_list}}}, 
             {"$group": {"_id": "$tg_user", "totalSpent": {"$sum": "$price"}}},
             {"$sort": {"totalSpent": -1}}
         ]
@@ -993,26 +849,16 @@ def top10():
                 user_rank, user_spent = i + 1, u['totalSpent']
                 break
         
-        # Top 10 အတွက် နာမည်များကို Database တွင် ရှာဖွေခြင်း
         top_10_list = all_ranks[:10]
         for u in top_10_list:
-            # User ရဲ့ မှတ်ပုံတင်ထားသော အချက်အလက်ကို ရှာမည်
-            user_data = users_col.find_one({
-                "$or": [{"user": u["_id"]}, {"phone": u["_id"]}, {"email": u["_id"]}]
-            })
-            
+            user_data = users_col.find_one({"$or": [{"user": u["_id"]}, {"phone": u["_id"]}, {"email": u["_id"]}]})
             if user_data and user_data.get("name"):
-                u["display_name"] = user_data["name"] # နာမည်ရှိရင် နာမည်ကို ပြမည်
+                u["display_name"] = user_data["name"]
             else:
-                # နာမည်မရှိခဲ့ပါက Privacy အရ ဖုန်းနံပါတ်/Email ကို အလယ်က စာဖျောက်ပြီး ပြမည်
                 uid_str = str(u["_id"])
-                if len(uid_str) > 6:
-                    u["display_name"] = uid_str[:3] + "***" + uid_str[-3:]
-                else:
-                    u["display_name"] = uid_str
+                u["display_name"] = uid_str[:3] + "***" + uid_str[-3:] if len(uid_str) > 6 else uid_str
                     
         return jsonify({"top10": top_10_list, "userRank": user_rank, "userSpent": user_spent})
-        
     except Exception as e:
         print(e)
         return jsonify({"top10": [], "userRank": "N/A", "userSpent": 0})
