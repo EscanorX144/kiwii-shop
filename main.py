@@ -134,7 +134,7 @@ GAMES_DATA = [
             ]
         }
     },
- [
+ ]
  
 HTML_CODE = '''
 <!DOCTYPE html><html><head>
