@@ -133,7 +133,7 @@ GAMES_DATA = [
                 {"d": "💎 9288 Diamonds", "p": 485000}
             ]
         }
-    }
+    },
 
 HTML_CODE = '''
 <!DOCTYPE html><html><head>
