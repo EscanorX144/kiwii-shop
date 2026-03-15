@@ -290,7 +290,7 @@ HTML_CODE = '''
             <h2 style="color: #c084fc; margin-bottom: 20px; font-weight: 800;">WELCOME</h2>
             <p style="color: #94a3b8; font-size: 14px; margin-bottom: 30px; line-height: 1.6;">စနစ်အတွင်းသို့ ဝင်ရောက်ရန်နှင့် အကောင့်သစ်ဖွင့်ရန်<br>အောက်ပါခလုတ်ကို နှိပ်ပါ</p>
             
-            <script async src="https://telegram.org/js/telegram-widget.js?22" data-telegram-login="BOT_USERNAME_HERE" data-size="large" data-radius="8" data-onauth="onTelegramAuth(user)" data-request-access="write"></script>
+            <script async src="https://telegram.org/js/telegram-widget.js?22" data-telegram-login="@Kiwii_Store_Bot" data-size="large" data-radius="8" data-onauth="onTelegramAuth(user)" data-request-access="write"></script>
         </div>
         
         <div id="reg-box" style="display: none;"></div>
