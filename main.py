@@ -365,9 +365,10 @@ HTML_CODE = '''
 <div id="privacy-sec" style="display:none; padding:15px; padding-bottom: 80px;">
     <h2 style="color:#c084fc; text-align:center; text-transform:uppercase; font-weight:800;">Privacy Policy</h2>
     <div style="background: rgba(15, 23, 42, 0.6); padding: 20px; border-radius: 12px; border: 1px solid rgba(147, 51, 234, 0.2); color: #f1f5f9; font-size: 14px; line-height: 1.8;">
-        <p><b>၁။ အချက်အလက်ရယူခြင်း:</b> Kiwii Game Store သည် လူကြီးမင်း၏ Telegram Username, Game ID နှင့် ဝယ်ယူမှုမှတ်တမ်းများကိုသာ ဝန်ဆောင်မှုပေးရန်အတွက် သိမ်းဆည်းထားပါသည်။</p>
-        <p><b>၂။ လုံခြုံရေး:</b> လူကြီးမင်း၏ အချက်အလက်များကို အခြားပြင်ပသို့ ပေါက်ကြားမှုမရှိစေရန် အထူးဂရုစိုက် ထိန်းသိမ်းထားပါသည်။</p>
-        <p><b>၃။ ဆက်သွယ်ရန်:</b> အခက်အခဲတစ်စုံတစ်ရာရှိပါက Customer Service သို့ အချိန်မရွေး ဆက်သွယ်နိုင်ပါသည်။</p>
+        <p><b>၁။ အချက်အလက်ရယူခြင်း:</b> Kiwii Game Store သည် လူကြီးမင်း၏ နာမည်၊ ဖုန်းနံပါတ်၊ Email၊ Game ID နှင့် ဝယ်ယူမှုမှတ်တမ်းများကို ဝန်ဆောင်မှုပေးရန်အတွက်သာ သိမ်းဆည်းထားပါသည်။</p>
+        <p><b>၂။ အချက်အလက် မျှဝေခြင်း:</b> လူကြီးမင်း၏ အချက်အလက်များကို အခြား ပြင်ပအဖွဲ့အစည်းများ (Third-parties) သို့ လုံးဝ ရောင်းချခြင်း၊ မျှဝေခြင်း ပြုလုပ်မည်မဟုတ်ပါ။</p>
+        <p><b>၃။ လုံခြုံရေး နှင့် မှတ်သားခြင်း:</b> Website ကို အသုံးပြုရ လွယ်ကူစေရန် Login ဝင်ထားသော အချက်အလက်များကို Browser တွင် မှတ်သားထားမည်ဖြစ်ပြီး အထူးဂရုစိုက် ထိန်းသိမ်းထားပါသည်။</p>
+        <p><b>၄။ ဆက်သွယ်ရန်:</b> အခက်အခဲတစ်စုံတစ်ရာရှိပါက သို့မဟုတ် အကောင့်ဖျက်သိမ်းလိုပါက Customer Service သို့ အချိန်မရွေး ဆက်သွယ်နိုင်ပါသည်။</p>
         <button onclick="goH()" style="margin-top:20px; width:100%; padding:12px; background: linear-gradient(135deg, #a855f7, #7e22ce); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">နောက်သို့ ပြန်သွားမည်</button>
     </div>
 </div>
@@ -375,12 +376,15 @@ HTML_CODE = '''
 <div id="terms-sec" style="display:none; padding:15px; padding-bottom: 80px;">
     <h2 style="color:#4ade80; text-align:center; text-transform:uppercase; font-weight:800;">Terms & Conditions</h2>
     <div style="background: rgba(15, 23, 42, 0.6); padding: 20px; border-radius: 12px; border: 1px solid rgba(74, 222, 128, 0.2); color: #f1f5f9; font-size: 14px; line-height: 1.8;">
-        <p><b>၁။ အချက်အလက်မှန်ကန်မှု:</b> Order တင်ရာတွင် Game ID , Zone ID နှင့် ငွေလွှဲပြေစာများ မှန်ကန်စေရန် သေချာစွာ စစ်ဆေးရပါမည်။ မှားယွင်းဖြည့်စွက်မှုကြောင့် Oder Cancel ခြင်းဖြစ်ပေါ်ပါမည်။</p>
-        <p><b>၂။ ငွေလွှဲပြေစာ:</b> ငွေလွှဲပြေစာ (Screenshot) အတုများအသုံးပြုခြင်းများ စစ်ဆေးတွေ့ရှိပါက အကောင့်အား အပြီးတိုင် ပိတ်သိမ်းပါမည်။</p>
-        <p><b>၃။ ငွေပြန်အမ်းခြင်း:</b> ဝယ်ယူမှု အောင်မြင်ပြီးသွားသော (Completed ဖြစ်သွားသော) Order များအတွက် ငွေပြန်အမ်းပေးမည် မဟုတ်ပါ။</p>
+        <p><b>၁။ အချက်အလက်မှန်ကန်မှု:</b> Order တင်ရာတွင် Game ID , Zone ID နှင့် ငွေလွှဲပြေစာများ မှန်ကန်စေရန် သေချာစွာ စစ်ဆေးရပါမည်။ မှားယွင်းဖြည့်စွက်မှုကြောင့် Order Cancel ခြင်းဖြစ်ပေါ်ပါမည်။</p>
+        <p><b>၂။ ကြာမြင့်ချိန်:</b> ပုံမှန်အားဖြင့် Order တစ်ခုလျှင် (1) မိနစ်မှ (5) မိနစ်ခန့် ကြာမြင့်နိုင်ပြီး၊ Game Server ပြုပြင်နေချိန်များတွင် ပိုမို ကြာမြင့်နိုင်ပါသည်။</p>
+        <p><b>၃။ ဈေးနှုန်းပြောင်းလဲခြင်း:</b> Package ဈေးနှုန်းများသည် ငွေလဲနှုန်းနှင့် Game ကုမ္ပဏီများ၏ သတ်မှတ်ချက်အရ ကြိုတင်အကြောင်းကြားခြင်းမရှိဘဲ ပြောင်းလဲနိုင်ပါသည်။</p>
+        <p><b>၄။ ငွေလွှဲပြေစာနှင့် အကောင့်ပိတ်သိမ်းခြင်း:</b> ငွေလွှဲပြေစာ (Screenshot) အတုများ အသုံးပြုခြင်း၊ ငွေမပြည့်ဘဲ လိမ်လည်တင်ခြင်းများ စစ်ဆေးတွေ့ရှိပါက အကောင့်အား အပြီးတိုင် (Ban) ပိတ်သိမ်းပါမည်။</p>
+        <p><b>၅။ ငွေပြန်အမ်းခြင်း:</b> ဝယ်ယူမှု အောင်မြင်ပြီးသွားသော (Completed ဖြစ်သွားသော) Order များအတွက် ငွေပြန်အမ်းပေးမည် မဟုတ်ပါ။</p>
         <button onclick="goH()" style="margin-top:20px; width:100%; padding:12px; background: linear-gradient(135deg, #22c55e, #16a34a); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">နောက်သို့ ပြန်သွားမည်</button>
     </div>
 </div>
+
 <script>
     const games = JSON_DATA_HERE;
     let currentUser = localStorage.getItem('user');
