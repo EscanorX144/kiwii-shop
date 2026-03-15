@@ -99,7 +99,7 @@ GAMES_DATA = [
         "id": 7, "name": "Magic Chess Go Go",
         "img": "/static/mcgg.jpg", 
         "zone": True, 
-        "cat_order": ["Weekly Pass", "Bundle Pack", "2X Diamonds", "Diamonds"],
+        "cat_order": ["Mcgg Dia", "Weekly Pass", "2X Dia", "Bundle Pack"],
         "cats": {
             "Weekly Pass": [
                 {"d": "Weekly Pass", "p": 6700}
