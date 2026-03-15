@@ -108,13 +108,13 @@ GAMES_DATA = [
                 {"d": "Batalha do Lukas", "p": 3500},
                 {"d": "Batalhe por Descontos", "p": 3500}
             ],
-            "2X Diamonds": [
+            "2X Dia": [
                 {"d": "💎 50+50 Diamonds", "p": 3150},
                 {"d": "💎 150+150 Diamonds", "p": 9350},
                 {"d": "💎 250+250 Diamonds", "p": 15500},
                 {"d": "💎 500+500 Diamonds", "p": 31000}
             ],
-            "Diamonds": [
+            "Mcgg Dia": [
                 {"d": "💎 5 Diamonds", "p": 400},
                 {"d": "💎 11 Diamonds", "p": 750},
                 {"d": "💎 22 Diamonds", "p": 1500},
