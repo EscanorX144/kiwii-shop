@@ -95,8 +95,8 @@ GAMES_DATA = [
             ]
         }
     },
-    [
-        "name": "Magic Chess Go Go",
+    {
+        "id" 7, "name": "Magic Chess Go Go",
         "img": "/static/mcgg.png", # ပုံမရှိသေးပါက ဒီအတိုင်းထားပါ
         "zone": True, 
         "cats": {
@@ -134,7 +134,7 @@ GAMES_DATA = [
             ]
         }
     },
-
+   [
 HTML_CODE = '''
 <!DOCTYPE html><html><head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
