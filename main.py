@@ -953,13 +953,12 @@ def telegram_webhook():
             # Reply Markup (ခလုတ်များ) ကို ဖယ်ရှားပြီး Caption သာ Update လုပ်ခြင်း
             requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/editMessageCaption", 
                           json={'chat_id': chat_id, 'message_id': msg_id, 'caption': caption, 'parse_mode': 'HTML', 'reply_markup': {"inline_keyboard": []}})
-            # 🔴 အစားထိုးရန် အဆုံး 🔴
-                
-                # ✅ ခလုတ်နှိပ်ကြောင်း Telegram ကို အကြောင်းပြန်ခြင်း (Loading ရပ်သွားရန်)
-                requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/answerCallbackQuery", 
-                    json={'callback_query_id': cb['id'], 'text': f'Order {status} updated!'})
-                
-        return "OK", 200
+            
+            # မလိုတဲ့ Loading ရပ်သွားရန်
+            requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/answerCallbackQuery",
+                          json={'callback_query_id': cb['id'], 'text': f'Order {status} updated!'})
+            
+            return "OK", 200
         
     except Exception as e:
         # 🔴 Error တက်ပါက Render သွားစစ်စရာမလိုဘဲ Telegram Group ထဲသို့ Error Message ပို့ပေးမည့်စနစ်
