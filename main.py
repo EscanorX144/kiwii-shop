@@ -278,6 +278,12 @@ HTML_CODE = '''
         <div id="h-sec">
             <div class="header-logo">KIWII GAME STORE</div>
             <div class="game-grid" id="g-list"></div>
+            
+            <div style="text-align: center; margin-top: 40px; margin-bottom: 30px;">
+                <a href="#" onclick="showPrivacy()" style="color: #94a3b8; font-size: 13px; text-decoration: none; margin-right: 20px; border-bottom: 1px solid #475569; padding-bottom: 2px;">Privacy Policy</a>
+                <a href="#" onclick="showTerms()" style="color: #94a3b8; font-size: 13px; text-decoration: none; border-bottom: 1px solid #475569; padding-bottom: 2px;">Terms & Conditions</a>
+            </div>
+
         </div>
         <div id="o-sec" style="display:none; padding:15px;">
             <button onclick="goH()" style="background:none;color:white;border:1px solid #334155;padding:8px 15px;border-radius:8px;margin-bottom:15px;">← Back</button>
@@ -512,8 +518,26 @@ HTML_CODE = '''
         document.getElementById('hist-sec').style.display='none';
         document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
         document.getElementById('nav-home').classList.add('active');
+        document.getElementById('privacy-sec').style.display = 'none';
+        document.getElementById('terms-sec').style.display = 'none';
     }
+function showPrivacy() {
+            document.getElementById('h-sec').style.display = 'none';
+            document.getElementById('o-sec').style.display = 'none';
+            document.getElementById('top-sec').style.display = 'none';
+            document.getElementById('hist-sec').style.display = 'none';
+            document.getElementById('terms-sec').style.display = 'none';
+            document.getElementById('privacy-sec').style.display = 'block';
+        }
 
+        function showTerms() {
+            document.getElementById('h-sec').style.display = 'none';
+            document.getElementById('o-sec').style.display = 'none';
+            document.getElementById('top-sec').style.display = 'none';
+            document.getElementById('hist-sec').style.display = 'none';
+            document.getElementById('privacy-sec').style.display = 'none';
+            document.getElementById('terms-sec').style.display = 'block';
+        }
     async function showTop() {
         document.getElementById('h-sec').style.display='none';
         document.getElementById('o-sec').style.display='none';
