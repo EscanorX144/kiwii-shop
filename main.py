@@ -944,9 +944,20 @@ def top10():
     try:
         current_user = request.args.get('user')
         
-        # Order ထဲက Completed ဖြစ်တဲ့ ဟာတွေကိုပဲ ပေါင်းပြီး အများဆုံးကနေ အနည်းဆုံးစီမည်
+        # 🔴 Admin အကောင့်များကို စာရင်းထဲမှ ဖယ်ထုတ်ရန် စာရင်း
+        admin_list = [
+            '@Bby_kiwii7', 'Bby_kiwii7', 
+            '09775394979', 
+            '@Escanor_XX', 'Escanor_XX', 
+            '@Escanor_X', 'Escanor_X'
+        ]
+        
+        # Order ထဲက Completed ဖြစ်တဲ့ ဟာတွေကိုပဲ ပေါင်းပြီး Admin တွေကို ဖယ်ထုတ်မည်
         pipeline = [
-            {"$match": {"status": "Completed"}}, 
+            {"$match": {
+                "status": "Completed",
+                "tg_user": {"$nin": admin_list}  # Admin များကို ဤနေရာတွင် ဖယ်ထုတ်ပါသည်
+            }}, 
             {"$group": {"_id": "$tg_user", "totalSpent": {"$sum": "$price"}}},
             {"$sort": {"totalSpent": -1}}
         ]
@@ -969,7 +980,7 @@ def top10():
             if user_data and user_data.get("name"):
                 u["display_name"] = user_data["name"] # နာမည်ရှိရင် နာမည်ကို ပြမည်
             else:
-                # နာမည်မရှိခဲ့ပါက Privacy အရ ဖုန်းနံပါတ်/Email ကို အလယ်က စာဖျောက်ပြီး ပြမည် (ဥပမာ 091***789)
+                # နာမည်မရှိခဲ့ပါက Privacy အရ ဖုန်းနံပါတ်/Email ကို အလယ်က စာဖျောက်ပြီး ပြမည်
                 uid_str = str(u["_id"])
                 if len(uid_str) > 6:
                     u["display_name"] = uid_str[:3] + "***" + uid_str[-3:]
