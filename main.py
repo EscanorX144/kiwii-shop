@@ -97,7 +97,7 @@ GAMES_DATA = [
     },
     {
         "name": "Magic Chess Go Go",
-        "img": "/static/mcgg.png", # ပုံမရှိသေးပါက ဒီအတိုင်းထားပါ
+        "img": "/static/mcgg.jpg", # ပုံမရှိသေးပါက ဒီအတိုင်းထားပါ
         "zone": True, 
         "cats": {
             "Weekly Pass": [
