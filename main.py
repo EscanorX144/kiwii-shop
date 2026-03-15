@@ -698,6 +698,10 @@ def auth():
         else:
             u = users_col.find_one({"$or": [{"phone": user_input}, {"email": user_input}, {"user": user_input}]})
             if u:
+                # 🚫 Ban ထားခြင်း ခံရသူဖြစ်နေလျှင် Login ပိတ်မည်
+                if u.get("banned") == True:
+                    return jsonify({"success": False, "msg": "❌ သင့်အကောင့်အား စည်းကမ်းဖောက်ဖျက်မှုကြောင့် ပိတ်သိမ်းထားပါသည်!"})
+
                 stored_pass = u.get('pass', '')
                 is_valid = False
                 if stored_pass.startswith('pbkdf2:') or stored_pass.startswith('scrypt:'):
@@ -725,6 +729,11 @@ def order():
         pkg = request.form.get('pkg')
         srv = request.form.get('srv')
         photo = request.files.get('photo')
+
+        # 🚫 Ban ထားခြင်း ခံရသူဖြစ်နေလျှင် Order တင်ခွင့် ပိတ်မည်
+        u = users_col.find_one({"user": tg_user})
+        if u and u.get("banned") == True:
+            return "❌ သင့်အကောင့်အား ပိတ်သိမ်းထားပါသည်!", 403
         
         actual_price = None
         for server in GAMES_DATA:
@@ -755,11 +764,13 @@ def order():
 ━━━━━━━━━━━━━━━
 ⏳ <b>Status:</b> Pending"""
 
+        # 🔴 အောက်ဆုံးတွင် Ban Account ခလုတ် အသစ် ထပ်တိုးထားပါသည် 🔴
         reply_markup = {"inline_keyboard": [
             [{"text": "✅ အောင်မြင်ပါသည် (Done)", "callback_data": f"st_Completed_None_{str(oid)}"}],
             [{"text": "❌ Cancel (ID မှား)", "callback_data": f"st_Cancelled_WrongID_{str(oid)}"}],
             [{"text": "❌ Cancel (ငွေမပြည့်)", "callback_data": f"st_Cancelled_BadReceipt_{str(oid)}"}],
-            [{"text": "❌ Cancel (ငွေလွှဲပြေစာမှား)", "callback_data": f"st_Cancelled_Other_{str(oid)}"}]
+            [{"text": "❌ Cancel (ငွေလွှဲပြေစာမှား)", "callback_data": f"st_Cancelled_Other_{str(oid)}"}],
+            [{"text": "🚫 Ban Account", "callback_data": f"st_Banned_None_{str(oid)}"}]
         ]}
         
         requests.post(
@@ -770,7 +781,7 @@ def order():
         return "Success"
     except Exception as e: 
         return str(e), 500
-
+        
 @app.route('/webhook/telegram', methods=['POST'])
 def telegram_webhook():
     try:
@@ -789,26 +800,42 @@ def telegram_webhook():
                 oid = parts[3] if len(parts) > 3 else (parts[2] if len(parts) > 2 else "")
                 
                 cancel_reason = ""
-                if status == 'Cancelled':
+                db_status = status
+
+                # 🚫 Ban ခလုတ်နှိပ်လိုက်ပါက အလုပ်လုပ်မည့်စနစ်
+                if status == 'Banned':
+                    cancel_reason = "စည်းကမ်းဖောက်ဖျက်မှုကြောင့် အကောင့်ပိတ်သိမ်းလိုက်ပါသည်။"
+                    db_status = 'Cancelled' # Order ကို Cancelled အဖြစ် ပြောင်းမည်
+                    
+                    # Database ထဲတွင် အဆိုပါ User ကို Ban ပြုလုပ်ခြင်း
+                    order_data = orders_col.find_one({"_id": ObjectId(oid)})
+                    if order_data:
+                        bad_user = order_data.get("tg_user")
+                        users_col.update_many({"$or": [{"user": bad_user}, {"phone": bad_user}, {"email": bad_user}]}, {"$set": {"banned": True}})
+
+                elif status == 'Cancelled':
                     if reason_code == "WrongID": cancel_reason = "Game ID (သို့) Zone ID မှားယွင်းနေပါသည်။"
                     elif reason_code == "BadReceipt": cancel_reason = "ကျသင့်ငွေ မပြည့်ခြင်းကြောင့် ဖြစ်ပါသည်။"
                     else: cancel_reason = "ငွေလွှဲပြေစာ မှားယွင်းနေသဖြင့် ပယ်ဖျက်လိုက်ပါသည်။"
 
-                update_data = {"status": status}
-                if status == 'Cancelled': update_data["reason"] = cancel_reason
+                update_data = {"status": db_status}
+                if cancel_reason: update_data["reason"] = cancel_reason
 
                 orders_col.update_one({"_id": ObjectId(oid)}, {"$set": update_data})
                 
                 msg_id = cb["message"]["message_id"]
                 chat_id = cb["message"]["chat"]["id"]
-                status_icon = '✅' if status == 'Completed' else '❌'
+                
+                status_icon = '✅' if db_status == 'Completed' else '❌'
+                if status == 'Banned': status_icon = '🚫'
+                display_status = 'Banned 🚫' if status == 'Banned' else db_status
                 
                 original_caption = cb["message"].get("caption", "")
                 if "⏳ Status: Pending" in original_caption:
                     original_caption = original_caption.split("⏳ Status: Pending")[0].strip()
                 
-                caption = f"{original_caption}\n\n<b>{status_icon} Status: {status}</b>"
-                if status == 'Cancelled': caption += f"\n⚠️ Reason: {cancel_reason}"
+                caption = f"{original_caption}\n\n<b>{status_icon} Status: {display_status}</b>"
+                if cancel_reason: caption += f"\n⚠️ Reason: {cancel_reason}"
 
                 requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/editMessageCaption", 
                               json={'chat_id': chat_id, 'message_id': msg_id, 'caption': caption, 'parse_mode': 'HTML', 'reply_markup': {"inline_keyboard": []}})
