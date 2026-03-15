@@ -314,11 +314,6 @@ HTML_CODE = '''
             
             <p style="text-align: center; margin-top: 20px; font-size: 14px;"><a href="#" onclick="toggleAuth('login')" style="color: #94a3b8; text-decoration: none;">Already have an account? <span style="color: #4ade80;">Login</span></a></p>
         </div>
-            
-            <script async src="https://telegram.org/js/telegram-widget.js?22" data-telegram-login="Kiwii_Store_Bot" data-size="large" data-radius="8" data-onauth="onTelegramAuth(user)" data-request-access="write"></script>
-        </div>
-        
-        <div id="reg-box" style="display: none;"></div>
         
     </div>
 
