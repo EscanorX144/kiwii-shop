@@ -283,8 +283,8 @@ HTML_CODE = '''
 </style>
 </head><body>
 <div id="main-container">
-    <div id="auth-sec" style="max-width: 380px; width: 90%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #0f172a; padding: 30px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid #334155; z-index: 9999;">
-        <div id="login-box">
+    <div id="auth-sec" style="max-width: 380px; width: 90%; box-sizing: border-box; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #0f172a; padding: 30px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid #334155; z-index: 9999;">
+    <div id="login-box">
             <h2 style="text-align: center; color: #c084fc; margin-top: 0; margin-bottom: 25px; text-transform: uppercase; font-weight: 800;">LOGIN</h2>
             <input type="text" id="log-user" placeholder="Phone Number (or) Email" style="width: 100%; padding: 14px; margin-bottom: 15px; border-radius: 8px; border: none; background: #020617; color: white; box-sizing: border-box; font-size: 15px;">
             <input type="password" id="log-pass" placeholder="Password" style="width: 100%; padding: 14px; margin-bottom: 25px; border-radius: 8px; border: none; background: #020617; color: white; box-sizing: border-box; font-size: 15px;">
