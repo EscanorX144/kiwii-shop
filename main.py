@@ -94,8 +94,46 @@ GAMES_DATA = [
                 {"d": "Weekly Pass 1X", "p": "6500"}, {"d": "Weekly Pass 2X", "p": "13000"}, {"d": "Weekly Pass 3X", "p": "19500"}, {"d": "Weekly Pass 4X", "p": "26000"}, {"d": "Weekly Pass 5X", "p": "32500"}, {"d": "Weekly Pass 6X", "p": "39000"}, {"d": "Weekly Pass 7X", "p": "45500"}, {"d": "Weekly Pass 8X", "p": "52000"}, {"d": "Weekly Pass 9X", "p": "58500"}, {"d": "Weekly Pass 10X", "p": "65000"}, {"d": "Twilight Pass", "p": "35500"}
             ]
         }
+    },
+    {
+        "name": "Magic Chess Go Go",
+        "img": "/static/mcgg.png", # ပုံမရှိသေးပါက ဒီအတိုင်းထားပါ
+        "zone": True, 
+        "cats": {
+            "Weekly Pass": [
+                {"d": "Weekly Pass", "p": 6700}
+            ],
+            "Bundle Pack": [
+                {"d": "Batalha do Lukas", "p": 3500},
+                {"d": "Batalhe por Descontos", "p": 3500}
+            ],
+            "2X Diamonds": [
+                {"d": "💎 50+50 Diamonds", "p": 3150},
+                {"d": "💎 150+150 Diamonds", "p": 9350},
+                {"d": "💎 250+250 Diamonds", "p": 15500},
+                {"d": "💎 500+500 Diamonds", "p": 31000}
+            ],
+            "Diamonds": [
+                {"d": "💎 5 Diamonds", "p": 400},
+                {"d": "💎 11 Diamonds", "p": 750},
+                {"d": "💎 22 Diamonds", "p": 1500},
+                {"d": "💎 56 Diamonds", "p": 3500},
+                {"d": "💎 86 Diamonds", "p": 4800},
+                {"d": "💎 112 Diamonds", "p": 7000},
+                {"d": "💎 172 Diamonds", "p": 9600},
+                {"d": "💎 257 Diamonds", "p": 14400},
+                {"d": "💎 344 Diamonds", "p": 19300},
+                {"d": "💎 516 Diamonds", "p": 29000},
+                {"d": "💎 706 Diamonds", "p": 38700},
+                {"d": "💎 1346 Diamonds", "p": 72750},
+                {"d": "💎 1825 Diamonds", "p": 97000},
+                {"d": "💎 2195 Diamonds", "p": 117000},
+                {"d": "💎 3688 Diamonds", "p": 195000},
+                {"d": "💎 5532 Diamonds", "p": 292000},
+                {"d": "💎 9288 Diamonds", "p": 485000}
+            ]
+        }
     }
-]
 
 HTML_CODE = '''
 <!DOCTYPE html><html><head>
