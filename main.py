@@ -286,9 +286,26 @@ HTML_CODE = '''
     <div id="auth-sec" style="max-width: 380px; width: 90%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(15, 23, 42, 0.9); padding: 30px; border-radius: 15px; border: 1px solid rgba(147, 51, 234, 0.3); box-shadow: 0 0 20px rgba(147, 51, 234, 0.1); box-sizing: border-box;">
     
         <div id="login-box">
-        <div id="login-box" style="text-align: center; padding: 20px; margin-top: 30px;">
-            <h2 style="color: #c084fc; margin-bottom: 20px; font-weight: 800;">WELCOME</h2>
-            <p style="color: #94a3b8; font-size: 14px; margin-bottom: 30px; line-height: 1.6;">စနစ်အတွင်းသို့ ဝင်ရောက်ရန်နှင့် အကောင့်သစ်ဖွင့်ရန်<br>အောက်ပါခလုတ်ကို နှိပ်ပါ</p>
+            <h2 style="text-align: center; color: #c084fc; margin-top: 0; margin-bottom: 25px; text-transform: uppercase; font-weight: 800;">LOGIN</h2>
+            
+            <input type="text" id="log-user" placeholder="Telegram Username (သို့) ဖုန်းနံပါတ်" style="width: 100%; padding: 14px; margin-bottom: 15px; border-radius: 8px; border: none; background: #020617; color: white; box-sizing: border-box; font-size: 14px;">
+            
+            <input type="password" id="log-pass" placeholder="Password" style="width: 100%; padding: 14px; margin-bottom: 25px; border-radius: 8px; border: none; background: #020617; color: white; box-sizing: border-box; font-size: 15px;">
+            <button onclick="auth('login')" style="width: 100%; padding: 14px; border-radius: 8px; background: linear-gradient(135deg, #a855f7, #7e22ce); color: white; border: none; font-weight: bold; cursor: pointer; font-size: 16px; text-transform: uppercase;">Login</button>
+            <p style="text-align: center; margin-top: 20px; font-size: 14px;"><a href="#" onclick="toggleAuth('register')" style="color: #94a3b8; text-decoration: none;">Don't have an account? <span style="color: #c084fc;">Sign Up</span></a></p>
+        </div>
+
+        <div id="reg-box" style="display: none;">
+            <h2 style="text-align: center; color: #4ade80; margin-top: 0; margin-bottom: 25px; text-transform: uppercase; font-weight: 800;">SIGN UP</h2>
+            <input type="text" id="reg-name" placeholder="သင့်နာမည် (Name)" style="width: 100%; padding: 14px; margin-bottom: 15px; border-radius: 8px; border: none; background: #020617; color: white; box-sizing: border-box; font-size: 15px;">
+            
+            <input type="text" id="reg-user" placeholder="Telegram Username (သို့) ဖုန်းနံပါတ်" style="width: 100%; padding: 14px; margin-bottom: 15px; border-radius: 8px; border: none; background: #020617; color: white; box-sizing: border-box; font-size: 14px;">
+            
+            <input type="password" id="reg-pass" placeholder="Password" style="width: 100%; padding: 14px; margin-bottom: 15px; border-radius: 8px; border: none; background: #020617; color: white; box-sizing: border-box; font-size: 15px;">
+            <input type="password" id="reg-repass" placeholder="Retype Password" style="width: 100%; padding: 14px; margin-bottom: 25px; border-radius: 8px; border: none; background: #020617; color: white; box-sizing: border-box; font-size: 15px;">
+            <button onclick="auth('register')" style="width: 100%; padding: 14px; border-radius: 8px; background: linear-gradient(135deg, #22c55e, #16a34a); color: white; border: none; font-weight: bold; cursor: pointer; font-size: 16px; text-transform: uppercase;">Create Account</button>
+            <p style="text-align: center; margin-top: 20px; font-size: 14px;"><a href="#" onclick="toggleAuth('login')" style="color: #94a3b8; text-decoration: none;">Already have an account? <span style="color: #4ade80;">Login</span></a></p>
+        </div>
             
             <script async src="https://telegram.org/js/telegram-widget.js?22" data-telegram-login="Kiwii_Store_Bot" data-size="large" data-radius="8" data-onauth="onTelegramAuth(user)" data-request-access="write"></script>
         </div>
