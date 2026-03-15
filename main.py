@@ -288,22 +288,30 @@ HTML_CODE = '''
         <div id="login-box">
             <h2 style="text-align: center; color: #c084fc; margin-top: 0; margin-bottom: 25px; text-transform: uppercase; font-weight: 800;">LOGIN</h2>
             
-            <input type="text" id="log-user" placeholder="Telegram Username (သို့) ဖုန်းနံပါတ်" style="width: 100%; padding: 14px; margin-bottom: 15px; border-radius: 8px; border: none; background: #020617; color: white; box-sizing: border-box; font-size: 14px;">
+            <input type="text" id="log-user" placeholder="Phone Number (or) Email" style="width: 100%; padding: 14px; margin-bottom: 15px; border-radius: 8px; border: none; background: #020617; color: white; box-sizing: border-box; font-size: 15px;">
             
             <input type="password" id="log-pass" placeholder="Password" style="width: 100%; padding: 14px; margin-bottom: 25px; border-radius: 8px; border: none; background: #020617; color: white; box-sizing: border-box; font-size: 15px;">
+            
             <button onclick="auth('login')" style="width: 100%; padding: 14px; border-radius: 8px; background: linear-gradient(135deg, #a855f7, #7e22ce); color: white; border: none; font-weight: bold; cursor: pointer; font-size: 16px; text-transform: uppercase;">Login</button>
+            
             <p style="text-align: center; margin-top: 20px; font-size: 14px;"><a href="#" onclick="toggleAuth('register')" style="color: #94a3b8; text-decoration: none;">Don't have an account? <span style="color: #c084fc;">Sign Up</span></a></p>
         </div>
 
         <div id="reg-box" style="display: none;">
             <h2 style="text-align: center; color: #4ade80; margin-top: 0; margin-bottom: 25px; text-transform: uppercase; font-weight: 800;">SIGN UP</h2>
-            <input type="text" id="reg-name" placeholder="သင့်နာမည် (Name)" style="width: 100%; padding: 14px; margin-bottom: 15px; border-radius: 8px; border: none; background: #020617; color: white; box-sizing: border-box; font-size: 15px;">
             
-            <input type="text" id="reg-user" placeholder="Telegram Username (သို့) ဖုန်းနံပါတ်" style="width: 100%; padding: 14px; margin-bottom: 15px; border-radius: 8px; border: none; background: #020617; color: white; box-sizing: border-box; font-size: 14px;">
+            <input type="text" id="reg-name" placeholder="Name" style="width: 100%; padding: 14px; margin-bottom: 12px; border-radius: 8px; border: none; background: #020617; color: white; box-sizing: border-box; font-size: 15px;">
             
-            <input type="password" id="reg-pass" placeholder="Password" style="width: 100%; padding: 14px; margin-bottom: 15px; border-radius: 8px; border: none; background: #020617; color: white; box-sizing: border-box; font-size: 15px;">
+            <input type="email" id="reg-email" placeholder="Email" style="width: 100%; padding: 14px; margin-bottom: 12px; border-radius: 8px; border: none; background: #020617; color: white; box-sizing: border-box; font-size: 15px;">
+            
+            <input type="tel" id="reg-phone" placeholder="Phone Number" style="width: 100%; padding: 14px; margin-bottom: 12px; border-radius: 8px; border: none; background: #020617; color: white; box-sizing: border-box; font-size: 15px;">
+            
+            <input type="password" id="reg-pass" placeholder="Password" style="width: 100%; padding: 14px; margin-bottom: 12px; border-radius: 8px; border: none; background: #020617; color: white; box-sizing: border-box; font-size: 15px;">
+            
             <input type="password" id="reg-repass" placeholder="Retype Password" style="width: 100%; padding: 14px; margin-bottom: 25px; border-radius: 8px; border: none; background: #020617; color: white; box-sizing: border-box; font-size: 15px;">
+            
             <button onclick="auth('register')" style="width: 100%; padding: 14px; border-radius: 8px; background: linear-gradient(135deg, #22c55e, #16a34a); color: white; border: none; font-weight: bold; cursor: pointer; font-size: 16px; text-transform: uppercase;">Create Account</button>
+            
             <p style="text-align: center; margin-top: 20px; font-size: 14px;"><a href="#" onclick="toggleAuth('login')" style="color: #94a3b8; text-decoration: none;">Already have an account? <span style="color: #4ade80;">Login</span></a></p>
         </div>
             
@@ -437,49 +445,48 @@ HTML_CODE = '''
         }
 
         async function auth(type) {
-            let user, pass;
-            
+            let user, pass, name = "", email = "", phone = "";
+
             if (type === 'register') {
-                const name = document.getElementById('reg-name').value.trim();
-                user = document.getElementById('reg-user').value.trim();
+                name = document.getElementById('reg-name').value.trim();
+                email = document.getElementById('reg-email').value.trim();
+                phone = document.getElementById('reg-phone').value.trim();
                 pass = document.getElementById('reg-pass').value;
                 const repass = document.getElementById('reg-repass').value;
 
-                if (!name || !user || !pass || !repass) return alert("❌ ကျေးဇူးပြု၍ အချက်အလက်အားလုံး ပြည့်စုံစွာ ဖြည့်ပါ!");
-                if (!user.startsWith('@')) return alert("❌ Telegram Username ၏ အရှေ့တွင် '@' ပါရပါမည်!");
-                if (pass !== repass) return alert("❌ Password နှစ်ခု တူညီမှုမရှိပါ!");
-                
+                if (!name || !email || !phone || !pass || !repass) return alert('❌ ကျေးဇူးပြု၍ အချက်အလက်အားလုံး ပြည့်စုံစွာ ဖြည့်ပါ!');
+                if (pass !== repass) return alert('❌ Password နှစ်ခု တူညီမှုမရှိပါ!');
+                user = phone; // Register လုပ်ချိန်တွင် Phone ကို အဓိကထားပို့ပါမည်
             } else {
                 user = document.getElementById('log-user').value.trim();
                 pass = document.getElementById('log-pass').value;
-                
-                if (!user || !pass) return alert("❌ Username နှင့် Password ဖြည့်ရန် လိုအပ်ပါသည်!");
-                if (!user.startsWith('@')) return alert("❌ Telegram Username ၏ အရှေ့တွင် '@' ပါရပါမည်!");
+                if (!user || !pass) return alert("❌ လိုအပ်သော အချက်အလက်များ ဖြည့်ပါ!");
             }
 
             try {
                 const res = await fetch('/api/auth', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ type: type, user: user, pass: pass }) 
+                    body: JSON.stringify({ type: type, user: user, pass: pass, name: name, email: email, phone: phone })
                 });
-                const data = await res.json();
                 
+                const data = await res.json();
+
                 if (data.success) {
                     if (type === 'register') {
-                        alert("✅ အကောင့်ဖွင့်ခြင်း အောင်မြင်ပါသည်! ကျေးဇူးပြု၍ Login ဝင်ပါ။");
+                        alert("✅ အကောင့်ဖွင့်ခြင်း အောင်မြင်ပါသည်! ကျေးဇူးပြု၍ Login ဝင်ပေးပါ။");
                         toggleAuth('login');
                     } else {
-                        // 🔴 ဤနေရာတွင် မူလ Code အတိုင်း Page ကို အောင်မြင်စွာ Refresh လုပ်ပေးပါမည်
-                        localStorage.setItem('user', user); 
-                        location.reload(); 
+                        // Login အောင်မြင်ပါက
+                        localStorage.setItem('user', data.user); // Backend မှ ပို့ပေးသော User ID ကို သိမ်းမည်
+                        location.reload();
                     }
                 } else {
-                    alert("❌ Error: " + data.msg);
+                    alert('❌ Error: ' + data.msg);
                 }
             } catch (error) {
                 console.error(error);
-                alert("❌ System Error: ကျေးဇူးပြု၍ ခဏစောင့်ပြီး ပြန်စမ်းကြည့်ပါ။");
+                alert('❌ System Error: ကျေးဇူးပြု၍ ခဏစောင့်ပြီး ပြန်လည်ကြိုးစားပါ။');
             }
         }
     function logout() { localStorage.removeItem('user'); location.reload(); }
@@ -713,41 +720,54 @@ def index():
 def auth():
     try:
         data = request.json
-        utype, user, psw = data['type'], data['user'], data['pass']
-        
+        utype = data.get('type')
+        user_input = data.get('user') # ဖုန်း (သို့) Email ဖြစ်နိုင်ပါသည်
+        psw = data.get('pass')
+
         if utype == 'register':
-            if users_col.find_one({"user": user}): 
-                return jsonify({"success": False, "msg": "User already exists!"})
+            name = data.get('name')
+            email = data.get('email')
+            phone = data.get('phone')
             
-            # 🛡️ အကောင့်သစ်များကို လုံခြုံသော Hash ဖြင့် သိမ်းဆည်းခြင်း
+            # Email (သို့) ဖုန်းနံပါတ် တူနေတာ ရှိ/မရှိ စစ်ဆေးခြင်း
+            if users_col.find_one({"$or": [{"email": email}, {"phone": phone}]}):
+                return jsonify({"success": False, "msg": "Email (သို့) Phone Number ကို အသုံးပြုပြီးသား ဖြစ်နေပါသည်!"})
+            
             hashed_pw = generate_password_hash(psw)
-            users_col.insert_one({"user": user, "pass": hashed_pw})
-            return jsonify({"success": True})
             
+            # Database သို့ သိမ်းဆည်းခြင်း (Phone ကို အဓိက User ID အနေဖြင့် သုံးပါမည်)
+            users_col.insert_one({
+                "user": phone, 
+                "name": name, 
+                "email": email, 
+                "phone": phone, 
+                "pass": hashed_pw
+            })
+            return jsonify({"success": True, "user": phone})
+
         else:
-            u = users_col.find_one({"user": user})
+            # Login ဝင်သည့်အခါ ဖုန်း (သို့) Email (သို့) Username အဟောင်းများဖြင့် ရှာဖွေနိုင်ရန်
+            u = users_col.find_one({"$or": [{"phone": user_input}, {"email": user_input}, {"user": user_input}]})
             if u:
                 stored_pass = u.get('pass', '')
                 is_valid = False
                 
-                # စကားဝှက်သည် Hash ပြောင်းပြီးသားလား (အသစ်လား) စစ်ဆေးခြင်း
+                # Password မှန်မမှန် စစ်ဆေးခြင်း (အဟောင်း/အသစ် ၂ မျိုးလုံးအတွက်)
                 if stored_pass.startswith('pbkdf2:') or stored_pass.startswith('scrypt:'):
                     is_valid = check_password_hash(stored_pass, psw)
                 else:
-                    # အကောင့်ဟောင်း (Password အစိမ်း) ဖြစ်နေလျှင် တိုက်ရိုက်စစ်ဆေးခြင်း
                     is_valid = (stored_pass == psw)
-                    
-                    # 💡 အရေးကြီး: အကောင့်ဟောင်းဖြစ်ပြီး Password မှန်ကန်ပါက Hash သို့ အလိုအလျောက် ပြောင်းလဲသိမ်းဆည်းပေးခြင်း
                     if is_valid:
                         new_hash = generate_password_hash(psw)
                         users_col.update_one({"_id": u["_id"]}, {"$set": {"pass": new_hash}})
-                        
+                
                 if is_valid:
-                    return jsonify({"success": True})
-                    
-            return jsonify({"success": False, "msg": "Invalid Login!"})
+                    # Login အောင်မြင်ပါက အဓိက User ID ကို ပြန်ပို့ပေးမည်
+                    return jsonify({"success": True, "user": u.get("user")})
             
-    except Exception as e: 
+            return jsonify({"success": False, "msg": "ဖုန်းနံပါတ်/Email (သို့) Password မှားယွင်းနေပါသည်!"})
+
+    except Exception as e:
         return jsonify({"success": False, "msg": str(e)})
 
 @app.route('/api/tg_login', methods=['POST'])
