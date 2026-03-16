@@ -426,8 +426,8 @@ HTML_CODE = '''
     function toggleAuth(type) {
         document.getElementById('login-box').style.display = type === 'login' ? 'block' : 'none';
         document.getElementById('reg-box').style.display = type === 'register' ? 'block' : 'none';
+        document.getElementById('guide-box').style.display = type === 'guide' ? 'block' : 'none';
     }
-
     async function auth(type) {
         let user, pass, name = "", email = "", phone = "";
         if (type === 'register') {
