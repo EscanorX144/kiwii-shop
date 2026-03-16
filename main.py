@@ -284,13 +284,16 @@ HTML_CODE = '''
 </head><body>
 <div id="main-container">
     <div id="auth-sec" style="max-width: 380px; width: 90%; box-sizing: border-box; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #0f172a; padding: 30px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid #334155; z-index: 9999;">
-    <div id="login-box">
+        
+        <div id="login-box">
             <h2 style="text-align: center; color: #c084fc; margin-top: 0; margin-bottom: 25px; text-transform: uppercase; font-weight: 800;">LOGIN</h2>
             <input type="text" id="log-user" placeholder="Phone Number (or) Email" style="width: 100%; padding: 14px; margin-bottom: 15px; border-radius: 8px; border: none; background: #020617; color: white; box-sizing: border-box; font-size: 15px;">
             <input type="password" id="log-pass" placeholder="Password" style="width: 100%; padding: 14px; margin-bottom: 25px; border-radius: 8px; border: none; background: #020617; color: white; box-sizing: border-box; font-size: 15px;">
             <button onclick="auth('login')" style="width: 100%; padding: 14px; border-radius: 8px; background: linear-gradient(135deg, #a855f7, #7e22ce); color: white; border: none; font-weight: bold; cursor: pointer; font-size: 16px; text-transform: uppercase;">Login</button>
             <p style="text-align: center; margin-top: 20px; font-size: 14px;"><a href="#" onclick="toggleAuth('register')" style="color: #94a3b8; text-decoration: none;">Don't have an account? <span style="color: #c084fc;">Sign Up</span></a></p>
+            <p style="text-align: center; margin-top: 10px; font-size: 13px;"><a href="#" onclick="toggleAuth('guide')" style="color: #fbbf24; text-decoration: none;"><i class="fas fa-question-circle"></i> အသုံးပြုနည်း (Guide)</a></p>
         </div>
+
         <div id="reg-box" style="display: none;">
             <h2 style="text-align: center; color: #4ade80; margin-top: 0; margin-bottom: 25px; text-transform: uppercase; font-weight: 800;">SIGN UP</h2>
             <input type="text" id="reg-name" placeholder="Name" style="width: 100%; padding: 14px; margin-bottom: 12px; border-radius: 8px; border: none; background: #020617; color: white; box-sizing: border-box; font-size: 15px;">
@@ -301,6 +304,20 @@ HTML_CODE = '''
             <button onclick="auth('register')" style="width: 100%; padding: 14px; border-radius: 8px; background: linear-gradient(135deg, #22c55e, #16a34a); color: white; border: none; font-weight: bold; cursor: pointer; font-size: 16px; text-transform: uppercase;">Create Account</button>
             <p style="text-align: center; margin-top: 20px; font-size: 14px;"><a href="#" onclick="toggleAuth('login')" style="color: #94a3b8; text-decoration: none;">Already have an account? <span style="color: #4ade80;">Login</span></a></p>
         </div>
+
+        <div id="guide-box" style="display: none;">
+            <h2 style="text-align: center; color: #fbbf24; margin-top: 0; margin-bottom: 20px; text-transform: uppercase; font-weight: 800;">အသုံးပြုနည်း</h2>
+            <div style="background: rgba(2, 6, 23, 0.8); padding: 15px; border-radius: 8px; font-size: 13px; color: #cbd5e1; line-height: 1.8; margin-bottom: 20px; border: 1px solid rgba(251, 191, 36, 0.2);">
+                <b style="color: #4ade80;"><i class="fas fa-user-plus"></i> အကောင့်သစ်ဖွင့်နည်း (Sign Up)</b><br>
+                ၁။ <b>Sign Up</b> ကိုနှိပ်ပါ။<br>
+                ၂။ နာမည်၊ Email၊ ဖုန်းနံပါတ် နှင့် Password များကို ပြည့်စုံစွာဖြည့်ပြီး <b>Create Account</b> ကိုနှိပ်ပါ။<br><br>
+                <b style="color: #c084fc;"><i class="fas fa-sign-in-alt"></i> အကောင့်ဝင်နည်း (Login)</b><br>
+                ၁။ အကောင့်ဖွင့်ခဲ့သော <b>ဖုန်းနံပါတ်</b> (သို့) Email ကို အပေါ်အကွက်တွင် ထည့်ပါ။<br>
+                ၂။ မိမိပေးခဲ့သော <b>Password</b> ကို အောက်အကွက်တွင်ထည့်ပြီး <b>Login</b> ကိုနှိပ်ပါ။
+            </div>
+            <button onclick="toggleAuth('login')" style="width: 100%; padding: 12px; border-radius: 8px; background: #334155; color: white; border: none; font-weight: bold; cursor: pointer;">← နောက်သို့ (Back)</button>
+        </div>
+
     </div>
 
     <div id="app-sec" style="display:none;">
