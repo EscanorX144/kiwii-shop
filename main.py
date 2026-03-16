@@ -102,36 +102,77 @@ GAMES_DATA = [
         "cat_order": ["Mcgg Dia", "Weekly Pass", "2X Dia", "Bundle Pack"],
         "cats": {
             "Weekly Pass": [
-                {"d": "Weekly Pass", "p": 6700}
+                {"d": "Weekly Pass", "p": "6700"}
             ],
             "Bundle Pack": [
-                {"d": "Batalha do Lukas", "p": 3500},
-                {"d": "Batalhe por Descontos", "p": 3500}
+                {"d": "Batalha do Lukas", "p": "3500"},
+                {"d": "Batalhe por Descontos", "p": "3500"}
             ],
             "2X Dia": [
-                {"d": "💎 50+50 Diamonds", "p": 3150},
-                {"d": "💎 150+150 Diamonds", "p": 9350},
-                {"d": "💎 250+250 Diamonds", "p": 15500},
-                {"d": "💎 500+500 Diamonds", "p": 31000}
+                {"d": "💎 50+50 Diamonds", "p": "3150"},
+                {"d": "💎 150+150 Diamonds", "p": "9350"},
+                {"d": "💎 250+250 Diamonds", "p": "15500"},
+                {"d": "💎 500+500 Diamonds", "p": "31000"}
             ],
             "Mcgg Dia": [
-                {"d": "💎 5 Diamonds", "p": 400},
-                {"d": "💎 11 Diamonds", "p": 750},
-                {"d": "💎 22 Diamonds", "p": 1500},
-                {"d": "💎 56 Diamonds", "p": 3500},
-                {"d": "💎 86 Diamonds", "p": 4800},
-                {"d": "💎 112 Diamonds", "p": 7000},
-                {"d": "💎 172 Diamonds", "p": 9600},
-                {"d": "💎 257 Diamonds", "p": 14400},
-                {"d": "💎 344 Diamonds", "p": 19300},
-                {"d": "💎 516 Diamonds", "p": 29000},
-                {"d": "💎 706 Diamonds", "p": 38700},
-                {"d": "💎 1346 Diamonds", "p": 72750},
-                {"d": "💎 1825 Diamonds", "p": 97000},
-                {"d": "💎 2195 Diamonds", "p": 117000},
-                {"d": "💎 3688 Diamonds", "p": 195000},
-                {"d": "💎 5532 Diamonds", "p": 292000},
-                {"d": "💎 9288 Diamonds", "p": 485000}
+                {"d": "💎 5 Diamonds", "p": "400"},
+                {"d": "💎 11 Diamonds", "p": "750"},
+                {"d": "💎 22 Diamonds", "p": "1500"},
+                {"d": "💎 56 Diamonds", "p": "3500"},
+                {"d": "💎 86 Diamonds", "p": "4800"},
+                {"d": "💎 112 Diamonds", "p": "7000"},
+                {"d": "💎 172 Diamonds", "p": "9600"},
+                {"d": "💎 257 Diamonds", "p": "14400"},
+                {"d": "💎 344 Diamonds", "p": "19300"},
+                {"d": "💎 516 Diamonds", "p": "29000"},
+                {"d": "💎 706 Diamonds", "p": "38700"},
+                {"d": "💎 1346 Diamonds", "p": "72750"},
+                {"d": "💎 1825 Diamonds", "p": "97000"},
+                {"d": "💎 2195 Diamonds", "p": "117000"},
+                {"d": "💎 3688 Diamonds", "p": "195000"},
+                {"d": "💎 5532 Diamonds", "p": "292000"},
+                {"d": "💎 9288 Diamonds", "p": "485000"}
+            ]
+        }
+    },
+    {
+        "id": 8, 
+        "name": "PUBG Mobile",
+        "img": "/static/pubg.png",
+        "need_zone": False, 
+        "cat_order": ["UC", "UC Pack", "Prime Pack", "Weekly Deal", "RP Pass"],
+        "cats": {
+            "UC": [
+                {"d": "60 UC", "p": "3750"},
+                {"d": "325 UC", "p": "18800"},
+                {"d": "660 UC", "p": "37500"},
+                {"d": "1800 UC", "p": "93500"},
+                {"d": "3850 UC", "p": "183000"},
+                {"d": "8100 UC", "p": "357000"}
+            ],
+            "UC Pack": [
+                {"d": "First Purchase", "p": "3900"},
+                {"d": "Material", "p": "11500"},
+                {"d": "Mythic", "p": "19100"},
+                {"d": "Weekly Mythic", "p": "14500"}
+            ],
+            "Prime Pack": [
+                {"d": "PRIME 1M", "p": "3900"},
+                {"d": "PRIME 3M", "p": "11500"},
+                {"d": "PRIME 6M", "p": "22500"},
+                {"d": "PRIME 1YR", "p": "45000"},
+                {"d": "PRIME PLUS 1M", "p": "37800"},
+                {"d": "PRIME PLUS 3M", "p": "110500"},
+                {"d": "PRIME PLUS 6M", "p": "215500"},
+                {"d": "PRIME PLUS 1YR", "p": "431000"}
+            ],
+            "Weekly Deal": [
+                {"d": "Pack 1", "p": "3900"},
+                {"d": "Pack 2", "p": "11500"}
+            ],
+            "RP Pass": [
+                {"d": "Elite Pass Lv 1 (50)", "p": "22600"},
+                {"d": "Elite Pass Plus Lv 1 (100)", "p": "106000"}
             ]
         }
     }
