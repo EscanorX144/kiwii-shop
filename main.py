@@ -524,6 +524,18 @@ HTML_CODE = '''
         document.getElementById('h-sec').style.display='none';
         document.getElementById('o-sec').style.display='block';
         document.getElementById('g-title').innerText = g.name;
+
+        // 🔴 Server ID အကွက် အဖွင့်/အပိတ် စနစ် 🔴
+        const zidInput = document.getElementById('zid');
+        if (g.need_zone === false) {
+            zidInput.style.display = 'none'; // PUBG ဆိုရင် အကွက်ဖျောက်မည်
+            zidInput.required = false;       // မဖြစ်မနေ ဖြည့်စရာမလိုတော့ပါ
+            zidInput.value = '';             // အလွတ်ထားမည်
+        } else {
+            zidInput.style.display = 'block'; // တခြား Game ဆိုရင် ပြန်ပေါ်မည်
+            zidInput.required = true;
+        }
+
         document.getElementById('cat-container').innerHTML = g.cat_order.map((c, i) => 
             `<div class="tab-btn ${i===0?'active':''}" onclick="renderP('${c}', this)">${c}</div>`).join('');
         renderP(g.cat_order[0], document.querySelector('.tab-btn.active'));
