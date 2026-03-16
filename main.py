@@ -321,17 +321,20 @@ HTML_CODE = '''
         border-radius: 50%; 
         color: #fbbf24;
     }
-    .pkg-dia-img {
-        width: 140px !important;   /* 90px ကနေ 140px သို့ အကြီးကြီး ဆွဲချဲ့လိုက်ပါပြီ */
-        height: 90px !important;   /* 65px ကနေ 90px သို့ မြှင့်လိုက်ပါပြီ */
+        .pkg-dia-img {
+        width: 100% !important;       /* Box အကျယ်နဲ့ အချိုးကျဖြစ်အောင် ပြင်ထားသည် */
+        max-width: 110px !important;  /* အကြီးဆုံး 110px သာ ကြီးခွင့်ပေးမည် */
+        height: 75px !important;      /* အမြင့်ကို အနေတော် ပြင်ထားသည် */
         object-fit: contain !important;
-        margin-bottom: 12px !important;
+        margin: 0 auto 12px auto !important; /* ပုံကို Box ရဲ့ အလယ်တည့်တည့်သို့ ပို့ပေးသည် */
+        display: block !important;
         transition: transform 0.2s ease;
     }
     
     .pkg-card:hover .pkg-dia-img {
-        transform: scale(1.15); /* နှိပ်လိုက်ရင် ပိုပြီး ရှေ့ကို ထွက်လာမည့် Effect */
+        transform: scale(1.15); 
     }
+
 </style>
 </head><body>
 <div id="main-container">
@@ -552,12 +555,12 @@ HTML_CODE = '''
         renderP(g.cat_order[0], document.querySelector('.tab-btn.active'));
     }
 
-    function getPkgImg(text) {
+        function getPkgImg(text) {
         let lowerText = text.toLowerCase();
-        let noSpaceText = lowerText.replace(/\s+/g, ''); // စာသားကြားက Space တွေကို ဖယ်ရှားမည်
+        let noSpaceText = lowerText.replace(/\s+/g, ''); 
         let num = text.replace(/[^0-9]/g, ''); 
 
-        // 🔴 PUBG ပုံအသစ်များအတွက် အလိုအလျောက် ရှာပေးမည့်စနစ် 🔴
+        // 🔴 PUBG အထူး Package များ 🔴
         const pubgPacks = [
             "firstpurchase", "material", "mythic", 
             "prime1m", "prime3m", "prime6m", "prime1yr",
@@ -566,18 +569,14 @@ HTML_CODE = '''
             "elitepasslv1(50)", "elitepasspluslv1(100)"
         ];
 
-        // အစ်ကို Upload တင်ထားတဲ့ .jpg နာမည်တွေနဲ့ ကိုက်ညီရင် အဲ့ဒီပုံကို ပြမည်
-        if (pubgPacks.includes(noSpaceText)) {
-            return `/static/${noSpaceText}.jpg`; 
-        }
+        if (pubgPacks.includes(noSpaceText)) return `/static/${noSpaceText}.jpg`; 
         
-        // Weekly Mythic အတွက် သီးသန့်ပုံမပါရင် Mythic ပုံကိုပဲ ယူသုံးမည်
         if (noSpaceText === "weeklymythic") return "/static/mythic.jpg";
 
-        // PUBG UC ရိုးရိုး Package များအတွက် uc.png ကိုပြမည်
-        if (lowerText.includes("uc")) return "/static/uc.png";
+        // 🔴 UC ပုံများအတွက် ပြင်ဆင်ချက် (uc60.png, uc325.png အစရှိသည်တို့အတွက်) 🔴
+        if (lowerText.includes("uc")) return `/static/uc${num}.png`;
 
-        // 🔵 MLBB (Diamond နှင့် တခြား Bundle ပုံဟောင်းများ) 🔵
+        // 🔵 MLBB Diamond များ 🔵
         if (lowerText.includes("50+50")) return "/static/dia50+50.png";
         if (lowerText.includes("150+150")) return "/static/dia150+150.png";
         if (lowerText.includes("250+250")) return "/static/dia250+250.png";
@@ -587,7 +586,6 @@ HTML_CODE = '''
         if (lowerText.includes("weekly")) return "/static/weeklypass.png";
         if (lowerText.includes("twilight")) return "/static/twilight.png";
 
-        // ပုံသတ်မှတ်မထားတဲ့ Package တွေဆိုရင် ပါလာတဲ့ဂဏန်းအရေအတွက်နဲ့ dia ပုံကို ပြမည်
         return `/static/dia${num}.png`;
     }
 
