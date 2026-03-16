@@ -543,7 +543,30 @@ HTML_CODE = '''
 
     function getPkgImg(text) {
         let lowerText = text.toLowerCase();
+        let noSpaceText = lowerText.replace(/\s+/g, ''); // စာသားကြားက Space တွေကို ဖယ်ရှားမည်
         let num = text.replace(/[^0-9]/g, ''); 
+
+        // 🔴 PUBG ပုံအသစ်များအတွက် အလိုအလျောက် ရှာပေးမည့်စနစ် 🔴
+        const pubgPacks = [
+            "firstpurchase", "material", "mythic", 
+            "prime1m", "prime3m", "prime6m", "prime1yr",
+            "primeplus1m", "primeplus3m", "primeplus6m", "primeplus1yr",
+            "pack1", "pack2", 
+            "elitepasslv1(50)", "elitepasspluslv1(100)"
+        ];
+
+        // အစ်ကို Upload တင်ထားတဲ့ .jpg နာမည်တွေနဲ့ ကိုက်ညီရင် အဲ့ဒီပုံကို ပြမည်
+        if (pubgPacks.includes(noSpaceText)) {
+            return `/static/${noSpaceText}.jpg`; 
+        }
+        
+        // Weekly Mythic အတွက် သီးသန့်ပုံမပါရင် Mythic ပုံကိုပဲ ယူသုံးမည်
+        if (noSpaceText === "weeklymythic") return "/static/mythic.jpg";
+
+        // PUBG UC ရိုးရိုး Package များအတွက် uc.png ကိုပြမည်
+        if (lowerText.includes("uc")) return "/static/uc.png";
+
+        // 🔵 MLBB (Diamond နှင့် တခြား Bundle ပုံဟောင်းများ) 🔵
         if (lowerText.includes("50+50")) return "/static/dia50+50.png";
         if (lowerText.includes("150+150")) return "/static/dia150+150.png";
         if (lowerText.includes("250+250")) return "/static/dia250+250.png";
@@ -552,6 +575,8 @@ HTML_CODE = '''
         if (lowerText.includes("monthly epic")) return "/static/monthlyepic.png";
         if (lowerText.includes("weekly")) return "/static/weeklypass.png";
         if (lowerText.includes("twilight")) return "/static/twilight.png";
+
+        // ပုံသတ်မှတ်မထားတဲ့ Package တွေဆိုရင် ပါလာတဲ့ဂဏန်းအရေအတွက်နဲ့ dia ပုံကို ပြမည်
         return `/static/dia${num}.png`;
     }
 
