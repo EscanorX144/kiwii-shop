@@ -321,17 +321,16 @@ HTML_CODE = '''
         border-radius: 50%; 
         color: #fbbf24;
     }
-    /* 🔴 ပုံတွေ ကြီးလာအောင် ထပ်တိုးမည့် Code 🔴 */
     .pkg-dia-img {
-        width: 90px !important;
-        height: 65px !important;
+        width: 140px !important;   /* 90px ကနေ 140px သို့ အကြီးကြီး ဆွဲချဲ့လိုက်ပါပြီ */
+        height: 90px !important;   /* 65px ကနေ 90px သို့ မြှင့်လိုက်ပါပြီ */
         object-fit: contain !important;
-        margin-bottom: 8px !important;
+        margin-bottom: 12px !important;
         transition: transform 0.2s ease;
     }
     
     .pkg-card:hover .pkg-dia-img {
-        transform: scale(1.1); /* နှိပ်လိုက်ရင် ပုံလေး နည်းနည်း ပိုကြီးလာမည့် effect */
+        transform: scale(1.15); /* နှိပ်လိုက်ရင် ပိုပြီး ရှေ့ကို ထွက်လာမည့် Effect */
     }
 </style>
 </head><body>
